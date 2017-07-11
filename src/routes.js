@@ -1,7 +1,7 @@
 import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
-import home from './views/home.vue'
+import home from './views/home/home.vue'
 import LayoutManagement from './views/StoreManagement/LayoutManagement.vue'
 import GoodsManagement from './views/GoodsManagement/GoodsManagement.vue'
 import GoodsShelves from './views/GoodsManagement/GoodsShelves.vue'
@@ -24,8 +24,12 @@ let routes = [
     //{ path: '/main', component: Main },
     {
         path: '/',
-        component: home,
-        name: '首页'
+        component: Home,
+        name: '首页',
+        children: [
+            { path: '/', component: home, name: '首页',hidden:true },
+            
+        ]
     },
     {
         path: '/',

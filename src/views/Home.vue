@@ -205,7 +205,7 @@
 			top: 65px;
 			border-radius:5px;
 			bottom: 30px;
-			left:2%;
+			left:1%;
 			overflow: hidden;
 			background:white;
 			aside {
