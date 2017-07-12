@@ -39,7 +39,7 @@
 						</template>
 						<template v-else>
 							<li class="el-submenu">
-								<div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)"><i :class="item.iconCls"></i></div>
+								<div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;" :class="$route.path==item.children[0].path?'is-active li-active':''" @click="$router.push(item.children[0].path)"><i :class="item.iconCls"></i></div>
 							</li>
 						</template>
 					</li>
@@ -141,7 +141,7 @@
 	
 	.container {
 		position: absolute;
-		background:#ddd;
+		background:white;
 		top: 0px;
 		bottom: 0px;
 		width: 100%;
@@ -170,7 +170,7 @@
 				//width:230px;
 				height:60px;
 				font-size: 20px;
-				padding-left:20px;
+				padding-left:30px;
 				padding-right:20px;
 				border-color: #70a5ec;
 				border-right-width: 1px;
@@ -200,22 +200,22 @@
 		}
 		.main {
 			display: flex;
-			// background: #324057;
 			position: absolute;
 			top: 65px;
 			border-radius:5px;
+			left:2%;
 			bottom: 30px;
-			left:1%;
 			overflow: hidden;
-			background:white;
+			background:#eef1f6;
 			aside {
-				flex:0 0 230px;
-				width: 230px;
-				// position: absolute;
-				// top: 0px;
-				// bottom: 0px;
+				flex:0 0 200px;
+				width: 200px;
+				border-right:white 3px solid;
 				.el-menu{
 					height: 100%;
+					li .is-active{
+						border-right:3px #70a5ec solid;
+					}
 				}
 				.collapsed{
 					width:60px;
@@ -238,8 +238,8 @@
 				width: 60px;
 			}
 			.menu-expanded{
-				flex:0 0 230px;
-				width: 230px;
+				flex:0 0 200px;
+				width: 200px;
 			}
 			.content-container {
 				flex:1;

@@ -2,11 +2,13 @@ import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
 import home from './views/home/home.vue'
-import LayoutManagement from './views/StoreManagement/LayoutManagement.vue'
-import GoodsManagement from './views/GoodsManagement/GoodsManagement.vue'
-import GoodsShelves from './views/GoodsManagement/GoodsShelves.vue'
-import MaterialBind from './views/AdManagement/MaterialBind.vue'
-import AdMachineManagement from './views/AdManagement/AdMachineManagement.vue'
+
+import layoutManage from './views/shop/layoutManage.vue'
+import goodsManage from './views/goods/goodsManage.vue'
+import onlineGoods from './views/goods/onlineGoods.vue'
+import bindDisplayData from './views/displayManage/bindDisplayData.vue'
+import manageDisplayDevice from './views/displayManage/manageDisplayDevice.vue'
+import editDevice from './views/displayManage/editDevice.vue'
 
 let routes = [
     {
@@ -26,6 +28,7 @@ let routes = [
         path: '/',
         component: Home,
         name: '首页',
+        iconCls: 'el-icon-message',
         children: [
             { path: '/', component: home, name: '首页',hidden:true },
             
@@ -36,7 +39,7 @@ let routes = [
         component: Home,
         name: '门店管理',
         children: [
-            { path: '/LayoutManagement', component: LayoutManagement, name: '布局管理' }
+            { path: '/layoutManage', component: layoutManage, name: '布局管理' }
         ]
     },
     {
@@ -44,8 +47,8 @@ let routes = [
         component: Home,
         name: '商品管理',
         children: [
-            { path: '/GoodsManagement', component: GoodsManagement, name: '商品管理' },
-            { path: '/GoodsShelves', component: GoodsShelves, name: '商品上架' }
+            { path: '/goodsManage', component: goodsManage, name: '商品管理' },
+            { path: '/onlineGoods', component: onlineGoods, name: '商品上架' }
         ]
     },
     {
@@ -53,8 +56,9 @@ let routes = [
         component: Home,
         name: '广告管理',
         children: [
-            { path: '/MaterialBind', component: MaterialBind, name: '素材绑定' },
-            { path: '/AdMachineManagement', component: AdMachineManagement, name: '广告机管理' }
+            { path: '/bindDisplayData', component: bindDisplayData, name: '素材绑定' },
+            { path: '/manageDisplayDevice', component: manageDisplayDevice, name: '广告机管理' },
+            { path: '/editDevice', component: editDevice, name: '查看编辑广告机',hidden:true }
         ]
     },
     {
