@@ -116,7 +116,7 @@ export default {
             })
 
         },
-        submint() {
+        submit() {
 
         this.batch = this.getBatchParam(this.specs) 
             var newParams = {
