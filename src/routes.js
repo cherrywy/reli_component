@@ -5,6 +5,7 @@ import home from './views/home/home.vue'
 
 import layoutManage from './views/shop/layoutManage.vue'
 import bindDisplayData from './views/displayMgt/bindDisplayData.vue'
+import bindList from './views/displayMgt/bindList.vue'
 import manageDisplayDevice from './views/displayMgt/manageDisplayDevice.vue'
 import editDevice from './views/displayMgt/editDevice.vue'
 
@@ -52,7 +53,8 @@ let routes = [
         children: [
             { path: '/bindDisplayData', component: bindDisplayData, name: '素材绑定' },
             { path: '/manageDisplayDevice', component: manageDisplayDevice, name: '广告机管理' },
-            { path: '/editDevice', component: editDevice, name: '查看编辑广告机',hidden:true }
+            { path: '/editDevice', component: editDevice, name: '查看编辑广告机',hidden:true },
+            { path: '/bindList', component: bindList, name: '素材绑定',hidden:true }
         ]
     },
     {

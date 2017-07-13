@@ -14,6 +14,7 @@ import displayViewOne from './common/displayViewOne.vue'
 import displayViewTwo from './common/displayViewTwo.vue'
 
 import { getImgsList } from '../../api/display';
+import { updatavideo } from '../../api/display';
 export default {
     data() {
         return {
@@ -41,6 +42,9 @@ export default {
 		deviceStyle:function (str) {
 			this.currentView = str
 			getImgsList('1209811640320002').then(data => {
+				console.log(data)
+			})
+			updatavideo('1209811640320002').then(data => {
 				console.log(data)
 			})
 		}

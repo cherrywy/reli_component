@@ -15,7 +15,7 @@
                     </el-select>  条</span>
             </el-col>
             <el-col :span='4' align='right'>
-                <el-button type="primary">上传图片</el-button>
+                <el-button type="primary" @click='bindList'>绑定素材</el-button>
             </el-col>
             <el-col :span='24' style='margin-top:20px'>
                 <el-table
@@ -73,3 +73,20 @@
         </el-col>
     </section>
 </template>
+<script>
+export default {
+    data() {
+        return {
+		  
+		}
+    },
+	components: {
+		
+	},
+	methods:{
+		bindList:function (str) {
+			this.$router.push({path:'/bindList'});
+		}
+	}
+ }
+</script>

@@ -22,16 +22,14 @@
                             <el-form :model="form">
                                 <el-form-item label="请选择图片：" :label-width="formLabelWidth" align='left'>
                                     <el-upload
-                                        class="upload-demo"
-                                        action="updataimgs"
-                                        :on-preview="imgPreview"
-                                        :on-remove="imgRemove"
-                                        :file-list="file-list">
+                                        action="https://jsonplaceholder.typicode.com/posts/"
+                                        :file-list="fileList"
+                                        on-success='handleAvatarSuccess'>
                                         <el-button size="small" type="primary">选择文件</el-button>
                                     </el-upload>
                                 </el-form-item>
                                 <el-form-item label="跳转地址：" :label-width="formLabelWidth" align='left'>
-                                    <el-input v-model="form.jump_url" auto-complete="off" style='width:300px;'></el-input>
+                                    <el-input  v-model='form.jump_url' auto-complete="off" style='width:300px;'></el-input>
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer" align='center'>
@@ -78,7 +76,7 @@
 
 <script>
 import { updataimgs } from '../../../api/display';
-
+import { requestUpload } from '../../../api/display';
 export default {
     data() {
       return {
@@ -88,13 +86,28 @@ export default {
           jump_url: '',
           uid:'1209811640320002'
         },
-        formLabelWidth: '100px'
+        formLabelWidth: '100px',
+        fileList:[]
       };
     },
     methods:{
-        /*updataimgs (form) {
-            console.log(data)
-        }*/
+       handleAvatarSuccess(res, file) {
+         this.imageUrl = URL.createObjectURL(file.raw);
+            const formData = new FormData();
+            formData.append('pic',file.raw);
+            formData.append('type','image');
+            requestUpload(formData).then(data => {
+                let { error_code, result } = data;
+                if (error_code !== 0) {
+                    this.$message({
+                        message: "返回数据有误",
+                        type: 'error'
+                    });
+                } else {
+                    this.imageUrl = data.result.original_pic
+                }
+            })
+        },
 	}
 };
 </script>

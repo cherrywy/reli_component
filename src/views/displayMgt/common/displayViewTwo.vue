@@ -15,6 +15,8 @@
 <script>
 import viewTwoimgs from './viewTwoimgs.vue'
 import viewTwovideo from './viewTwovideo.vue'
+
+import { updatavideo } from '../../../api/display';
 export default {
     data() {
         return {
@@ -28,6 +30,9 @@ export default {
 	methods:{
 		changeView:function (str) {
 			this.cv = str
+			updatavideo('1209811640320002').then(data => {
+				console.log(data)
+			})
 		}
 	}
  }
