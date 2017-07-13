@@ -22,19 +22,20 @@
                             <el-form :model="form">
                                 <el-form-item label="请选择图片：" :label-width="formLabelWidth" align='left'>
                                     <el-upload
-                                        action="https://jsonplaceholder.typicode.com/posts/"
+                                        action="http://118.89.232.160:10001/util/file/upload.json"
                                         :file-list="fileList"
+                                        list-type='picture'
                                         on-success='handleAvatarSuccess'>
                                         <el-button size="small" type="primary">选择文件</el-button>
                                     </el-upload>
                                 </el-form-item>
                                 <el-form-item label="跳转地址：" :label-width="formLabelWidth" align='left'>
-                                    <el-input  v-model='form.jump_url' auto-complete="off" style='width:300px;'></el-input>
+                                    <el-input  v-model='form.jump_url'  style='width:300px;'></el-input>
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer" align='center'>
-                                <el-button type="primary" @click="dialogFormVisible = false">绑 定</el-button>
-                            </div>
+                                <el-button type="primary" @click="bindimgs">绑 定</el-button>
+                            </div>  
                         </el-dialog>
                     </el-col>   
             </el-col>
@@ -75,8 +76,7 @@
 </template>
 
 <script>
-import { updataimgs } from '../../../api/display';
-import { requestUpload } from '../../../api/display';
+import { updataimgs,requestUpload} from '../../../api/display'
 export default {
     data() {
       return {
@@ -87,12 +87,21 @@ export default {
           uid:'1209811640320002'
         },
         formLabelWidth: '100px',
-        fileList:[]
+        fileList:[],
+        options: [{
+          value: '5',
+          label: '5'
+        }, {
+          value: '10',
+          label: '10'
+        }],
+        value: ''
       };
     },
     methods:{
-       handleAvatarSuccess(res, file) {
+       handleAvatarSuccess (res, file) {
          this.imageUrl = URL.createObjectURL(file.raw);
+         console.log(this.imageUrl)
             const formData = new FormData();
             formData.append('pic',file.raw);
             formData.append('type','image');
@@ -105,9 +114,20 @@ export default {
                     });
                 } else {
                     this.imageUrl = data.result.original_pic
-                }
-            })
+            }
+          })
         },
+        bindimgs(){
+            this.dialogFormVisible = false
+            let str = {
+                pic_url:'img.png',
+                jump_ur:'www.baidu.com',
+                uid:'1209811640320002'
+            }
+            updataimgs(str).then(data => {   
+                console.log(data)
+            })
+        }
 	}
 };
 </script>
