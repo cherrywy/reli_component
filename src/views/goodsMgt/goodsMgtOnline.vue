@@ -19,7 +19,7 @@
             </el-row>
             <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;">
                 <el-card style="margin: 0 auto; width:500px;height:300px;">
-                    <img src="../../assets/logo.png" class="image">
+                    <img src="" class="image">
                     <div style="padding: 14px;">
                         <span>好吃的汉堡</span>
                         <div class="bottom clearfix">

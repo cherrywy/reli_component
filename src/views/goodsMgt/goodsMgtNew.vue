@@ -73,6 +73,7 @@ export default {
         }
     },
     mounted() {
+
         this.loadAll(0);
         this.loadAll(1);
         this.brandHistory();
@@ -116,6 +117,8 @@ export default {
 
         },
         submint() {
+
+        this.batch = this.getBatchParam(this.specs) 
             var newParams = {
                 uid: 1185378158575618,
                 batch: this.batch,
@@ -249,7 +252,76 @@ export default {
             } else {
                 this.options4 = [];
             }
+
+        },
+        getBatchParam(specs) {
+            const com_data = (specs) => {
+
+                const result = specs.map((v, index) => {
+                    const { spec_name, spec_value } = v;
+                    return spec_value.map(v => {
+                        const obj = {};
+                        obj[`spec${index + 1}_name`] = spec_name;
+                        obj[`spec${index + 1}_value`] = v;
+                        return obj;
+                    })
+                });
+                if (result.length === 1) {
+                    return result.pop();
+                } else if (result.length === 2) {
+                    return two_com_data(result);
+                } else if (result.length === 3) {
+                    return three_com_data(result);
+                } else {
+                    return null;
+                }
+            };
+
+            function extend(target, source, source_two) {
+                const tmp = JSON.parse(JSON.stringify(target));
+                for (let obj in target) {
+                    tmp[obj] = target[obj];
+                }
+                for (let obj in source) {
+                    tmp[obj] = source[obj];
+                }
+                if (source_two) {
+                    for (let obj in source_two) {
+                        tmp[obj] = source_two[obj];
+                    }
+                }
+                return tmp;
+            }
+
+            const two_com_data = (datas) => {
+                let batch = [];
+                for (let i = 0; i < datas[0].length; i++) {
+                    for (let j = 0; j < datas[1].length; j++) {
+                        let s1 = datas[0][i];
+                        let s2 = datas[1][j];
+                        batch.push(extend(s1, s2));
+                    }
+                }
+                return batch;
+            };
+
+            const three_com_data = (datas) => {
+                let batch = [];
+                for (let i = 0; i < datas[0].length; i++) {
+                    for (let j = 0; j < datas[1].length; j++) {
+                        for (let k = 0; k < datas[2].length; k++) {
+                            let s1 = datas[0][i];
+                            let s2 = datas[1][j];
+                            let s3 = datas[2][k];
+                            batch.push(extend(s1, s2, s3));
+                        }
+                    }
+                }
+                return batch;
+            };
+            return com_data(specs);
         }
+
     }
 }
 
