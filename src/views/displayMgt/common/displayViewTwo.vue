@@ -3,8 +3,8 @@
 		<el-col :span ='24'>
              <el-col :span ='3' style='margin-top:20px;'><span>素材类型：</span></el-col>
              <el-col :span ='21'>
-                <el-button @click='haha("data2imgs")'>轮播图</el-button>
-                <el-button @click='haha("data1video")'>视频</el-button>
+                <el-button @click='changeView("viewTwoimgs")'>轮播图</el-button>
+				 <el-button @click='changeView("viewTwovideo")'>视频</el-button>
             </el-col>
         </el-col>
         <el-col :span='24'>
@@ -13,20 +13,20 @@
 	</section>
 </template>
 <script>
-import data2imgs from './data2imgs.vue'
-import data1video from './data1video.vue'
+import viewTwoimgs from './viewTwoimgs.vue'
+import viewTwovideo from './viewTwovideo.vue'
 export default {
     data() {
         return {
-		  cv: 'data1video'
+		  cv: 'viewTwoimgs'
 		}
     },
 	components: {
-		data2imgs,
-		data1video
+		viewTwoimgs,
+		viewTwovideo
 	},
 	methods:{
-		haha:function (str) {
+		changeView:function (str) {
 			this.cv = str
 		}
 	}

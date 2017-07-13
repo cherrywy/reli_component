@@ -2,23 +2,25 @@
 	<section>
 		<el-row>
 			<el-col :span ='24' style='margin-top:20px;'>
-				<el-button class='device' @click='deviceStyle("displaydata1")'>广告机1</el-button>
-				<el-button class='device' @click='deviceStyle("displaydata2")'>广告机2</el-button>	
+				<el-button class='device' @click='deviceStyle("displayViewOne")'>广告机1</el-button>
+				<el-button class='device' @click='deviceStyle("displayViewTwo")'>广告机2</el-button>	
 			</el-col>
 		</el-row>
 		<components :is='currentView'></components>
 	</section>
 </template>
 <script>
-import displaydata1 from './common/displaydata1.vue'
-import displaydata2 from './common/displaydata2.vue'
+import displayViewOne from './common/displayViewOne.vue'
+import displayViewTwo from './common/displayViewTwo.vue'
+
+import { getImgsList } from '../../api/display';
 export default {
     data() {
         return {
           activeName2: 'first',
 		  options: [{value: 5,label: 5}, {value: 10,label: 10}],
 		  value: '',
-		  currentView: 'displaydata1'
+		  currentView: 'displayViewOne'
 		}
     },
 	props:{
@@ -32,12 +34,15 @@ export default {
 		}
 	},
 	components: {
-		displaydata1,
-		displaydata2
+		displayViewOne,
+		displayViewTwo
 	},
 	methods:{
 		deviceStyle:function (str) {
 			this.currentView = str
+			getImgsList('1209811640320002').then(data => {
+				console.log(data)
+			})
 		}
 	}
  }

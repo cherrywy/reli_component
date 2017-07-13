@@ -4,11 +4,9 @@ import Home from './views/Home.vue'
 import home from './views/home/home.vue'
 
 import layoutManage from './views/shop/layoutManage.vue'
-import goodsManage from './views/goods/goodsManage.vue'
-import onlineGoods from './views/goods/onlineGoods.vue'
-import bindDisplayData from './views/displayManage/bindDisplayData.vue'
-import manageDisplayDevice from './views/displayManage/manageDisplayDevice.vue'
-import editDevice from './views/displayManage/editDevice.vue'
+import bindDisplayData from './views/displayMgt/bindDisplayData.vue'
+import manageDisplayDevice from './views/displayMgt/manageDisplayDevice.vue'
+import editDevice from './views/displayMgt/editDevice.vue'
 
 let routes = [
     {
@@ -45,11 +43,7 @@ let routes = [
     {
         path: '/',
         component: Home,
-        name: '商品管理',
-        children: [
-            { path: '/goodsManage', component: goodsManage, name: '商品管理' },
-            { path: '/onlineGoods', component: onlineGoods, name: '商品上架' }
-        ]
+        name: '商品管理'
     },
     {
         path: '/',
