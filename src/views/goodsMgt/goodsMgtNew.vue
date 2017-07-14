@@ -98,7 +98,11 @@ export default {
                 });
 
             } else {
-                alert('目前只能添加3个规格');
+             
+                this.$message({
+                        message: "目前只能添加3个规格",
+                        type: 'warning'
+                    });
             }
         },
         handleAvatarSuccess(res, file) {

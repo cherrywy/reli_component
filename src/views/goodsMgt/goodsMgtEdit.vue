@@ -99,9 +99,13 @@ export default {
                     spec_name: '',
                     spec_value: ''
                 });
-                console.log(this.specs);
+              
             } else {
-                alert('目前只能添加3个规格');
+                this.$message({
+                        message: "目前只能添加3个规格",
+                        type: 'warning'
+                    });
+            
             }
         },
         handleAvatarSuccess(res, file) {
@@ -124,7 +128,6 @@ export default {
 
         },
         submit() {
-           console.log(this.specs)
             this.batch = this.getBatchParam(this.specs)
             const goods_id = this.$route.query.goods_id;
             const brand_id = this.brand.filter(v => {
@@ -141,7 +144,6 @@ export default {
                 title_pics: this.imageUrl
             };
             requestUpdate(newParams).then(data => {
-                 alert('111')
                 let { error_code, result } = data;
                 if (error_code == 0) {
                     this.$message({
