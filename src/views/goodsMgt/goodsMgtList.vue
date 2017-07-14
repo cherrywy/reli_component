@@ -29,7 +29,12 @@
             </el-table-column>
             <el-table-column prop="goods_name" label="商品名称" align="center">
             </el-table-column>
-            <el-table-column prop="spec_info.spec1_name" label="规格" width="100" align="center">
+            <el-table-column label="规格" width="150" align="center">
+                <template scope="scope">
+                    <div v-for="item in scope.row.spec_info">
+                  {{item.spec1_value}},{{item.spec2_value}},{{item.spec3_value}}
+                    </div>
+                </template>
             </el-table-column>
             <el-table-column prop="goods_brand_name" label="品牌" align="center" width="100">
             </el-table-column>
@@ -98,7 +103,7 @@ export default {
             if (brand_name) {
                 listParams['brand_name'] = brand_name
             }
-            if (key_word ) {
+            if (key_word) {
                 listParams['key_word'] = key_word
             }
             requestList(listParams).then(data => {
@@ -118,9 +123,9 @@ export default {
             })
         },
         searchList() {
-            this.getList(this.brand_name, this.key_word ,0)
-            this.brand_name=''
-             this.key_word=''
+            this.getList(this.brand_name, this.key_word, 0)
+            this.brand_name = ''
+            this.key_word = ''
         },
         handleCurrentChange(val) {
             this.currentPage = val;

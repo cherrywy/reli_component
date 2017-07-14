@@ -124,6 +124,7 @@ export default {
 
         },
         submit() {
+           console.log(this.specs)
             this.batch = this.getBatchParam(this.specs)
             const goods_id = this.$route.query.goods_id;
             const brand_id = this.brand.filter(v => {
@@ -140,6 +141,7 @@ export default {
                 title_pics: this.imageUrl
             };
             requestUpdate(newParams).then(data => {
+                 alert('111')
                 let { error_code, result } = data;
                 if (error_code == 0) {
                     this.$message({
@@ -314,10 +316,11 @@ export default {
             }
         },
         getBatchParam(specs) {
+            
             const com_data = (specs) => {
-
+                
                 const result = specs.map((v, index) => {
-                    const { spec_name, spec_value } = v;
+                    const { spec_name, spec_value=[]} = v;
                     return spec_value.map(v => {
                         const obj = {};
                         obj[`spec${index + 1}_name`] = spec_name;

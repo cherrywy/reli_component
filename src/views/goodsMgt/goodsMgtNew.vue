@@ -89,35 +89,21 @@ export default {
         addSku() {
             if (this.specs.length == 0) {
                 this.loadAll(2);
-                this.loadAll(3);
+                
             }
             if (this.specs.length < 3) {
                 this.specs.push({
                     spec_name: '',
                     spec_value: ''
                 });
-                console.log(this.specs);
+
             } else {
                 alert('目前只能添加3个规格');
             }
         },
         handleAvatarSuccess(res, file) {
             this.imageUrl = URL.createObjectURL(file.raw);
-            const formData = new FormData();
-            formData.append('pic', file.raw);
-            formData.append('type', 'image');
-            requestUpload(formData).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.imageUrl = data.result.original_pic
-
-                }
-            })
+            this.imageUrl = res.result.original_pic
 
         },
         submit() {
@@ -262,7 +248,7 @@ export default {
             const com_data = (specs) => {
 
                 const result = specs.map((v, index) => {
-                    const { spec_name, spec_value } = v;
+                    const { spec_name, spec_value=[] } = v;
                     return spec_value.map(v => {
                         const obj = {};
                         obj[`spec${index + 1}_name`] = spec_name;
