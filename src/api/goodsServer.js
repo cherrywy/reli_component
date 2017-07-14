@@ -18,3 +18,6 @@ export const requestUpload = params => {
 
 export const requestList =params => { return axios.post(`${apiServer}/a/goods/list.json`, params).then(res => res.data);};
 export const requestRemove =params => { return axios.post(`${apiServer}/a/goods/remove.json`, params).then(res => res.data);};
+
+export const requestUpdate =params => { return axios.post(`${apiServer}/a/goods/update.json`, params).then(res => res.data);};
+export const requestEdit =params => { return axios.post(`${apiServer}/a/goods/show.json`, params).then(res => res.data);};
