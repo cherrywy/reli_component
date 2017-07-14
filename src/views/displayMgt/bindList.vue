@@ -2,15 +2,15 @@
     <section>
         <el-row>
             <el-col :span='24'>
-                <el-form ref="form" :model="form" >
+                <el-form ref="form" :model="bindgoods" >
                     <el-form-item label="请选择商品：">
                         <el-input
                             icon="search"
-                            v-model="goods"
+                            v-model="filter.goods"
                             :on-icon-click="handleIconClick"
-                        style='width:200px;'>
+                             style='width:200px;'>
                         </el-input>
-                        <el-button type='text'  @click="dialogFormVisible = true">选择商品</el-button>
+                        <el-button type='text'  @click="changeGoods">选择商品</el-button>
                         <el-dialog :visible.sync="dialogFormVisible">
                             <el-form :model="form">
                                 <el-form-item  :label-width="formLabelWidth">
@@ -20,9 +20,13 @@
                                     <span>找不到商品？去<el-button type='text'>添加</el-button></span>
                                 </el-form-item>
                                 <el-form-item  :label-width="formLabelWidth">
-                                    <el-table :data="gridData" style='marign-top:10px;'>
-                                            <el-table-column property="date" label="选择" width="200"></el-table-column>
-                                            <el-table-column property="name" label="商品名称" ></el-table-column>
+                                    <el-table :data="arr" style='marign-top:10px;'>
+                                            <el-table-column label="选择" width="200">
+                                                <template scope="scope">
+                                                    <el-checkbox v-model="checked" @click="check"></el-checkbox>
+                                                </template>
+                                            </el-table-column>
+                                            <el-table-column label="商品名称" prop='name'></el-table-column>
                                     </el-table>
                                 </el-form-item>
                             </el-form>
@@ -85,14 +89,17 @@
                        <el-input  style='width:300px;'></el-input> 元
                     </el-form-item>
                     <el-form-item label="请选择视频" >
-                       <el-upload
-                            action="http://118.89.232.160:10001/v10/a/goods/fold_dd/edit_banner.json"
-                            :file-list="fileList">
-                            <el-button size="small" type="primary">本地上传</el-button>
-                            <img src="" alt="">
+                        <el-upload
+                                action="http://118.89.232.160:10001/util/file/upload.json"
+                                list-type="picture-card"
+                                :on-success='handleAvatarSuccess'
+                                :on-remove="handleRemove">
+                                <i class="el-icon-plus"></i>
+                                <div slot="tip" class="el-upload__tip" style='margin-left:50px;color:red;'>注：视频只支持16：9尺寸，且只能上传一个</div>
                         </el-upload>
-                       <span color='red'>注：视频只支持16：9尺寸，且只能上传一个</span>
-                       <img src="" alt="">
+                        <el-dialog v-model="dialogVisible" size="tiny">
+                            <img width="100%" :src="dialogImageUrl" alt="">
+                        </el-dialog>
                     </el-form-item>
                     <el-form-item align='center'>
                         <el-button type="primary" @click="onSubmit">绑定</el-button>
@@ -103,10 +110,20 @@
     </section>
 </template>
 <script>
+import {changeGoodsList} from '../../api/display'
   export default {
     data() {
       return {
         dialogTableVisible: false,
+        bindgoods:{},
+        form:{},
+        filter: {
+                goods:null,
+                userId: null ,
+                nickName:null,
+                startTime:null,
+                endTime:null,
+         },
         dialogFormVisible: false,
         form: {
           name: '',
@@ -118,8 +135,24 @@
           resource: '',
           desc: ''
         },
-        formLabelWidth: '120px'
+        formLabelWidth: '120px',
+        arr:[]
       };
+    },
+	methods:{
+        changeGoods(){
+            this.dialogFormVisible = true
+            let id = {
+               uid:'1209811640320002' 
+            }
+            changeGoodsList(id).then(data => {
+                this.arr = data.result.list.map(v=>{
+                    return {
+                        name:v.data.name
+                    }
+                });
+            })
+        }
     }
   };
 </script>

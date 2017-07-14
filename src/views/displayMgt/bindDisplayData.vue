@@ -13,15 +13,15 @@
 import displayViewOne from './common/displayViewOne.vue'
 import displayViewTwo from './common/displayViewTwo.vue'
 
-import { getImgsList } from '../../api/display';
-import { updatavideo } from '../../api/display';
+import { getImgsList,updatavideo,allPic_imgs } from '../../api/display';
 export default {
     data() {
         return {
           activeName2: 'first',
 		  options: [{value: 5,label: 5}, {value: 10,label: 10}],
 		  value: '',
-		  currentView: 'displayViewOne'
+		  currentView: 'displayViewOne',
+		  lists:null
 		}
     },
 	props:{
@@ -41,11 +41,19 @@ export default {
 	methods:{
 		deviceStyle:function (str) {
 			this.currentView = str
-			getImgsList('1209811640320002').then(data => {
-				console.log(data)
+			let id = {
+				uid:'1209811640320002'
+			}
+			getImgsList(id).then(data => {
+				//console.log(data)
 			})
-			updatavideo('1209811640320002').then(data => {
-				console.log(data)
+			updatavideo(id).then(data => {
+				//console.log(data)
+			})
+			allPic_imgs(id).then(data => {
+				this.lists = data.result
+				let imgList =this.lists
+				//console.log(this.lists)
 			})
 		}
 	}

@@ -5,9 +5,10 @@
 				<el-select v-model="value" placeholder="请选择">
 					<el-option
 						v-for="item in options"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value">
+						:key="item.data.shop"
+						:label="item.data.shop"
+						:value="item.data.shop"
+						:change='getShopList(item)'>
 					</el-option>
 				</el-select>
 			</span>
@@ -19,7 +20,7 @@
       			style="width: 100%;">
 				<el-table-column
 					prop="date"
-					label="广告名称"
+					label="广告机名称"
 					width="300" align='center'>
 				</el-table-column>
 				<el-table-column
@@ -51,6 +52,7 @@
 	</el-row>
 </template>
 <script>
+import {getShop,display_list} from '../../api/display'
     export default {
       data() {
         return {
@@ -70,14 +72,35 @@
             date: '2016-05-03',
             name: '王小虎',
             address: '上海市普陀区金沙江路 1516 弄'
-          }]
+          }],
+					value:'',
+					options:null,
+					dpy_list:{
+						name:null,
+						shop_id:null
+					}
         }
       },
+		mounted(){
+        this.getFocusList()
+    },
 	  methods:{
 		  edit () {
 			  this.$router.push({path:'/editDevice'});
-		  }
-	  }
+		  },
+			getFocusList(){//加载页面时候加载门店
+				let par = {uid:'1209811640320002'}
+        getShop(par).then(data=>{
+					 this.options = data.result
+					 this.dpy_list.shop_id = data.result[0].id	
+				})
+      },
+			getShopList(){//门店
+				display_list(this.dpy_list).then(data=>{
+					console.log(data)
+				})
+			},	
+	 	 }
     }
   </script>
 <style>

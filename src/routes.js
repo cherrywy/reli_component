@@ -29,7 +29,7 @@ let routes = [
         name: '首页',
         iconCls: 'el-icon-message',
         children: [
-            { path: '/', component: home, name: '首页',hidden:true },
+            { path: '/', component: home, name: '首页',hidden:true }  
             
         ]
     },

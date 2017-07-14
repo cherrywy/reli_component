@@ -19,18 +19,19 @@
                     </el-col>
                     <el-col :span='24'>
                         <el-dialog  :visible.sync="dialogFormVisible" >
-                            <el-form :model="form">
+                            <el-form :model="imgInfomation">
                                 <el-form-item label="请选择图片：" :label-width="formLabelWidth" align='left'>
                                     <el-upload
                                         action="http://118.89.232.160:10001/util/file/upload.json"
-                                        :file-list="fileList"
-                                        list-type='picture'
-                                        on-success='handleAvatarSuccess'>
-                                        <el-button size="small" type="primary">选择文件</el-button>
-                                    </el-upload>
+                                        name="pic"
+                                        :data="upload_params"      
+                                        :show-file-list="true"
+                                        :on-success='handleAvatarSuccess'>
+                                        <el-button size="small" type="primary" :disabled='btn_show'>选择文件</el-button>
+                                    </el-upload>                       
                                 </el-form-item>
                                 <el-form-item label="跳转地址：" :label-width="formLabelWidth" align='left'>
-                                    <el-input  v-model='form.jump_url'  style='width:300px;'></el-input>
+                                    <el-input   style='width:300px;' v-model='imgInfomation.jump_url'></el-input>
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer" align='center'>
@@ -44,24 +45,40 @@
                         :data="tableData"
                         style="width: 100%;">
                         <el-table-column
-                        prop="date"
+                        prop="pic_url"
                         label="图片"
                         width="200"
                         align='center'>
                         </el-table-column>
+                            <template><img :src="img_url" ></template>
                         <el-table-column
-                        prop="name"
+                        prop="jump_url"
                         label="url地址"
                         width="600"
                         align='center'>
                         </el-table-column>
                         <el-table-column
-                        prop="address"
+                        prop="event"
                         label="操作"
                         align='center'>
+                            <template scope="scope">
+                            <el-button
+                                size="small"
+                                @click="delete_imgs(scope.$index, scope.row)">删除</el-button>
+                        </template>
                         </el-table-column>
                     </el-table>
             </el-col>
+            <el-dialog
+                title="提示"
+                :visible.sync="dialogDelete"
+                size="tiny">
+                <span>确认删除？</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogDelete = false">取 消</el-button>
+                    <el-button type="primary" @click="handleDelete()">确 定</el-button>
+                </span>
+            </el-dialog>
 
             <el-col :span='24' align='right'>
                     <div class="block">
@@ -76,18 +93,17 @@
 </template>
 
 <script>
-import { updataimgs,requestUpload} from '../../../api/display'
+import { updataimgs,requestUpload,allPic_imgs,deleteimgs} from '../../../api/display'
 export default {
     data() {
       return {
         dialogFormVisible: false,
-        form: {
-          pic_url: '',
-          jump_url: '',
-          uid:'1209811640320002'
-        },
         formLabelWidth: '100px',
-        fileList:[],
+        dialogDelete:false,
+        btn_show:false,
+        upload_params:{
+            type:'image'
+        },
         options: [{
           value: '5',
           label: '5'
@@ -95,39 +111,76 @@ export default {
           value: '10',
           label: '10'
         }],
-        value: ''
+        value: '',
+        img_url:'',
+        imgInfomation:{
+            jump_url:'',
+            pic_url:'',
+            uid:'1209811640320002'
+        },
+        tableData:[{
+            pic_url:'',
+            jump_url:''
+        }],
+        displayId:null,
+        inx:null,
+        new_list:null
       };
     },
+    mounted(){
+        this.getImgsList()
+    },
     methods:{
-       handleAvatarSuccess (res, file) {
-         this.imageUrl = URL.createObjectURL(file.raw);
-         console.log(this.imageUrl)
-            const formData = new FormData();
-            formData.append('pic',file.raw);
-            formData.append('type','image');
-            requestUpload(formData).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.imageUrl = data.result.original_pic
-            }
-          })
+       handleAvatarSuccess(res, file) {
+         this.btn_show = true
+         this.imgInfomation.pic_url = res.result.file_download_url
         },
         bindimgs(){
+            //上传图片
             this.dialogFormVisible = false
-            let str = {
-                pic_url:'img.png',
-                jump_ur:'www.baidu.com',
-                uid:'1209811640320002'
-            }
-            updataimgs(str).then(data => {   
-                console.log(data)
+            this.imgInfomation.uid = 1209811640320002
+            updataimgs(this.imgInfomation).then(data=>{
+                console.log(data.result.id)
+                let newImg = {
+                    pic_url:this.imgInfomation.pic_url,
+                    jump_url:this.imgInfomation.jump_url,
+                    id:data.result.id
+                }
+                console.log(newImg)
+                this.tableData.unshift(newImg)
+                this.new_list = this.tableData
             })
-        }
+        },
+        getImgsList(){
+            //加载轮播图信息
+            let id = {
+				uid:'1209811640320002'
+			}
+            allPic_imgs(id).then(data=>{  
+                this.tableData = data.result
+            })
+        },
+        delete_imgs(index,row){
+            this.dialogDelete = true;
+            this.inx = index
+        },
+        handleDelete(){
+            //删除
+            this.dialogDelete = false;
+            if(this.new_list){
+              let banner_id =this.new_list[this.inx].id
+                console.log(this.new_list)
+                console.log(this.new_list[this.inx])
+            }
+            let banner_id =this.tableData[this.inx].id
+            let banId = {
+                banner_id:banner_id
+            }
+            deleteimgs(banId).then(data => {
+                //console.log(data)
+                this.tableData.splice(this.inx,1);
+            })  
+         }
 	}
 };
 </script>
