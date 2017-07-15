@@ -69,7 +69,6 @@ export default {
     data() {
         return {
             tableData: [],
-            tableContent: [],
             brand: [],
             key_word: '',
             brand_name: '',
