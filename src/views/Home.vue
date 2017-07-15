@@ -45,10 +45,10 @@
 					</li>
 				</ul>
 			</aside>
-			<section class="content-container">
-				<div class="grid-content bg-purple-light">
+			<section class="content-container" style="margin-bottom:20x;">
+				<div class="grid-content bg-purple-light"  >
 					<el-col :span="24" class="breadcrumb-container">
-						<el-breadcrumb separator="/" class="breadcrumb-inner">
+						<el-breadcrumb separator="/" class="breadcrumb-inner" style="margin-bottom: 20px;">
 							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
 								{{ item.name }}
 							</el-breadcrumb-item>
