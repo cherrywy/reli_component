@@ -1,8 +1,8 @@
 <template>
     <section>
         <el-col :span="24">
-            <el-col :span="6">
-                <el-select v-model="brand_name" placeholder="品牌">
+            <el-col :span="7">
+                <el-select v-model="brand_name" style="width: 261px;" placeholder="品牌">
                     <el-option v-for="item in brand" :key="item.id" :label="item.name" :value="item.name">
                     </el-option>
                 </el-select>
@@ -23,7 +23,7 @@
         <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
             <el-table-column label="商品图片" width="120" align="center">
                 <template scope="scope">
-                    <img width='20' height='20' :src="scope.row.goods_title_pics">
+                    <img width='60' height='60' :src="scope.row.goods_title_pics">
                 </template>
     
             </el-table-column>
