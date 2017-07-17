@@ -82,6 +82,7 @@ import { requestOnline, requestFindShop, requestFindShopPlan, requestSearchSpec,
 export default {
     data() {
         return {
+            uid:'',
             canvas: null,
             coorDefaults: {
                 originX: 'center',
@@ -124,6 +125,7 @@ export default {
     },
     mounted: function () {
         this.getFindShop()//获取门店
+          this.uid=localStorage.getItem('uid');
     },
     wach: {
         canvas() {
@@ -202,7 +204,7 @@ export default {
             const goods_spec_ids = this.multipleSelection.map(v => {
                 return v.id
             }).join()
-            let listParams = { uid: 1209811640320002, goods_spec_ids: goods_spec_ids, show_case_id: show_case_id };
+            let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: show_case_id };
             requestGoodsOnline(listParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -241,7 +243,7 @@ export default {
         },
         getOnlineList(key_word, pageNum, limit) {
             this.dialogFormVisible = true;
-            let listParams = { uid: 1209811640320002, page: pageNum, limit: limit };
+            let listParams = { uid: this.uid, page: pageNum, limit: limit };
             if (key_word) {
                 listParams['key_word'] = key_word
             }
@@ -271,7 +273,7 @@ export default {
             this.getOnlineList(this.plansName, this.currentPage, this.pageSize)
         },
         getFindShop() {
-            const shopPlanParams = { uid: 1209811640320002 };
+            const shopPlanParams = { uid: this.uid };
             requestFindShop(shopPlanParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -295,7 +297,7 @@ export default {
             const shop_id = this.shop.filter(v => {
                 return v.value === this.shopName;
             }).map(v => v.id).pop();
-            const shopPlanParams = { uid: 1209811640320002, shop_id: shop_id };
+            const shopPlanParams = { uid: this.uid, shop_id: shop_id };
             requestFindShopPlan(shopPlanParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {

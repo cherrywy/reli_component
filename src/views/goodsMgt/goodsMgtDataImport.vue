@@ -1,14 +1,14 @@
 <template>
     <section>
         <el-col :span="24" style="margin-bottom:20px">
-            <el-upload class="avatar-uploader" ref="upload" style="float:right;margin-right:20px;" action="http://118.89.232.160:10001/a/goods/sales.json" :data="{'uid': 1209811640320002,'shop_id':1272219830442436,'header_index':4,'file':fileList.name}" :file-list="fileList" :on-success="handleImportSuccess" :show-file-list="false">
+            <el-upload class="avatar-uploader" ref="upload" style="float:right;margin-right:20px;" action="http://118.89.232.160:10001/a/goods/sales.json" :data="{'uid': uid,'shop_id':shop_id,'header_index':4,'file':fileList.name}" :file-list="fileList" :on-success="handleImportSuccess" :show-file-list="false">
                 <el-button type="primary" style="background:#70a5ec">导入销售数据</el-button>
             </el-upload>
         </el-col>
         <el-col :span="24" style="margin-bottom:20px" v-if="dataImprt.length!=0">
-            <div v-for='item in dataImprt' style="border-bottom: 1px solid #ccc;padding:10px;">
+            <div v-for='(item,index) in dataImprt' style="border-bottom: 1px solid #ccc;padding:10px;">
                 <span>{{item.data.goods_name}}</span>
-                <el-button type='text' style="float:right;margin-right:50px" @click='searchGoodsSpec(item.$index,item.id,item.data.goods_name,item.data.goods_number)'>搜索</el-button>
+                <el-button type='text' style="float:right;margin-right:50px" @click='searchGoodsSpec(index,item.id,item.data.goods_name,item.data.goods_number)'>搜索</el-button>
     
             </div>
             <el-row class="row center">
@@ -16,25 +16,25 @@
                 </el-pagination>
             </el-row>
         </el-col>
-        <el-dialog class='goods_dialog':visible.sync="dialogFormVisible" size='large'>
+        <el-dialog class='goods_dialog' :visible.sync="dialogFormVisible" size='large'>
             <el-form style='text-align: center;'>
     
                 <el-form-item :label="oldGoodsName" label-width="150">
                     <el-input style='width:200px;float:right;' v-model="goodsName" placeholder="请输入商品名称搜索" icon='search' :file-list="fileList" :on-icon-click="searchGoodsName" auto-complete="off"></el-input>
                 </el-form-item>
                 <p v-if='isShowNull' style='color:red;margin:50px auto 100px;text-algin:center'>未搜索到该商品</p>
-                <div  v-if='isShow'  style="border-bottom: 1px solid #ccc;padding:10px;">
+                <div v-if='isShow' style="border-bottom: 1px solid #ccc;padding:10px;">
                     <el-table ref="singleTable" :data="specSearchList" highlight-current-row @current-change="handleCurrentChange" style="width: 100%">
-                        <el-table-column type="index" width="100" align='center' >
+                        <el-table-column type="index" width="100" align='center'>
                         </el-table-column>
-                        <el-table-column property="goods_name" label="商品名称" align='center' >
+                        <el-table-column property="goods_name" label="商品名称" align='center'>
                         </el-table-column>
-                        <el-table-column  label="商品规格" align='center'>
+                        <el-table-column label="商品规格" align='center'>
                             <template scope="scope">
-                                    {{scope.row.spec1_value?scope.row.spec1_value:''}} {{scope.row.spec2_value?","+scope.row.spec2_value:''}}{{scope.row.spec3_value?","+scope.row.spec3_value:''}}
-                                </template>
+                                {{scope.row.spec1_value?scope.row.spec1_value:''}} {{scope.row.spec2_value?","+scope.row.spec2_value:''}}{{scope.row.spec3_value?","+scope.row.spec3_value:''}}
+                            </template>
                         </el-table-column>
-                       
+    
                     </el-table>
     
                     <el-button type="primary" @click="submit()" style="margin:61px auto 0; width:20%;">绑定</el-button>
@@ -48,16 +48,18 @@
 </template>
 <script>
 
-import { requestUpload, requestDataImport, requestGoodSpecProcess, requestGoodSpecSearch, requestGoodSpecUpdate,requestGoodSpecRemove } from '../../api/goodsServer';
+import { requestUpload, requestDataImport, requestGoodSpecProcess, requestGoodSpecSearch, requestGoodSpecUpdate, requestGoodSpecRemove } from '../../api/goodsServer';
 import moment from 'moment';
 export default {
     data() {
         return {
-            goodsId:'',
-            index:0,
-            currentRow:'',
-            spec_number:'',
-            isShow:false,
+            uid:'',
+            shop_id:'',
+            goodsId: '',
+            index: 0,
+            currentRow: '',
+            spec_number: '',
+            isShow: false,
             isShowNull: false,
             specSearchList: [],
             currentPage: 1,
@@ -72,7 +74,8 @@ export default {
         }
     },
     mounted: function () {
-
+     this.uid=localStorage.getItem('uid');
+     this.shop_id=localStorage.getItem('shop_id');
     },
     methods: {
         handleImportSuccess(res, fileList) {
@@ -86,7 +89,7 @@ export default {
 
         },
         getGoodSpecProcessList() {
-            let goodSpecProcessParams = { shop_id: 1272219830442436, page: this.currentPage };
+            let goodSpecProcessParams = { shop_id: this.shop_id, page: this.currentPage };
             requestGoodSpecProcess(goodSpecProcessParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -105,16 +108,18 @@ export default {
             this.currentPage = val;
             this.getGoodSpecProcessList()
         },
-        searchGoodsSpec(index,id,name,spec_number) {
-            
-            this.index=index;
-            this.goodsId=id
+        searchGoodsSpec(index, id, name, spec_number) {
+
+            this.index = index;
+            this.goodsId = id
             this.dialogFormVisible = true
             this.oldGoodsName = name
-            this.spec_number=spec_number
+            this.spec_number = spec_number
         },
         searchGoodsName() {
-            let goodSpecUpdateParams = { uid: 1209811640320002, keyword: this.goodsName };
+            
+
+            const goodSpecUpdateParams = { uid: this.uid, keyword: this.goodsName };
             requestGoodSpecSearch(goodSpecUpdateParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -128,9 +133,9 @@ export default {
                         this.isShowNull = true
                         this.isShow = false
 
-                    }else{
-                       this.isShow = true
-                       this.isShowNull = false
+                    } else {
+                        this.isShow = true
+                        this.isShowNull = false
                     }
 
                 }
@@ -139,55 +144,56 @@ export default {
         setCurrent(row) {
             this.$refs.singleTable.setCurrentRow(row);
         },
-        submit(){
-            if(this.currentRow===''){
+        submit() {
+            if (this.currentRow === '') {
                 this.$message({
-                        message: "您未选择要绑定的商品",
-                        type: 'warning'
-                    });
-            }else{
+                    message: "您未选择要绑定的商品",
+                    type: 'warning'
+                });
+            } else {
                 let goodSpecUpdateParams = { goods_spec_id: this.currentRow, spec_number: this.spec_number };
-            requestGoodSpecUpdate(goodSpecUpdateParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "未绑定成功",
-                        type: 'error'
-                    });
-                } else {
-                     this.delectSpec(),
-                     this.$message({
-                        message: "绑定成功",
-                        type: 'success'
-                    });
-                   this.dialogFormVisible= false
-                  this.isShowNull = false
-                  this.isShow = false
-                  this.goodsName= ''
-
-                   this.getGoodSpecProcessList()
-                }
-            })
-            }
-           
-        },
-        delectSpec(){
-            let removeParams = { id: this.goodsId };
-                requestGoodSpecRemove(removeParams).then(data => {
+                requestGoodSpecUpdate(goodSpecUpdateParams).then(data => {
                     let { error_code, result } = data;
-                    if (error_code == 0) {
-                       
-                        this.dataImprt.splice(this.index, 1);
-
+                    if (error_code !== 0) {
+                        this.$message({
+                            message: "未绑定成功",
+                            type: 'error'
+                        });
+                    } else {
+                        this.delectSpec(),
+                            this.$message({
+                                message: "绑定成功",
+                                type: 'success'
+                            });
+                        this.dialogFormVisible = false
+                        this.isShowNull = false
+                        this.isShow = false
+                        this.goodsName = ''
                     }
                 })
+            }
+
+        },
+        delectSpec() {
+            let removeParams = { id: this.goodsId };
+            requestGoodSpecRemove(removeParams).then(data => {
+                let { error_code, result } = data;
+                if (error_code == 0) {
+                    this.dataImprt.splice(this.index, 1);
+                    this.$message({
+                        message: "删除成功",
+                        type: 'success'
+                    });
+
+                }
+            })
         },
         handleCurrentChange(val) {
             this.currentRow = val.id;
 
-           
+
         }
-        }
+    }
 }
 </script>
 <style>
@@ -195,10 +201,10 @@ export default {
     width: 1080px;
     margin: 20px auto;
 }
-.goods_dialog .el-dialog.el-dialog--large{
-   padding-bottom: 200px
-}
 
+.goods_dialog .el-dialog.el-dialog--large {
+    padding-bottom: 200px
+}
 </style>
 
 

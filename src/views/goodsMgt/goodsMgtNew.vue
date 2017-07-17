@@ -57,6 +57,8 @@ import { requestSearchHistory, requestNew, requestBrand, requestBrandHistory, re
 export default {
     data() {
         return {
+            uid:'',
+            head_office_id:'',
             labelPosition: 'top',
             bigcategory: [],
             smallcategory: [],
@@ -75,6 +77,9 @@ export default {
         }
     },
     mounted() {
+        this.uid = localStorage.getItem('uid');
+        this.head_office_id = localStorage.getItem('head_office_id');
+        
         this.loadAll(0);
         this.loadAll(1);
         this.brandHistory();
@@ -89,7 +94,7 @@ export default {
         addSku() {
             if (this.specs.length == 0) {
                 this.loadAll(2);
-                
+
             }
             if (this.specs.length < 3) {
                 this.specs.push({
@@ -98,11 +103,11 @@ export default {
                 });
 
             } else {
-             
+
                 this.$message({
-                        message: "目前只能添加3个规格",
-                        type: 'warning'
-                    });
+                    message: "目前只能添加3个规格",
+                    type: 'warning'
+                });
             }
         },
         handleAvatarSuccess(res, file) {
@@ -111,12 +116,15 @@ export default {
 
         },
         submit() {
+             this.specs = this.specs.filter(v=>{
+                return v.spec_value.length;
+           });
             const brand_id = this.brand.filter(v => {
                 return v.name === this.brand_name;
             }).map(v => v.id).pop();
             this.batch = this.getBatchParam(this.specs)
             var newParams = {
-                uid: 1185378158575618,
+                uid:this.uid,
                 batch: this.batch,
                 big_category: this.big_category,
                 brand_id: brand_id,
@@ -142,7 +150,7 @@ export default {
             })
         },
         getBrandId(brand_name) {
-            let newbrandParams = { uid: 1185378158575618, brand_name: brand_name };
+            let newbrandParams = { uid: this.uid, brand_name: brand_name };
             requestBrand(newbrandParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -156,7 +164,7 @@ export default {
             })
         },
         brandHistory() {
-            let brandParams = { head_office_id: 1209812865056771, name: this.brand_name };
+            let brandParams = { head_office_id: this.head_office_id, name: this.brand_name };
             requestBrandHistory(brandParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -170,8 +178,8 @@ export default {
                 }
             })
         },
-        loadAll(type, parent_key_word) {
-            let bigParams = { uid: 1185378158575618, type: type, parent_key_word: parent_key_word };
+        loadAll(type,parent_key_word) {
+            let bigParams = { uid:this.uid, type: type, parent_key_word: parent_key_word };
             requestSearchHistory(bigParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -252,7 +260,7 @@ export default {
             const com_data = (specs) => {
 
                 const result = specs.map((v, index) => {
-                    const { spec_name, spec_value=[] } = v;
+                    const { spec_name, spec_value = [] } = v;
                     return spec_value.map(v => {
                         const obj = {};
                         obj[`spec${index + 1}_name`] = spec_name;

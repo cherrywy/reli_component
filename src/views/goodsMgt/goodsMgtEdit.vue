@@ -58,6 +58,8 @@ import { requestSearchHistory, requestEdit, requestUpdate, requestBrand, request
 export default {
     data() {
         return {
+            uid:'',
+            head_office_id:'',
             labelPosition: 'top',
             bigcategory: [],
             smallcategory: [],
@@ -77,6 +79,8 @@ export default {
         }
     },
     mounted() {
+        this.uid=localStorage.getItem('uid');
+        this.head_office_id=localStorage.getItem('head_office_id');
         this.loadAll(0);
         this.loadAll(1);
         this.brandHistory();
@@ -97,7 +101,7 @@ export default {
             if (this.specs.length < 3) {
                 this.specs.push({
                     spec_name: '',
-                    spec_value: ''
+                    spec_value: []
                 });
               
             } else {
@@ -114,13 +118,18 @@ export default {
 
         },
         submit() {
+           console.log(this.specs);
+           this.specs = this.specs.filter(v=>{
+                return v.spec_value.length;
+           });
+           console.log(this.specs);
             this.batch = this.getBatchParam(this.specs)
             const goods_id = this.$route.query.goods_id;
             const brand_id = this.brand.filter(v => {
                 return v.name === this.brand_name;
             }).map(v => v.id).pop();
             var newParams = {
-                uid: 1185378158575618,
+                uid: this.uid,
                 id: goods_id,
                 batch: this.batch,
                 big_category: this.big_category,
@@ -147,7 +156,7 @@ export default {
             })
         },
         getBrandId(brand_name) {
-            let newbrandParams = { uid: 1185378158575618, brand_name: brand_name };
+            let newbrandParams = { uid: this.uid, brand_name: brand_name };
             requestBrand(newbrandParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -161,7 +170,7 @@ export default {
             })
         },
         brandHistory() {
-            let brandParams = { head_office_id: 1209812865056771, name: this.brand_name };
+            let brandParams = { head_office_id: this.head_office_id, name: this.brand_name };
             requestBrandHistory(brandParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -197,19 +206,19 @@ export default {
                             if(!data){
                                 return [];
                             }
-                            if (data.hasOwnProperty('spec_spec1_name')) {
+                            if (data.hasOwnProperty('spec_spec1_name')&&data['spec_spec1_name']) {
                                 specs.push({
                                     spec_name: data['spec_spec1_name'],
                                     spec_value: data['spec_spec1_values']
                                 })
                             }
-                            if (data.hasOwnProperty('spec_spec2_name')) {
+                            if (data.hasOwnProperty('spec_spec2_name')&&data['spec_spec2_name']) {
                                 specs.push({
                                     spec_name: data['spec_spec2_name'],
                                     spec_value: data['spec_spec2_values']
                                 })
                             }
-                            if (data.hasOwnProperty('spec_spec3_name')) {
+                            if (data.hasOwnProperty('spec_spec3_name'&&data['spec_spec3_name'])) {
                                 specs.push({
                                     spec_name: data['spec_spec3_name'],
                                     spec_value: data['spec_spec3_values']
@@ -226,7 +235,7 @@ export default {
             })
         },
         loadAll(type, parent_key_word) {
-            let bigParams = { uid: 1185378158575618, type: type, parent_key_word: parent_key_word };
+            let bigParams = { uid:this.uid, type: type, parent_key_word: parent_key_word };
             requestSearchHistory(bigParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {

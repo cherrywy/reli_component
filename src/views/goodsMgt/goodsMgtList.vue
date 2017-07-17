@@ -32,7 +32,8 @@
             <el-table-column label="规格" width="150" align="center">
                 <template scope="scope">
                     <div v-for="item in scope.row.spec_info">
-                  {{item.spec1_value}},{{item.spec2_value}},{{item.spec3_value}}
+                       
+                   {{item.spec1_value?item.spec1_value:''}} {{item.spec2_value?","+item.spec2_value:''}}{{item.spec3_value?","+item.spec3_value:''}}
                     </div>
                 </template>
             </el-table-column>
@@ -68,6 +69,7 @@ import moment from 'moment';
 export default {
     data() {
         return {
+            uid: '',
             tableData: [],
             brand: [],
             key_word: '',
@@ -78,13 +80,15 @@ export default {
         }
     },
     mounted: function () {
+        this.uid = localStorage.getItem('uid');
+        this.head_office_id= localStorage.getItem('head_office_id');
         this.brandHistory()
         this.getList()
 
     },
     methods: {
         brandHistory() {
-            let brandParams = { head_office_id: 1209812865056771, name: this.brand_name };
+            let brandParams = { head_office_id: this.head_office_id, name: this.brand_name };
             requestBrandHistory(brandParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -98,7 +102,7 @@ export default {
             })
         },
         getList(brand_name, key_word, pageNum) {
-            let listParams = { uid: 1185378158575618, page: pageNum };
+            let listParams = { uid: this.uid, page: pageNum };
             if (brand_name) {
                 listParams['brand_name'] = brand_name
             }
