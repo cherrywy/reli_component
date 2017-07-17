@@ -7,6 +7,7 @@ import goodsMgtList from './views/goodsMgt/goodsMgtList.vue'
 import goodsMgtNew from './views/goodsMgt/goodsMgtNew.vue'
 import goodsMgtEdit from './views/goodsMgt/goodsMgtEdit.vue'
 import goodsMgtOnline from './views/goodsMgt/goodsMgtOnline.vue'
+import goodsMgtDataImport from './views/goodsMgt/goodsMgtDataImport.vue'
 
 import layoutManage from './views/shop/layoutManage.vue'
 import bindDisplayData from './views/displayMgt/bindDisplayData.vue'
@@ -54,7 +55,8 @@ let routes = [
             { path: '/goodsMgtList', component: goodsMgtList, name: '商品管理' },
             { path: '/goodsMgtNew', component: goodsMgtNew, name: '商品创建',hidden: true },
             { path: '/goodsMgtEdit', component: goodsMgtEdit, name: '商品更新',hidden: true },
-            { path: '/goodsMgtOnline', component: goodsMgtOnline, name: '商品上架' }
+            { path: '/goodsMgtOnline', component: goodsMgtOnline, name: '商品上架' },
+            { path: '/goodsMgtDataImport', component: goodsMgtDataImport, name: '数据导入' }
         ]
     },
     {
