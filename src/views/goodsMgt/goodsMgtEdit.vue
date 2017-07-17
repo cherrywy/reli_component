@@ -110,21 +110,7 @@ export default {
         },
         handleAvatarSuccess(res, file) {
             this.imageUrl = URL.createObjectURL(file.raw);
-            const formData = new FormData();
-            formData.append('pic', file.raw);
-            formData.append('type', 'image');
-            requestUpload(formData).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.imageUrl = data.result.original_pic
-
-                }
-            })
+            this.imageUrl = res.result.original_pic
 
         },
         submit() {
