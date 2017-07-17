@@ -46,14 +46,15 @@
                         </div>
                     </el-form-item>
                 </el-form>
-                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;">提交</el-button>
+                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;">保存</el-button>
             </el-card>
         </el-row>
     
     </section>
 </template>
  <script>
-import { requestSearchHistory, requestNew, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
+import { requestSearchHistory, requestEdit, requestUpdate, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
+
 export default {
     data() {
         return {
@@ -70,6 +71,7 @@ export default {
             skuValue: [],
             specs: [],
             batch: [],
+            goodsMes: [],
             loading: false,
 
         }
@@ -78,6 +80,7 @@ export default {
         this.loadAll(0);
         this.loadAll(1);
         this.brandHistory();
+        this.getGoodsMes()
     },
     methods: {
         deletSku(index) {
@@ -89,34 +92,50 @@ export default {
         addSku() {
             if (this.specs.length == 0) {
                 this.loadAll(2);
-                
+                this.loadAll(3);
             }
             if (this.specs.length < 3) {
                 this.specs.push({
                     spec_name: '',
                     spec_value: ''
                 });
-
+              
             } else {
-             
                 this.$message({
                         message: "目前只能添加3个规格",
                         type: 'warning'
                     });
+            
             }
         },
         handleAvatarSuccess(res, file) {
             this.imageUrl = URL.createObjectURL(file.raw);
-            this.imageUrl = res.result.original_pic
+            const formData = new FormData();
+            formData.append('pic', file.raw);
+            formData.append('type', 'image');
+            requestUpload(formData).then(data => {
+                let { error_code, result } = data;
+                if (error_code !== 0) {
+                    this.$message({
+                        message: "返回数据有误",
+                        type: 'error'
+                    });
+                } else {
+                    this.imageUrl = data.result.original_pic
+
+                }
+            })
 
         },
         submit() {
+            this.batch = this.getBatchParam(this.specs)
+            const goods_id = this.$route.query.goods_id;
             const brand_id = this.brand.filter(v => {
                 return v.name === this.brand_name;
             }).map(v => v.id).pop();
-            this.batch = this.getBatchParam(this.specs)
             var newParams = {
                 uid: 1185378158575618,
+                id: goods_id,
                 batch: this.batch,
                 big_category: this.big_category,
                 brand_id: brand_id,
@@ -124,7 +143,7 @@ export default {
                 small_category: this.small_category,
                 title_pics: this.imageUrl
             };
-            requestNew(newParams).then(data => {
+            requestUpdate(newParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code == 0) {
                     this.$message({
@@ -167,6 +186,56 @@ export default {
                 } else {
                     this.brand = result.list
 
+                }
+            })
+        },
+        getGoodsMes() {
+            const goods_id = this.$route.query.goods_id;
+            let mesParams = { goods_id: goods_id };
+            requestEdit(mesParams).then(data => {
+                let { error_code, result } = data;
+                if (error_code !== 0) {
+                    this.$message({
+                        message: "返回数据有误",
+                        type: 'error'
+                    });
+                } else {
+                    this.brand_name = result.list.goods_brand_name ? result.list.goods_brand_name : ''
+                    this.small_category = result.list.goods_small_category ? result.list.goods_small_category : ''
+                    this.big_category = result.list.goods_big_category ? result.list.goods_big_category : ''
+                    this.name = result.list.goods_name ? result.list.goods_name : ''
+                    this.imageUrl = result.list.goods_title_pics ? result.list.goods_title_pics : ''
+                    function getSpecsResult(data) {
+                        const result_specs_to_params = (data) => {
+                            let specs = [];
+                            if(!data){
+                                return [];
+                            }
+                            if (data.hasOwnProperty('spec_spec1_name')) {
+                                specs.push({
+                                    spec_name: data['spec_spec1_name'],
+                                    spec_value: data['spec_spec1_values']
+                                })
+                            }
+                            if (data.hasOwnProperty('spec_spec2_name')) {
+                                specs.push({
+                                    spec_name: data['spec_spec2_name'],
+                                    spec_value: data['spec_spec2_values']
+                                })
+                            }
+                            if (data.hasOwnProperty('spec_spec3_name')) {
+                                specs.push({
+                                    spec_name: data['spec_spec3_name'],
+                                    spec_value: data['spec_spec3_values']
+                                })
+                            }
+                            return specs;
+                        }
+                        return result_specs_to_params(result.list);
+                    }
+
+                    this.specs = getSpecsResult(result.list) ? getSpecsResult(result.list) : []
+                    
                 }
             })
         },
@@ -249,10 +318,11 @@ export default {
             }
         },
         getBatchParam(specs) {
+            
             const com_data = (specs) => {
-
+                
                 const result = specs.map((v, index) => {
-                    const { spec_name, spec_value=[] } = v;
+                    const { spec_name, spec_value=[]} = v;
                     return spec_value.map(v => {
                         const obj = {};
                         obj[`spec${index + 1}_name`] = spec_name;
@@ -315,7 +385,6 @@ export default {
             };
             return com_data(specs);
         },
-
         goodsList() {
             const path = '/goodsMgtList';
             this.$router.push({ path: path });
