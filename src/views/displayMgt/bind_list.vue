@@ -72,40 +72,27 @@
                              <i class="el-icon-plus"></i>
                         </el-upload>
                     </el-form-item>
-                    <el-form-item label="商品标签：">
-                       <el-select v-model="tag_goods_value" @change="getBrandId(tag_goods_value)" filterable>
-                            <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.name">
-                            </el-option>
-                        </el-select>
-                        <el-tag  :key="tag_goods_value"
-                            v-model='tag_goods_value'
-                            :closable="true"
-                            @close="handleTag(tag)">{{tag_goods_value}}</el-tag>
+                    <el-form-item label="请选择图片">
+                        <el-upload
+                            action="http://118.89.232.160:10001/util/file/upload.json"
+                            name="pic"
+                            :data="upload_params"      
+                            :show-file-list="true"
+                            list-type="picture-card"
+                            :file-list="fileList"
+                            :on-remove='handleAvatarRemove'
+                            :on-success='imghandleAvatarSuccess'>
+                             <i class="el-icon-plus"></i>
+                        </el-upload>
                     </el-form-item>
-                    <el-form-item label="商品推荐语：">
-                       <el-input
-                            type="textarea"
-                            :rows="2"
-                            placeholder="请输入内容"
-                            v-model="form.details_intro_goods_value" style='width:300px;'>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="商品介绍：">
-                       <el-input
-                            type="textarea"
-                            :rows="2"
-                            placeholder="请输入内容"
-                            v-model="form.propaganda_intro_goods_value"
-                             style='width:300px;'>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="商品详情地址：">
+                    
+                   
+                    <el-form-item label="跳转地址">
                        <el-input  style='width:300px;' v-model='form.jump_url_url'></el-input>
                     </el-form-item>
-                    <el-form-item label="商品价格：">
-                       <el-input  style='width:300px;'v-model='form.price_goods_value'></el-input> 元
-                    </el-form-item>
-                    <el-form-item label="请选择视频" >
+                    
+                    
+                    <el-form-item label="请选择互动视频" >
                     <el-upload
                         class="upload-demo"
                         drag
@@ -278,6 +265,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
                     return {
                         name:v.data.name,
                         goods_id:v.id
+
                     }
                 });
             })

@@ -26,7 +26,7 @@
                     <el-table-column
                     prop="goodname"
                     label="商品名称"
-                    width="300"
+                    width="500"
                     align='center'>
                     </el-table-column>
                     <el-table-column
@@ -39,10 +39,9 @@
                     label="操作"
                     align='center'>
                         <template scope="scope">
-                            <el-button  size="small"  @click="dialogFormVisible = true">更换</el-button>
                             <el-button
                                 size="small"
-                                @click="dialogDelete = true">删除</el-button>
+                                @click="delete_goods(scope.$index)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -74,45 +73,71 @@
                                 <el-button type="primary" @click="dialogFormVisible = false">保 存</el-button>
                             </div>
             </el-dialog>
-
-            <el-dialog
-                title="提示"
-                :visible.sync="dialogDelete"
-                size="tiny"
-                :before-close="handleClose">
-                <span>确认删除？</span>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogDelete = false">取 消</el-button>
-                    <el-button type="primary" @click="handleDelete()">确 定</el-button>
-                </span>
-            </el-dialog>
         </el-row>
     </section>
 </template>
 <script>
+ import {bind_id_Imgs,carouselImgs,bind_id_goods,delete_id_goods} from '../../../api/display'
   export default {
+      
+     
     data() {
       return {
-        fileList2: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, 
-        {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
-        tableData:[{
-            goodname:'111',
-            state:'新品',
-        }],
+        fileList2: [],
+        tableData:[],
         dialogFormVisible: false,
-        dialogDelete:false
+        dialogDelete:false,
+        formLabelWidth:'120px'
       };
     },
+    mounted() {
+        this.getimg_List();
+    },
     methods: {
+        getimg_List(){
+            let bind_id = this.$route.query.id   
+            console.log(bind_id)
+            let info = {
+                display_device_id:bind_id
+            }
+            bind_id_goods(info).then(data=>{
+                this.tableData = data.result.list.map(v =>{
+                    return {
+                        goodname:v.list_goods_info_name,
+                        state:v.list_goods_tag_goods_value,
+                        id:v.goods_id_id
+                    }
+                })
+                console.log(data.result.list)
+            })
+        },
+         
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+        //console.log(file, fileList);
       },
       handlePreview(file) {
-        console.log(file);
+        //console.log(file);
       },
-      deleteGoods(index,row){
-        tableData = this.tableData.splice(index,1)
-        console.log(tableData)
+      delete_goods(index){
+        //确认解除
+            this.$confirm('删除该商品后将无法撤回，是否继续', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() =>{
+                //let goods_id = this.tableData[index].id
+                console.log(this.tableData[index].id)
+                let banId = {
+                   goods_id:this.tableData[index].id,
+                   display_device_id:this.$route.query.id,
+                   uid:1209811640320002
+                }
+                delete_id_goods(banId).then(data => {
+                    this.tableData.splice(index,1)
+                    this.getVideoList()
+                })  
+            })
+        //console.log(tableData)
       },
       handleDelete(index,row){
          // alert(111)

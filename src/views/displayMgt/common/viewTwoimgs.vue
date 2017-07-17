@@ -41,33 +41,22 @@
                     </el-col>   
             </el-col>
             <el-col :span='24' style='margin-top:20px'>
-                    <el-table
-                        :data="tableData"
-                        style="width: 100%;">
-                        <el-table-column
-                        prop="pic_url"
-                        label="图片"
-                        width="200"
-                        align='center'>
-                        </el-table-column>
-                            <template><img :src="img_url" ></template>
-                        <el-table-column
-                        prop="jump_url"
-                        label="url地址"
-                        width="600"
-                        align='center'>
-                        </el-table-column>
-                        <el-table-column
-                        prop="event"
-                        label="操作"
-                        align='center'>
-                            <template scope="scope">
-                            <el-button
-                                size="small"
-                                @click="delete_imgs(scope.$index, scope.row)">删除</el-button>
-                        </template>
-                        </el-table-column>
-                    </el-table>
+                    <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
+            <el-table-column label="商品图片" width="120" align="center">
+                <template scope="scope">
+                    <img width='50' height='50' :src="scope.row.pic_url">
+                </template>
+    
+            </el-table-column>
+            <el-table-column prop="jump_url" label="url地址" align="center">
+            </el-table-column>
+        
+            <el-table-column label="操作" align="center" width="150">
+                <template scope="scope">
+                    <el-button @click="deleteList(scope.$index, scope.row.banner_id)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
             </el-col>
             <el-dialog
                 title="提示"
@@ -146,7 +135,7 @@ export default {
                     jump_url:this.imgInfomation.jump_url,
                     id:data.result.id
                 }
-                console.log(newImg)
+                //console.log(newImg)
                 this.tableData.unshift(newImg)
                 this.new_list = this.tableData
             })
@@ -160,26 +149,21 @@ export default {
                 this.tableData = data.result
             })
         },
-        delete_imgs(index,row){
-            this.dialogDelete = true;
-            this.inx = index
-        },
-        handleDelete(){
-            //删除
-            this.dialogDelete = false;
-            if(this.new_list){
-              let banner_id =this.new_list[this.inx].id
-                console.log(this.new_list)
-                console.log(this.new_list[this.inx])
-            }
-            let banner_id =this.tableData[this.inx].id
-            let banId = {
-                banner_id:banner_id
-            }
-            deleteimgs(banId).then(data => {
-                //console.log(data)
-                this.tableData.splice(this.inx,1);
-            })  
+        deleteList(index,banner_id){
+            this.$confirm('删除该商品后将无法撤回，是否继续', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() =>{
+                banner_id = this.tableData[index].id
+                let banId = {
+                   banner_id:banner_id
+                }
+                deleteimgs(banId).then(data => {
+                       this.tableData.splice(this.inx,1)
+                       this.getImgsList()
+                })  
+            })
          }
 	}
 };
