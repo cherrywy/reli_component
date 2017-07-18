@@ -23,23 +23,23 @@
 
 <script>
   import { requestLogin } from '../api/api';
-  //import NProgress from 'nprogress'
+  
   export default {
     data() {
       return {
         logining: false,
         ruleForm2: {
-          account: 'admin',
-          checkPass: '123456'
+          account: '',
+          checkPass: ''
         },
         rules2: {
           account: [
-            { required: true, message: '请输入账号', trigger: 'blur' },
-            //{ validator: validaePass }
+            { required: true, message: '请输入手机号', trigger: 'blur' },
+            
           ],
           checkPass: [
             { required: true, message: '请输入密码', trigger: 'blur' },
-            //{ validator: validaePass2 }
+           
           ]
         },
         checked: true
@@ -53,27 +53,30 @@
         var _this = this;
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
-            //_this.$router.replace('/table');
+          
             this.logining = true;
-            //NProgress.start();
-            var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
+           
+            var loginParams = { phone: this.ruleForm2.account, password: this.ruleForm2.checkPass };
             requestLogin(loginParams).then(data => {
               this.logining = false;
-              //NProgress.done();
-              let { msg, code, user } = data;
-              if (code !== 200) {
+         
+              let { msg, error_code,result } = data;
+              if (error_code !== 0) {
                 this.$message({
-                  message: msg,
+                  message: '未登录成功',
                   duration: 1000,
                   type: 'error'
                 });
               } else {
-                sessionStorage.setItem('user', JSON.stringify(user));
+               
+                localStorage.setItem('uid',result.id );
+                localStorage.setItem('shop_id',result.user_data.shop_id );
+                localStorage.setItem('head_office_id',result.user_data.head_office_id );
+                localStorage.setItem('phone',result.user_data.phone );
                 this.$router.push({ path: '/' });
               }
             });
           } else {
-            console.log('error submit!!');
             return false;
           }
         });

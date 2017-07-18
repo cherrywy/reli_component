@@ -1,8 +1,8 @@
 <template>
     <section>
         <el-col :span="24">
-            <el-col :span="6">
-                <el-select v-model="brand_name" placeholder="品牌">
+            <el-col :span="7">
+                <el-select v-model="brand_name" style="width: 261px;" placeholder="品牌">
                     <el-option v-for="item in brand" :key="item.id" :label="item.name" :value="item.name">
                     </el-option>
                 </el-select>
@@ -23,7 +23,7 @@
         <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
             <el-table-column label="商品图片" width="120" align="center">
                 <template scope="scope">
-                    <img width='20' height='20' :src="scope.row.goods_title_pics">
+                    <img width='60' height='60' :src="scope.row.goods_title_pics">
                 </template>
     
             </el-table-column>
@@ -32,7 +32,8 @@
             <el-table-column label="规格" width="150" align="center">
                 <template scope="scope">
                     <div v-for="item in scope.row.spec_info">
-                  {{item.spec1_value}},{{item.spec2_value}},{{item.spec3_value}}
+                       
+                   {{item.spec1_value?item.spec1_value:''}} {{item.spec2_value?","+item.spec2_value:''}}{{item.spec3_value?","+item.spec3_value:''}}
                     </div>
                 </template>
             </el-table-column>
@@ -64,12 +65,12 @@
 <script>
 
 import { requestList, requestRemove, requestBrandHistory } from '../../api/goodsServer';
-import moment from 'moment';
+
 export default {
     data() {
         return {
+            uid: '',
             tableData: [],
-            tableContent: [],
             brand: [],
             key_word: '',
             brand_name: '',
@@ -79,13 +80,15 @@ export default {
         }
     },
     mounted: function () {
+        this.uid = localStorage.getItem('uid');
+        this.head_office_id= localStorage.getItem('head_office_id');
         this.brandHistory()
         this.getList()
 
     },
     methods: {
         brandHistory() {
-            let brandParams = { head_office_id: 1209812865056771, name: this.brand_name };
+            let brandParams = { head_office_id: this.head_office_id, name: this.brand_name };
             requestBrandHistory(brandParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -98,8 +101,8 @@ export default {
                 }
             })
         },
-        getList(brand_name, key_word, pageNum) {
-            let listParams = { uid: 1185378158575618, page: pageNum };
+        getList(brand_name,key_word, pageNum) {
+            let listParams = { uid:this.uid, page: pageNum };
             if (brand_name) {
                 listParams['brand_name'] = brand_name
             }
@@ -107,19 +110,13 @@ export default {
                 listParams['key_word'] = key_word
             }
             requestList(listParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
+                    this.tableData = data.tableData;
+                    this.total = data.total_count;
+            }).catch(err=>{
+                this.$message({
                         message: "返回数据有误",
                         type: 'error'
                     });
-                } else {
-                    this.tableData = result.list.map(v => {
-                        v.goods_created_at = moment(v.goods_created_at).format('YYYY/MM/DD');
-                        return v;
-                    })
-                    this.total = result.total_count;
-                }
             })
         },
         searchList() {
