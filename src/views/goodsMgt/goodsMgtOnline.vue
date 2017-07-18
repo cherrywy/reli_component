@@ -70,7 +70,7 @@
     
                 <el-table-column label="操作" align="center">
                     <template scope="scope">
-                        <el-button size="small" type="danger" @click="handleOffline(scope.$index, scope.row.goods_spec_id)">下架</el-button>
+                        <el-button size="small" type="danger" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -140,12 +140,15 @@ export default {
         },
 
         handleOffline(index, goods_spec_id) {
+
             this.$confirm('下架该商品后将无法撤回，是否继续', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                let removeParams = { goods_spec_id: goods_spec_id, show_case_id: show_case_id };
+                
+                let removeParams = { goods_spec_id: goods_spec_id, show_case_id: this.show_case_id };
+               console.log(removeParams);
                 requestGoodsOffline(removeParams).then(data => {
                     let { error_code, result } = data;
                     if (error_code == 0) {
@@ -153,8 +156,9 @@ export default {
                             type: 'success',
                             message: '下架成功!'
                         });
+                        console.log(index);
                         this.onlineShowCaseList.splice(index, 1);
-                        this.getList();
+                        this.getOnlineShowCaseList();
 
                     }
                 })
@@ -166,10 +170,12 @@ export default {
             });
         },
         submit() {
+            
             const goods_spec_ids = this.multipleSelection.map(v => {
                 return v.id
             }).join()
             let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: this.show_case_id };
+            console.log(listParams);
             requestGoodsOnline(listParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -182,7 +188,9 @@ export default {
                         message: "保存成功",
                         type: 'success'
                     });
-                    dialogFormVisible = false;
+                    this.dialogFormVisible = false;
+                    this.getOnlineShowCaseList() 
+
                 }
             })
 
