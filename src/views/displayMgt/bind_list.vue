@@ -8,7 +8,7 @@
                             icon="search"
                             v-model="filter.goods"
                             :on-icon-click="handleIconClick"
-                             style='width:200px;'>
+                            style='width:200px;'>
                         </el-input>
                         <el-button type='text'  @click="changeGoods">选择商品</el-button>
                         <br/>
@@ -30,7 +30,6 @@
                                     placeholder="请输入商品名称搜索" 
                                     auto-complete="off" 
                                     style='width:200px;' 
-                                    :change='search'
                                     :file-list="form.fileList"
                                     on-icon-click='search'></el-input>
                                 </el-form-item>
@@ -90,14 +89,13 @@
                     <el-form-item label="跳转地址">
                        <el-input  style='width:300px;' v-model='form.jump_url_url'></el-input>
                     </el-form-item>
-                    
-                    
+    
                     <el-form-item label="请选择互动视频" >
                     <el-upload
                         class="upload-demo"
                         drag
                         name="pic"
-                        :data="upload_params"  
+                        :data="video_upload_params"  
                         :show-file-list="true"
                         :file-list="videoList"
                         :on-remove='videohandleAvatarRemove'
@@ -161,6 +159,8 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
                video_url:'',
         },
         goodId:'',
+        upload_params:{type:'image'},
+        video_upload_params:{type:'video'},
         good_name:'',
         selectAry:[],
       };
@@ -287,6 +287,13 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
                 this.dialogFormVisible = false;
                 this.form.goods_name = this.good_name
             }   
+        },
+        search(){
+            alert(1)
+           let name = this.searchVal
+           this.arr = this.arr.filter(function(v){
+               return new RegExp(`${name}`,'i').test(v.name);
+           })
         }
     }
   };

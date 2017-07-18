@@ -11,7 +11,7 @@
 					</el-option>
 				</el-select>
 			</span>
-			<el-input placeholder="请输入广告机名称搜索" v-model="input2" icon='search' class='inp_seach' ></el-input>
+			<el-input placeholder="请输入广告机名称搜索" v-model="input2" icon='search' class='inp_seach' :on-icon-click="handleIconClick" @change='iconClick'></el-input>
 		</el-col>
 		<el-col :span='24' style='margin-top:20px;'>
 			<el-table class='table'
@@ -40,93 +40,108 @@
     		</el-table>
 		</el-col>
 		<el-col :span='24' align='right'>
-			<div class="block">
-				<el-pagination
-					layout="prev, pager, next"
-					:total="50">
-				</el-pagination>
-			</div>
+			<el-pagination @size-change="sizeChange" @current-change="currentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5, 10,]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
+            </el-pagination>
 		</el-col>
 	</el-row>
 </template>
 <script>
-import {getShop,display_list} from '../../api/display'
+import {getShop,display_list,search_goods} from '../../api/display'
     export default {
       data() {
         return {
-          tableData:[{
-						name:'',
-						shop:'',
-						state:''
-					}],
-					optionsValue:'全部',
-					options:['全部'],
-					dpy_list:{
-						name:null,
-						shop_id:null
-					},
-					input2:'',
-					info:{
-						shop_id:'',
-						name:'',
-						page:''
-					}
+			tableData:[],
+			optionsValue:'全部',
+			options:['全部'],
+			dpy_list:{
+				name:null,
+				shop_id:null
+			},
+			input2:'',
+			info:{
+				shop_id:'',
+				name:'',
+				page:''
+			},
+			pageinationInfo: {
+				currentPage: 1,
+				pageSize: 5,
+				total: 0,
+			},
         }
       },
-		mounted(){
+	mounted(){
         this.getFocusList()
-				//this.getShopList()
     },
 		computed:{
-        filteredTableData: function () {
-          	let shop = this.optionsValue;
-						let name = this.input2;
-						return this.tableData.filter(function(value){
-						  if(shop == '全部'|| shop == ''){
-								if(name == ''){
-									return true
-								}else{
-									return value.name == name 
-								}
-							}else{
-							   return value.shop == shop
-							}
-					})
-        }
+			filteredTableData: function () {
+				let shop = this.optionsValue;
+				//let name = this.input2;
+				return this.tableData.filter(function(value){
+					if(shop == '全部'|| shop == ''){
+						if(name == ''){
+							return true
+						}else{
+							return value.name == name 
+						}
+					}else{
+						return value.shop == shop
+					}
+				})
+			}
     },
-	  methods:{
-		  edit (index,id) {
+	methods:{
+		edit (index,id) {
 				id = this.tableData[index].id
 				const path = '/editDevice?id=' + id;
-        this.$router.push({ path: path });
-		  },
-			getFocusList(){//加载页面时候加载门店
-				let par = {uid:'1209811640320002'}
-			
-        getShop(par).then(data=>{
-					//加载门店
-					 data.result.map(v => {
-							  display_list().then(data=>{
-										this.tableData =data.result.map(val =>{
-													return{
-														name:val.data.name,
-														shop:val.data.shop_name ||'无门店信息',
-														state:val.data.heartbeat_time,
-														id:val.id
-													}
-											})
-											this.tableData.map(ast => {
-													if(this.options.indexOf(ast.shop) == -1){
-														this.options.push(ast.shop)
-													}
-											})
-									})
-					 })
+       			this.$router.push({ path: path });
+		},
+		getFocusList(){//加载页面时候加载门店
+			//console.log(this.input2.match(/^[^x00-xff]/))
+			let par = {
+				uid:'1209811640320002',
+				page:this.pageinationInfo.currentPage,
+                limit:this.pageinationInfo.pageSize,
+				name:this.input2
+			}
+       		search_goods(par).then(data=>{ 
+				this.pageinationInfo.total = data.total_count
+				this.tableData = data.result.map( v=>{
+					return{
+						name:v.data.name,
+						shop:v.data.shop_name || '无门店信息',
+						state:v.data.heartbeat_time,
+						id:v.id
+					}
 				})
-      },
-			
-	 	 }
-    }
+				console.log(this.tableData.state)
+				this.tableData.map(ast => {
+					if(this.options.indexOf(ast.shop) == -1){
+						this.options.push(ast.shop)
+					}
+				})
+				
+			})
+        },
+	    handleIconClick(input2){
+			 this.getFocusList();
+		},
+		iconClick(){
+			this.getFocusList();
+		},
+		  //分页
+        currentChange(currentPage) {
+             //当前页变动时候触发的事件
+            this.pageinationInfo.currentPage = currentPage;
+            this.getFocusList()
+        },
+        sizeChange(size) {
+            //pageSize 改变时会触发
+            this.pageinationInfo.pageSize = size;
+            this.getFocusList()
+        },
+    },
+}
   </script>
 <style>
 	.inp_seach{

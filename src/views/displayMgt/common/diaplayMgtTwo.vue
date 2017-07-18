@@ -4,23 +4,16 @@
                 <span>轮播图</span>
             </el-col>
             <el-col :span='24'>
-            <ul v-for='img in img_lists'  style='float:left;'>
-                <li class='el-icon-delete'>
+            <ul v-for='img in img_lists'  style='float:left;list-style:none;'>
+                <li>
                     <img width='150' height='150' :src="img.pic_url"  @click="delete_bind_img(img)">
                 </li>
             </ul>
             <p>
-            <el-button style='width:150px;height:150px;border-style:dashed;margin-left:50px;margin-top:12px;' @click='add_imgs'><i class="el-icon-plus"></i></el-button>
+            <el-button style='width:150px;height:150px;border-style:dashed;margin-left:50px;' @click='add_imgs'><i class="el-icon-plus"></i></el-button>
             </p>
             <el-dialog  :visible.sync="dialogTableVisible">
                 <template>
-                     <!--<el-checkbox-group v-for="img in imgLists" style='float:left;'>
-                        <el-checkbox>
-                            <template>
-                                <img width='80' height='80' :src="img.pic_url" style='border:1px #999 dashed;'>
-                            </template>
-                        </el-checkbox>
-                    </el-checkbox-group>-->
                   <el-table :data="imgLists" style='marign-top:10px;'  @cell-click="handleSelect">
                         <el-table-column  width="200" type='selection'></el-table-column>
                         <el-table-column  prop='pic_url'>
@@ -75,13 +68,18 @@
             <el-dialog :visible.sync="dialogFormVisible">
                 <el-form :model="form">
                     <el-form-item  :label-width="formLabelWidth">
-                        <el-input v-model="input" placeholder="请输入商品名称搜索" auto-complete="off" style='width:200px;'></el-input>
+                        <el-input v-model="input" 
+                            placeholder="请输入商品名称搜索" 
+                            auto-complete="off" 
+                            icon='search' class='inp_seach'
+                            :on-icon-click='search'
+                            style='width:200px;'></el-input>
                     </el-form-item>
                     <el-form-item  :label-width="formLabelWidth" align='right'>
-                        <span>找不到商品？去<el-button type='text'>添加</el-button></span>
+                        <span>找不到商品？去<el-button type='text' @click='addDisplay'>添加</el-button></span>
                     </el-form-item>
                     <el-form-item  :label-width="formLabelWidth">
-                        <el-table :data="gridData" style='marign-top:10px;' @cell-click="handleSelect">
+                        <el-table :data="gridData" style='marign-top:10px;' @cell-click="clickSelect">
                                 <el-table-column type='selection' label="选择" width="200"></el-table-column>
                                 <el-table-column prop="name" label="商品名称" ></el-table-column>
                         </el-table>
@@ -89,10 +87,8 @@
                 </el-form>
                 <el-form align='right'>
                     <div class="block">
-                        <el-pagination
-                            layout="prev, pager, next"
-                            :total="50">
-                        </el-pagination> 
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5, 10,]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
+                    </el-pagination>
                     </div>
                 </el-form>
                 <div slot="footer" class="dialog-footer" align='center'>
@@ -127,6 +123,11 @@
         dialogTableVisible:false,
         ids:[],
         add_info:{},
+        pageinationInfo: {
+            currentPage: 1,
+            pageSize: 5,
+            total: 0,
+         },
       };
     },
     mounted() {
@@ -134,15 +135,17 @@
     },
     methods: {
         getimg_List(){
+            this.img_lists =[]
             let bind_id = this.$route.query.id   
             let info = {
-                display_device_id:bind_id
+                display_device_id:bind_id,
+                uid:'1209811640320002'
             }
             bind_id_goods(info).then(data=>{
                 this.tableData = data.result.list.map(v =>{
                     return {
                         goodname:v.list_goods_info_name,
-                        state:v.list_goods_tag_goods_value,
+                        state:(v.goods_id_state ==0?'未下载':(v.goods_id_state==1?'正在下载':'正常')),
                         id:v.goods_id_goods_id
                     }
                 })
@@ -191,17 +194,22 @@
               uid:"1209811640320002"
           }
           updatavideo(inf).then(data =>{
+            let pageSize = this.pageinationInfo.pageSize //每页显示5条
+            let startIndex = (this.pageinationInfo.currentPage - 1) * pageSize  //当前页起始下标
+            let endIndex =(this.pageinationInfo.currentPage * pageSize )  //当前页起始下标
               this.gridData = data.result.video_list.map(v => {
                  return{
                      name:v.video.goods.info_name,
                      goods_id:v.video.goods.info_id,
                  }
               })
+              this.pageinationInfo.total =  this.gridData.length
+                this.gridData = this.gridData.slice(startIndex,endIndex)
           })
       },
-     handleSelect(row){
-            this.good_name = row.name
-            let newid= row.goods_id +','
+     clickSelect(row){
+            //this.good_name = row.name
+            let newid= row.goods_id
             if(this.goodId.indexOf(newid) == -1){
                 this.goodId.push(newid)
             }
@@ -210,21 +218,16 @@
         this.dialogFormVisible = false;
         let val = {
             display_device_id:this.$route.query.id,
-            goods_ids:this.goodId + '<br/>',
+            goods_ids:this.goodId+'',
             uid:"1209811640320002"
         }
         online_goods(val).then(data=>{
-            this.tableData =  data.result.list.map( val =>{
-                return {
-                    goodname:val.goods_id_goods_name,
-                    state:val.goods_id_state==0?'未下载':(goods_id_state == 1?'正在下载':'正常')
-                }
-            })
+             this.getimg_List();
         })
       },
       delete_bind_img(img){
           //删除绑定轮播图
-          console.log(img)
+         // console.log(index)
             this.$confirm('删除该轮播图后将无法撤回，是否继续', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -233,8 +236,11 @@
                 let info ={
                     display_device_banner_id:img.display_device_banner_id
                 }
-                delete_bind_imgs(info)
-                this.img_lists.splice(this,1)
+                delete_bind_imgs(info).then(data =>{
+                     this.img_lists = []
+                     this.getimg_List();
+                })
+                //this.img_lists.splice(this,1)
           })
 
       },
@@ -244,6 +250,7 @@
             let id = {
                 uid:'1209811640320002'
             }
+            this.imgLists=[]
             allPic_imgs(id).then(data =>{
                 data.result.map(o =>{
                     let img_url ={
@@ -276,7 +283,30 @@
             this.img_lists =[]
             this.getimg_List()
         })
-      }
+      },
+      //分页
+         handleCurrentChange(currentPage) {
+             //当前页变动时候触发的事件
+            console.log(currentPage)
+            this.pageinationInfo.currentPage = currentPage;
+           this.update_goods()
+        },
+         handleSizeChange(size) {
+            //pageSize 改变时会触发
+            console.log(size)
+            this.pageinationInfo.pageSize = size;
+            this.update_goods()
+        },
+        //ss
+        search(){
+           let name = this.input
+           this.gridData = this.gridData.filter(function(v){
+               return new RegExp(`${name}`,'i').test(v.name);
+           })
+        },
+        addDisplay(){
+            this.$router.push({ path: '/bindList' });
+        }
     }
   }
 </script>

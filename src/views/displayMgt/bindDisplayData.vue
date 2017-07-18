@@ -2,8 +2,8 @@
 	<section>
 		<el-row>
 			<el-col :span ='24' style='margin-top:20px;'>
-				<el-button class='device' @click='deviceStyle("displayViewOne")'>广告机1</el-button>
-				<el-button class='device' @click='deviceStyle("displayViewTwo")'>广告机2</el-button>	
+				<!--<el-button class='device' @click='deviceStyle("displayViewOne")'>广告机1</el-button>-->
+				<div class='device' @click='deviceStyle("displayViewTwo")'></div>
 			</el-col>
 		</el-row>
 		<components :is='currentView'></components>
@@ -64,6 +64,13 @@ export default {
 		width:150px;
 		height:200px;
 		margin-right:20px;
+		background:url('../../../static/twoad.jpeg') no-repeat;
+		background-size:100% 100%;
+	}
+	.device:active{
+		border:1px blue solid;
+		width:150px;
+		height:200px;
 	}
 	.div{
 		border:1px red solid;

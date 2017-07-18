@@ -1,24 +1,15 @@
 <template>
     <section>
         <el-col :span ='24' v-if='true'>
-            <el-col :span='6' style='margin:20px 0px;'><el-input v-model="input" placeholder="请输入商品名称"></el-input></el-col>
-        <el-col :span ='24' v-if='true'>
-            <el-col :span='20'>
-                <span>本页显示 
-                    <el-select v-model="value" placeholder="5" style='width:80px'>
-                    <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                    </el-option>
-                    </el-select>  条</span>
+            <el-col :span='6' style='margin:20px 0px;'>
+          <el-input placeholder="请输入商品名称搜索" v-model="input" icon='search' :on-icon-click='search' class='inp_seach'></el-input>
             </el-col>
-            <el-col :span='4' align='right'>
+           <el-col :span ='24' v-if='true'>
+            <el-col :span='24' align='right'>
                 <el-button type="primary" @click='bindList'>绑定素材</el-button>
             </el-col>
             <el-col :span='24' style='margin-top:20px'>
-                <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
+                <el-table :data="filteredTableData" border style="width: 100%; margin-top: 15px;">
             <el-table-column label="商品图片" width="120" align="center">
                 <template scope="scope">
                     <img width='50' height='50' :src="scope.row.img">
@@ -43,14 +34,9 @@
             </el-table-column>
         </el-table>
             </el-col>
-           
             <el-col :span='24' align='right'>
-                <div class="block">
-                    <el-pagination
-                    layout="prev, pager, next"
-                    :total="50">
-                    </el-pagination>
-                </div>
+               <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5, 10,]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
+               </el-pagination>
             </el-col>
         </el-col>
         </el-col>
@@ -66,22 +52,32 @@ export default {
           video_list:{},
           dialogFormVisible:false,
           dialogDelete:false,
-          options: [{
-            value: '5',
-            label: '5'
-            }, {
-            value: '10',
-            label: '10'
-            }],
           imgs:'',
           inx:null,
           new_list:null,
-          value:''
+          pageinationInfo: {
+            currentPage: 1,
+            pageSize: 5,
+            total: 0,
+         },
+         input:''
         }
     },
 	mounted(){
         this.getVideoList()
 	},
+    computed:{
+        filteredTableData: function () {
+            let goodname = this.input;
+            return this.tableData.filter(function(value){
+				if(goodname !== value.goodname || shop == ''){
+                    return true
+                }else{
+                    return value.goodname == goodname
+                }
+			})
+        }
+    },
 	methods:{
 		bindList:function () {
 			this.$router.push({path:'/bindList'});
@@ -92,7 +88,10 @@ export default {
                uid:'1209811640320002' 
             }
             updatavideo(id).then(data=>{  
-                console.log(data.result.video_list);
+                this.pageinationInfo.total = data.result.video_list.length
+                let pageSize = this.pageinationInfo.pageSize //每页显示5条
+                let startIndex = (this.pageinationInfo.currentPage - 1) * pageSize  //当前页起始下标
+                let endIndex =(this.pageinationInfo.currentPage * pageSize )  //当前页起始下标
                 this.tableData = data.result.video_list.map(v=>{
                     // const {goods} = v.video;
                     const goods_pics = v.video.goods.info_title_pics?v.video.goods.info_title_pics[0]:null;
@@ -103,10 +102,11 @@ export default {
                         goodtag:v.video.goods.tag_goods_value,
                         goodprice:v.video.goods.price_goods_value,
                         bindvideo:v.video.goods.vedio_url_url?'是':'否',
-                        bindaddress:v.video.goods.vedio_url_url,
+                        bindaddress:v.video.goods.jump_url_url,
                         id:v.video.goods.info_id
                     }
                 })
+                this.tableData = this.tableData.slice(startIndex,endIndex)
                 console.log(this.tableData)
             })
         },
@@ -133,8 +133,26 @@ export default {
             //console.log(this.tableData[index])
             const path = '/bindList?goods_id=' + id;
             this.$router.push({ path: path });
-         }
-
+         },
+         //分页
+         handleCurrentChange(currentPage) {
+             //当前页变动时候触发的事件
+            console.log(currentPage)
+            this.pageinationInfo.currentPage = currentPage;
+           this.getVideoList()
+        },
+         handleSizeChange(size) {
+            //pageSize 改变时会触发
+            console.log(size)
+            this.pageinationInfo.pageSize = size;
+            this.getVideoList()
+        },
+        search(){
+            let goods_name = this.input;
+            this.tableData = this.tableData.filter(function(value){
+                return new RegExp(`${goods_name}`,'i').test(value.goodname);
+            })
+		},
 	}
  }
 </script>

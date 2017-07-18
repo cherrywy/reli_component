@@ -1,11 +1,9 @@
 <template>
    <section>
-		<el-col :span ='24'>
-             <el-col :span ='3' style='margin-top:20px;'><span>素材类型：</span></el-col>
-             <el-col :span ='21'>
+		<el-col :span ='24' style='margin-top:20px;'>
+             <span>素材类型：</span>
                 <el-button @click='changeView("viewTwoimgs")'>轮播图</el-button>
-				 <el-button @click='changeView("viewTwovideo")'>视频</el-button>
-            </el-col>
+				<el-button @click='changeView("viewTwovideo")'>视频</el-button>
         </el-col>
         <el-col :span='24'>
             <components :is='cv'></components>

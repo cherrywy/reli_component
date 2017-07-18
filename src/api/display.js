@@ -40,7 +40,12 @@ export const changeDiaplay = params => { return axios.post(`${apiServer}/v10/a/g
 export const changeGoodsList = params => { return axios.post(`${apiServer}/v10/a/goods/list.json`, params).then(res => res.data); };
 //批量上传商品
 export const online_goods = params => { return axios.post(`${apiServer}/v10/c/folder_dd/batch_bind.json`, params).then(res => res.data); };
- 
+//获取门店的广告机列表(支持名称模糊搜索)#
+export const search_goods = params => { return axios.post(`${apiServer}/v10/a/display_device/list.json`, params).then(res => res.data); };
+export const goodstype = params => { return axios.post(`${apiServer}/a/search_history/find.json`, params).then(res => res.data); };
+export const addstype = params => { return axios.post(`${apiServer}/a/search_history/new.json`, params).then(res => res.data); };
+//查询商品信息
+export const find_one_goods = params => { return axios.post(`${apiServer}/v10/c/folder_dd/find_one_goods.json`, params).then(res => res.data); };
 
 //门店  广告机列表
 

@@ -75,7 +75,6 @@ export default {
         formLabelWidth: '100px',
         dialogDelete:false,
         btn_show:false,
-        loading:true,
         upload_params:{
             type:'image'
         },
@@ -92,13 +91,11 @@ export default {
         displayId:null,
         inx:null,
         new_list:null,
-        totalinfo:null,
         pageinationInfo: {
             currentPage: 1,
             pageSize: 5,
             total: 0,
         },
-        condition: {},
       };
     },
     mounted(){
@@ -115,7 +112,6 @@ export default {
             this.dialogFormVisible = false
             this.imgInfomation.uid = 1209811640320002
             updataimgs(this.imgInfomation).then(data=>{
-                console.log(data.result.id)
                 let newImg = {
                     pic_url:this.imgInfomation.pic_url,
                     jump_url:this.imgInfomation.jump_url,
@@ -124,21 +120,29 @@ export default {
                 this.tableData.unshift(newImg)
                 this.new_list = this.tableData
                 this.imgInfomation.pic_url = ''
+                this.getImgsList()
             })
+            
         },
         getImgsList(){
             //加载轮播图信息
             let id = {
-				uid:'1209811640320002'
+				uid:'1209811640320002',
+                page:this.pageinationInfo.currentPage,
+                limit:this.pageinationInfo.pageSize
 			}
             getImgsList(id).then(data=>{  
+                console.log(data)
+                this.pageinationInfo.total = data.total_count
                 this.tableData = data.result.map(v =>{
                     return{
                         pic_url:v.data.pic_url,
-                        jump_url:v.data.jump_url
+                        jump_url:v.data.jump_url,
+                        id:v.id
                     }
                 })
-                this.pageinationInfo.total = this.tableData.length
+                //this.tableData = this.tableData.slice(startIndex, [endIndex]) 
+                
             })
         },
         deleteList(index,banner_id){
@@ -165,17 +169,14 @@ export default {
              //当前页变动时候触发的事件
             console.log(currentPage)
             this.pageinationInfo.currentPage = currentPage;
-            //this.handleRefresh();
+           this.getImgsList()
         },
          handleSizeChange(size) {
             //pageSize 改变时会触发
-           // console.log(size)
+            console.log(size)
             this.pageinationInfo.pageSize = size;
-            //this.handleRefresh();
+            this.getImgsList()
         },
-        // handleRefresh(){
-        //     this.getImgsList(this.pageinationInfo, this.condition);
-        // }
 	}
 };
 </script>
