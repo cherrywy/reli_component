@@ -1,0 +1,112 @@
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+
+.text-danger {
+  color: #f44141;
+}
+
+.clear {
+  clear: both;
+}
+
+.popup-container {
+  font-size: 11px;
+  padding: 6px 8px 8px 8px;
+  background: #ffffff;
+  border: 2px solid #4286f4;
+  border-radius: 5px;
+  position: absolute;
+  transition: all .2s;
+  min-width: 230px;
+  max-width: 230px;
+  user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  max-height: 480px;
+  overflow-y: scroll;
+
+  .section {
+    width: 100%;
+
+    .form-group {
+      .form-row {
+        select {
+          outline: none;
+        }
+
+        .sku-group-image {
+          max-width: 80px;
+          height: auto;
+          cursor: pointer;
+        }
+      }
+
+      .form-row:not(:last-child) {
+        margin-bottom: 4px;
+      }
+    }
+
+    button {
+      padding: 2px 5px;
+    }
+
+    .remove {
+      color: #f44141;
+      background: #ffffff;
+      border: 1px solid #f44141;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .remove:active {
+      outline: none;
+      color: #ffffff;
+      background: #f44141;
+    }
+
+    .reset {
+      color: #e29b0c;
+      background: #ffffff;
+      border: 1px solid #e29b0c;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .reset:active {
+      outline: none;
+      color: #ffffff;
+      background: #e29b0c;
+    }
+
+    .save {
+      color: #4CAF50;
+      background: #ffffff;
+      border: 1px solid #4CAF50;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .save:active {
+      outline: none;
+      color: #ffffff;
+      background: #4CAF50;
+    }
+
+    .spinner {
+      transition: all .3s;
+    }
+  }
+
+  .section:not(:last-child) {
+    margin-bottom: 20px;
+  }
+
+  .float-right {
+    float: right;
+  }
+}
