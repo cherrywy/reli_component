@@ -1,0 +1,100 @@
+.zy-dialog-transition-enter, .zy-dialog-transition-leave-to {
+  opacity: 0;
+
+  .zy-dialog-dialog {
+    top: 44% !important;
+  }
+}
+
+.zy-dialog {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(40, 40, 40, 0.6);
+  z-index: 99999999;
+  transition: all .2s ease;
+
+  .zy-dialog-dialog {
+    position: relative;
+    top: 46%;
+    transform: translateY(-100%);
+    background-color: #ffffff;
+    width: 600px;
+    margin: 0 auto;
+    border-radius: 10px;
+    transition: all .3s ease;
+    overflow: hidden;
+    outline: none;
+
+    .zy-dialog-header {
+      padding: 20px 16px 20px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .zy-dialog-header.with-body {
+      padding-bottom: 8px;
+    }
+
+    .zy-dialog-body {
+      padding: 0 16px 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .zy-dialog-footer {
+      border-top: 1px solid #efefef;
+      text-align: right;
+      user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      cursor: pointer;
+
+      input.zy-dialog-footer-button {
+        border: none;
+        background: transparent;
+        color: #0097ff;
+        padding: 10px 0;
+        display: block;
+        float: left;
+        overflow: hidden;
+        font-size: 16px;
+        outline: none;
+      }
+
+      input.zy-dialog-footer-button:active {
+        color: #006abe;
+        background-color: #f0f0f0;
+      }
+
+      input.zy-dialog-footer-button.red {
+        color: #eb3941;
+      }
+
+      input.zy-dialog-footer-button.red:active {
+        color: #ad292f;
+        background-color: #f0f0f0;
+      }
+
+      input.zy-dialog-footer-button:not(:first-child) {
+        border-left: 1px solid #efefef;
+      }
+
+      input.zy-dialog-footer-button:first-child:nth-last-child(1) {
+        width: 100%;
+      }
+
+      input.zy-dialog-footer-button:first-child:nth-last-child(2),
+      input.zy-dialog-footer-button:first-child:nth-last-child(2) ~ input.zy-dialog-footer-button {
+        width: 50%;
+      }
+    }
+  }
+
+  .zy-dialog-dialog.zy-dialog-sm {
+    width: 300px;
+  }
+}

@@ -9,7 +9,7 @@ import goodsMgtEdit from './views/goodsMgt/goodsMgtEdit.vue'
 import goodsMgtOnline from './views/goodsMgt/goodsMgtOnline.vue'
 import goodsMgtDataImport from './views/goodsMgt/goodsMgtDataImport.vue'
 
-import layoutManage from './views/shop/layoutManage.vue'
+import layoutManage from './components/View/layoutBoardView.vue'
 import bindDisplayData from './views/displayMgt/bindDisplayData.vue'
 import bindList from './views/displayMgt/bindList.vue'
 import manageDisplayDevice from './views/displayMgt/manageDisplayDevice.vue'
@@ -33,7 +33,7 @@ let routes = [
         path: '/',
         component: Home,
         name: '首页',
-        iconCls: 'el-icon-message',
+        iconCls: '/static/home_click.png',
         children: [
             { path: '/', component: home, name: '首页',hidden:true },
             
@@ -42,6 +42,7 @@ let routes = [
     {
         path: '/',
         component: Home,
+        iconCls: '/static/md_click.png',
         name: '门店管理',
         children: [
             { path: '/layoutManage', component: layoutManage, name: '布局管理' }
@@ -50,6 +51,7 @@ let routes = [
     {
         path: '/',
         component: Home,
+        iconCls: '/static/sp_click.png',
         name: '商品管理',
         children: [
             { path: '/goodsMgtList', component: goodsMgtList, name: '商品管理' },
@@ -62,6 +64,7 @@ let routes = [
     {
         path: '/',
         component: Home,
+        iconCls: '/static/ad_click.png',
         name: '广告管理',
         children: [
             { path: '/bindDisplayData', component: bindDisplayData, name: '素材绑定' },

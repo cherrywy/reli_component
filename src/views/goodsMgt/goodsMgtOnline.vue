@@ -124,8 +124,9 @@ export default {
         }
     },
     mounted: function () {
+        this.uid=localStorage.getItem('uid');
         this.getFindShop()//获取门店
-          this.uid=localStorage.getItem('uid');
+        
     },
     wach: {
         canvas() {
@@ -236,7 +237,7 @@ export default {
                         type: 'error'
                     });
                 } else {
-                    alert(plan_id)
+                    
                     this.planShowCase = result
                 }
             })
@@ -273,7 +274,8 @@ export default {
             this.getOnlineList(this.plansName, this.currentPage, this.pageSize)
         },
         getFindShop() {
-            const shopPlanParams = { uid: this.uid };
+            console.log(this.uid )
+            const shopPlanParams = { uid:this.uid };
             requestFindShop(shopPlanParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {

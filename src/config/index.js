@@ -1,4 +1,4 @@
-const evn = require('./../evn')
+const evn = require('./../env')
 export default {
   siteName: '智慧门店后台管理',
   siteNameMini: 'ZH',

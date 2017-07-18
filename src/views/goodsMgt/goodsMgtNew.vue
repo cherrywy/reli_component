@@ -4,8 +4,15 @@
             <el-card class="box-card">
                 <el-form :label-position="labelPosition" label-width="80px">
                     <el-form-item label="商品类目">
-                        <el-autocomplete class="inline-input" v-model="big_category" :fetch-suggestions="querySearch" placeholder="大类目"></el-autocomplete>
-                        <el-autocomplete class="inline-input" v-model="small_category" :fetch-suggestions="querySearchSmall" placeholder="小类目"></el-autocomplete>
+                        <el-select v-model="big_category" filterable allow-create placeholder="大类目" @change="searchHistoryNew(0,big_category)">
+                            <el-option v-for="item in bigcategory" :key="item.id" :label="item.name" :value="item.value">
+                            </el-option>
+                        </el-select>
+                         <el-select v-model="small_category" filterable allow-create placeholder="小类目"@change="searchHistoryNew(1,small_category)">
+                            <el-option v-for="item in smallcategory" :key="item.id" :label="item.name" :value="item.value">
+                            </el-option>
+                        </el-select>
+                        
                     </el-form-item>
                     <el-form-item label="商品品牌">
                         <el-select v-model="brand_name" @change="getBrandId(brand_name)" filterable allow-create placeholder="请选择品牌">
@@ -38,7 +45,7 @@
                                 </el-button>
                             </div>
                             <div v-if="spec.spec_name!='' " style="width:50%;padding:10px;">
-                                <el-select class='sku_value' style=" width:100%;background-color:transparent;-webkit-appearance:none;" v-model="spec.spec_value" multiple filterable allow-create placeholder="请选择规格值">
+                                <el-select class='sku_value' style=" width:100%;background-color:transparent;-webkit-appearance:none;" v-model="spec.spec_value" @change="searchHistoryNew(3,spec.spec_value,spec.spec_name)" multiple filterable allow-create placeholder="请选择规格值">
                                     <el-option v-for="item in skuValue" :key="item.value" :label="item.label" :value="item.value">
                                     </el-option>
                                 </el-select>
@@ -53,12 +60,12 @@
     </section>
 </template>
  <script>
-import { requestSearchHistory, requestNew, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
+import { requestHistoryNew,requestSearchHistory, requestNew, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
 export default {
     data() {
         return {
-            uid:'',
-            head_office_id:'',
+            uid: '',
+            head_office_id: '',
             labelPosition: 'top',
             bigcategory: [],
             smallcategory: [],
@@ -79,7 +86,7 @@ export default {
     mounted() {
         this.uid = localStorage.getItem('uid');
         this.head_office_id = localStorage.getItem('head_office_id');
-        
+
         this.loadAll(0);
         this.loadAll(1);
         this.brandHistory();
@@ -89,6 +96,7 @@ export default {
             this.specs.splice(index, 1);
         },
         getSkuVulue(name) {
+          this.searchHistoryNew(2,name)
             this.loadAll(3, name);
         },
         addSku() {
@@ -116,16 +124,16 @@ export default {
 
         },
         submit() {
-             this.specs = this.specs.filter(v=>{
+            this.specs = this.specs.filter(v => {
                 return v.spec_value.length;
-           });
+            });
             const brand_id = this.brand.filter(v => {
                 return v.name === this.brand_name;
             }).map(v => v.id).pop();
             this.batch = this.getBatchParam(this.specs)
             var newParams = {
-                uid:this.uid,
-                batch: this.batch,
+                uid: this.uid,
+                batch:this.batch,
                 big_category: this.big_category,
                 brand_id: brand_id,
                 name: this.name,
@@ -178,8 +186,23 @@ export default {
                 }
             })
         },
-        loadAll(type,parent_key_word) {
-            let bigParams = { uid:this.uid, type: type, parent_key_word: parent_key_word };
+        searchHistoryNew(type,key_word,parent_key_word){
+           let historyNewParams = { uid: this.uid, type: type, key_word: key_word ,parent_key_word:parent_key_word};
+            requestHistoryNew(historyNewParams).then(data => {
+                let { error_code, result } = data;
+                if (error_code !== 0) {
+                    this.$message({
+                        message: "返回数据有误",
+                        type: 'error'
+                    });
+                } else {
+                   
+
+                }
+            })
+        },
+        loadAll(type, parent_key_word) {
+            let bigParams = { uid: this.uid, type: type, parent_key_word: parent_key_word };
             requestSearchHistory(bigParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -219,28 +242,6 @@ export default {
 
                 }
             })
-        },
-        querySearch(queryString, cb) {
-            var bigcategory = this.bigcategory
-            var results = queryString ? bigcategory.filter(this.createFilter(queryString)) : bigcategory;
-            // 调用 callback 返回建议列表的数据
-            cb(results);
-        },
-        createFilter(queryString) {
-            return (bigcategory) => {
-                return (bigcategory.value.indexOf(queryString.toLowerCase()) >= 0);
-            }
-        },
-        querySearchSmall(queryString, cb) {
-            var smallcategory = this.smallcategory
-            var results = queryString ? smallcategory.filter(this.createFilter(queryString)) : smallcategory;
-            // 调用 callback 返回建议列表的数据
-            cb(results);
-        },
-        createFilterSmall(queryString) {
-            return (smallcategory) => {
-                return (smallcategory.value.indexOf(queryString.toLowerCase()) >= 0);
-            }
         },
         remoteMethod(query) {
             if (query !== '') {

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import env from '../env'
+import moment from 'moment';
 let apiServer = env.apiServer;
 
 export const requestSearchHistory = params => { return axios.post(`${apiServer}/a/search_history/find.json`, params).then(res => res.data);};
@@ -14,9 +15,29 @@ export const requestUpload = params => {
         headers: {'Content-Type': 'multipart/form-data'}
     }).then(res => res.data);
 };
-export const requestList =params => { return axios.post(`${apiServer}/a/goods/list.json`, params).then(res => res.data);};
+
+export const requestList = (params) => { return axios.post(`${apiServer}/a/goods/list.json`, params).then(res => {
+        const {error_code,result} = res.data;
+        if (error_code !== 0){
+            throw new Error('requst error');
+        }
+        const tableData = result.list.map(v=>{
+            v.goods_created_at = moment(v.goods_created_at).format('YYYY/MM/DD');
+            return v;
+        });
+        const {total_count} = result;
+        return {
+            tableData,
+            total_count
+        };
+    })
+};
+
 export const requestRemove =params => { return axios.post(`${apiServer}/a/goods/remove.json`, params).then(res => res.data);};
 export const requestUpdate =params => { return axios.post(`${apiServer}/a/goods/update.json`, params).then(res => res.data);};
+
+export const requestHistoryNew =params => { return axios.post(`${apiServer}/a/search_history/new.json`, params).then(res => res.data);};
+
 export const requestEdit =params => { return axios.post(`${apiServer}/a/goods/show.json`, params).then(res => res.data);};
 export const requestOnline =params => { return axios.post(`${apiServer}/a/goods/online.json`, params).then(res => res.data);};
 export const requestFindShop =params => { return axios.post(`${apiServer}/a/goods/find_shop_plan.json`, params).then(res => res.data);};

@@ -65,7 +65,7 @@
 <script>
 
 import { requestList, requestRemove, requestBrandHistory } from '../../api/goodsServer';
-import moment from 'moment';
+
 export default {
     data() {
         return {
@@ -101,8 +101,8 @@ export default {
                 }
             })
         },
-        getList(brand_name, key_word, pageNum) {
-            let listParams = { uid: this.uid, page: pageNum };
+        getList(brand_name,key_word, pageNum) {
+            let listParams = { uid:this.uid, page: pageNum };
             if (brand_name) {
                 listParams['brand_name'] = brand_name
             }
@@ -110,19 +110,13 @@ export default {
                 listParams['key_word'] = key_word
             }
             requestList(listParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
+                    this.tableData = data.tableData;
+                    this.total = data.total_count;
+            }).catch(err=>{
+                this.$message({
                         message: "返回数据有误",
                         type: 'error'
                     });
-                } else {
-                    this.tableData = result.list.map(v => {
-                        v.goods_created_at = moment(v.goods_created_at).format('YYYY/MM/DD');
-                        return v;
-                    })
-                    this.total = result.total_count;
-                }
             })
         },
         searchList() {
