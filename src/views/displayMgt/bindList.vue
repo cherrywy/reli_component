@@ -25,6 +25,7 @@
                                     auto-complete="off" 
                                     style='width:200px;' 
                                     :file-list="form.fileList"
+                                    @change='clear_search_input'
                                     :on-icon-click='search'></el-input>
                                 </el-form-item>
                                 <el-form-item  :label-width="formLabelWidth" align='right'>
@@ -71,7 +72,7 @@
                         <el-tag :key="seleValue.key_word"
                             v-model='seleValue.key_word'
                             :closable="true"
-                            @close="handleTag(tag)">{{seleValue.key_word}}</el-tag>
+                            @close="handleTag(tag)">{{seleValue}}</el-tag>
                     </el-form-item>
                     <el-form-item label="商品推荐语：">
                        <el-input
@@ -195,15 +196,14 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 let img = {
                     url:val.pic[0].data.url?val.pic[0].data.url:val.info[0].data.title_pics[0]
                 }
-                this.fileList.push(img)
-                //console.log(this.fileList)
+                if(img.url){
+                    this.fileList.push(img)
+                }
                 let video = {
                     url:val.vedio_url[0].data.url
                 }
                 this.videoList.push(video)
-                this.seleValue = {
-                    key_word:val.tag[0].data.goods_value
-                }
+                this.seleValue = val.tag[0].data.goods_value
                 this.form = {
                      goods_name:val.info[0].data.name,
                      details_intro:val.details_intro[0].data.goods_value,
@@ -219,7 +219,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 key_word:this.tag_goods_value
             }
             goodstype(info).then(data =>{
-                console.log(data.result)
+                //console.log(data.result)
                 this.options = data.result.map(v =>{
                     return{
                         key_word:v
@@ -251,23 +251,32 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
             }
             this.videoList.push(upimg)
         },
+        handleAvatarRemove(file,fileLis){
+            //图片删除
+            this.fileList =[]
+          //  console.log(file)
+        },
+        videohandleAvatarRemove(){
+            this.videoList =[]
+        },
         onSubmit(){//绑定
            let info = this.form
            console.log(this.fileList[0])
            this.saveInfomations = {
                goods_url:this.fileList[0]?this.fileList[0].url:'',
-               details_intro:info.details_intro_goods_value,
-               details_tag:this.tag_goods_value,
+               details_intro:info.propaganda_intro,
+               details_tag:this.seleValue,
                goods_id:this.$route.query.goods_id || this.goodId,
-               goods_tag:this.tag_goods_value,
+               goods_tag:this.seleValue,
                goods_tag_url:'',
-               jump_url:info.jump_url_url,
+               jump_url:info.tag_url,
                price:info.price_goods_value,
-               propaganda:info.propaganda_intro_goods_value,
+               propaganda:info.details_intro,
                propaganda_pic:'',
                uid:'1209811640320002',
                video_url:this.videoList[0]?this.videoList[0].url:'',
            }
+           //console.log(this.saveInfomations)
            changeDiaplay(this.saveInfomations).then(data=>{
                this.$router.push({ path: '/bindDisplayData' });
                this.$message({
@@ -275,6 +284,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                     type: 'success'
                 });
            })
+           this.$route.go(-1)
         },
         changeGoods(){
             this.dialogFormVisible = true
@@ -294,6 +304,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 this.pageinationInfo.total =  this.arr.length
                 this.arr = this.arr.slice(startIndex,endIndex)
             })
+
         },
         handleSelect(row){
             //console.log(row)
@@ -331,13 +342,25 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                return new RegExp(`${name}`,'i').test(v.name);
            })
         },
+        clear_search_input(){
+            //清楚搜素输入框
+           let name = this.searchVal
+           console.log(this.searchVal)
+           if(this.searchVal !== ''){
+                this.arr = this.arr.filter(function(v){
+                      return new RegExp(`${name}`,'i').test(v.name);
+                })
+           }else{
+                 this.changeGoods()
+           }
+        },
         remoteMethod(){
             let inf = {
                 uid:'1209811640320002',
                 type:4,
                 key_word:this.seleValue
             }
-            //addstype(inf)
+            addstype(inf)
             //this.getGoodsList();
         }
     }

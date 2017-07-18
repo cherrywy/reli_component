@@ -46,7 +46,8 @@
 	</el-row>
 </template>
 <script>
-import {getShop,display_list,search_goods} from '../../api/display'
+import moment from 'moment';
+import {getShop,display_list,search_goods,get_shop} from '../../api/display'
     export default {
       data() {
         return {
@@ -68,6 +69,7 @@ import {getShop,display_list,search_goods} from '../../api/display'
 				pageSize: 5,
 				total: 0,
 			},
+			shopId:'',
         }
       },
 	mounted(){
@@ -76,7 +78,6 @@ import {getShop,display_list,search_goods} from '../../api/display'
 		computed:{
 			filteredTableData: function () {
 				let shop = this.optionsValue;
-				//let name = this.input2;
 				return this.tableData.filter(function(value){
 					if(shop == '全部'|| shop == ''){
 						if(name == ''){
@@ -92,35 +93,57 @@ import {getShop,display_list,search_goods} from '../../api/display'
     },
 	methods:{
 		edit (index,id) {
-				id = this.tableData[index].id
-				const path = '/editDevice?id=' + id;
-       			this.$router.push({ path: path });
+			id = this.tableData[index].id
+			const path = '/editDevice?id=' + id;
+			this.$router.push({ path: path });
 		},
-		getFocusList(){//加载页面时候加载门店
-			//console.log(this.input2.match(/^[^x00-xff]/))
-			let par = {
-				uid:'1209811640320002',
-				page:this.pageinationInfo.currentPage,
-                limit:this.pageinationInfo.pageSize,
-				name:this.input2
+		getFocusList(){//加载页面时候加载门店		
+			let uid = {
+				uid:'1209811640320002'
 			}
-       		search_goods(par).then(data=>{ 
-				this.pageinationInfo.total = data.total_count
-				this.tableData = data.result.map( v=>{
-					return{
-						name:v.data.name,
-						shop:v.data.shop_name || '无门店信息',
-						state:v.data.heartbeat_time,
-						id:v.id
+			getShop(uid).then(data =>{
+				data.result.map(v =>{
+					if(this.options.indexOf(v.data.shop) == -1){
+						this.options.push(v.data.shop)
 					}
 				})
-				console.log(this.tableData.state)
-				this.tableData.map(ast => {
-					if(this.options.indexOf(ast.shop) == -1){
-						this.options.push(ast.shop)
-					}
+				this.shopId = data.result.map(v=>{
+					return v.id
 				})
-				
+				let name = this.input2
+				let param ={}
+				if(name){
+				   param = {
+						name:this.input2,
+						shop_id:this.shopId+'',
+						page:this.pageinationInfo.currentPage,
+						limit:this.pageinationInfo.pageSize,
+					}
+				}else{
+					param = {
+						shop_id:this.shopId+'',
+						page:this.pageinationInfo.currentPage,
+						limit:this.pageinationInfo.pageSize,
+					}
+				}
+				console.log(param)
+				search_goods(param).then(data=>{ 
+					this.pageinationInfo.total = data.total_count
+					let time = Date.parse(new Date())
+					this.tableData = data.result.map( v=>{
+						return{
+							name:v.data.name,
+							shop:v.data.shop_name || '无门店信息',
+							state:(time - v.data.heartbeat_time >= 1800)?'不正常':'正常',
+							id:v.id
+						}
+					})
+					this.tableData.map(ast => {
+						if(this.options.indexOf(ast.shop) == -1){
+							this.options.push(ast.shop)
+						}
+					})
+				})
 			})
         },
 	    handleIconClick(input2){

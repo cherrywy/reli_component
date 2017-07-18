@@ -2,7 +2,7 @@
     <section>
         <el-col :span ='24' v-if='true'>
             <el-col :span='6' style='margin:20px 0px;'>
-          <el-input placeholder="请输入商品名称搜索" v-model="input" icon='search' :on-icon-click='search' class='inp_seach'></el-input>
+          <el-input placeholder="请输入商品名称搜索" v-model="input" icon='search' :on-icon-click='search' @change='searchAll' class='inp_seach'></el-input>
             </el-col>
            <el-col :span ='24' v-if='true'>
             <el-col :span='24' align='right'>
@@ -150,9 +150,16 @@ export default {
         search(){
             let goods_name = this.input;
             this.tableData = this.tableData.filter(function(value){
-                return new RegExp(`${goods_name}`,'i').test(value.goodname);
+                    return new RegExp(`${goods_name}`,'i').test(value.goodname);
             })
 		},
+        searchAll(){
+            let goods_name = this.input;
+            this.getVideoList()
+            this.tableData = this.tableData.filter(function(value){
+                    return new RegExp(`${goods_name}`,'i').test(value.goodname);
+            })
+        }
 	}
  }
 </script>

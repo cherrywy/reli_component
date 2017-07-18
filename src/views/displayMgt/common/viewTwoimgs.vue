@@ -4,7 +4,7 @@
             <el-col :span ='24' style='margin-top:20px;'>
 
                     <el-col :span='24' align='right'>
-                        <el-button type="primary" @click="dialogFormVisible = true">上传图片</el-button>
+                        <el-button type="primary" @click="addImg">上传图片</el-button>
                     </el-col>
                     <el-col :span='24'>
                         <el-dialog  :visible.sync="dialogFormVisible" >
@@ -15,8 +15,10 @@
                                         name="pic"
                                         :data="upload_params"      
                                         :show-file-list="true"
+                                        :max='1'
+                                        :file-list="fileList"
                                         :on-success='handleAvatarSuccess'>
-                                        <el-button size="small" type="primary" :disabled='btn_show'>选择文件</el-button>
+                                        <el-button size="small" type="primary">选择文件</el-button>
                                     </el-upload>                       
                                 </el-form-item>
                                 <el-form-item label="跳转地址：" :label-width="formLabelWidth" align='left'>
@@ -75,6 +77,7 @@ export default {
         formLabelWidth: '100px',
         dialogDelete:false,
         btn_show:false,
+        fileList:[],
         upload_params:{
             type:'image'
         },
@@ -102,10 +105,23 @@ export default {
         this.getImgsList()
     },
     methods:{
+        addImg(){
+            this.dialogFormVisible = true
+            this.fileList=[]
+            this.imgInfomation.jump_url=''
+        },
         handleAvatarSuccess(res, file) {
         //图片上传成功
          this.btn_show = true
-         this.imgInfomation.pic_url = res.result.file_download_url
+         //console.log(res)
+        if(res.error_code !== 0){
+                this.$message({
+                    message:res.error_msg,
+                    type: 'error'
+                }).then(this.fileList=[])
+            }else{
+                this.imgInfomation.pic_url = res.result.file_download_url
+            }
         },
         bindimgs(){
             //上传图片

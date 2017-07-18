@@ -1,8 +1,11 @@
 import axios from 'axios';
 import env from '../env'
-
+import moment from 'moment';
 //let apiServer = 'http://118.89.232.160:10001';
 let apiServer = env.apiServer;
+//基础功能-地理信息-获取所有省信息#
+export const get_shop = params => { return axios.post(`${apiServer}/util/location/get_province.json`, params).then(res => res.data); };
+
 //获取门店
 export const getShop = params => { return axios.post(`${apiServer}/a/shop/list.json`, params).then(res => res.data); };
 //查询所有广告机轮播图
@@ -63,6 +66,8 @@ export const delete_id_goods = params => { return axios.post(`${apiServer}/v10/c
 export const bind_imgs = params => { return axios.post(`${apiServer}/v10/c/fold_dd/bind_banner.json`, params).then(res => res.data); };
 //删除绑定轮播图
 export const delete_bind_imgs = params => { return axios.post(`${apiServer}/v10/c/fold_dd/remove_banner.json`, params).then(res => res.data); };
+//首页 获取坐标那个
+export const get_shop_imgs = params => { return axios.post(`${apiServer}/a/plan_show_case/list.json`, params).then(res => res.data); };
 
 /****-----------
  * ---
