@@ -45,7 +45,11 @@ let routes = [
         iconCls: '/static/md_click.png',
         name: '门店管理',
         children: [
-            { path: '/layoutManage', component: layoutManage, name: '布局管理' }
+            {
+                path: '/layoutManage',
+                component: layoutManage,
+                name: '布局管理'
+            }
         ]
     },
     {

@@ -18,12 +18,13 @@
         </el-row>
         <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;">
             <el-card style="margin: 0 auto; width:500px;height:300px;position:relative">
-                <div class="canvas" ref="canvas">
+                <!--<div class="canvas" ref="canvas">
                     <canvas id="stage"></canvas>
-                </div>
+                </div>-->
+                <Viewer :planId="planId" />
                 <div style="bottom: 0;position: absolute;">
                     <div class="bottom">
-                        <el-button type="text" class="button">展柜数量:{{planShowCase.show_case_type}}</el-button>
+                        <el-button type="text" class="button">展柜数量:{{planShowCaseNumber}}</el-button>
                     </div>
                 </div>
             </el-card>
@@ -61,7 +62,7 @@
                     </div>
                 </el-dialog>
             </div>
-            <el-table :data="tableOnlineList" border style="width: 100%;margin-top: 15px;">
+            <el-table :data="onlineShowCaseList" border style="width: 100%;margin-top: 15px;">
                 <el-table-column prop='goods_name' label="商品名称">
                 </el-table-column>
                 <el-table-column prop="" label="商品图片" align="center">
@@ -78,40 +79,21 @@
     </section>
 </template>
 <script>
+import Viewer from './../../components/SharedBlocks/Viewer'
 import { requestOnline, requestFindShop, requestFindShopPlan, requestSearchSpec, requestOnlineShowCase, requestPlanShowCaseList, requestGoodsOnline, requestGoodsOffline } from '../../api/goodsServer';
 export default {
     data() {
         return {
             uid:'',
-            canvas: null,
-            coorDefaults: {
-                originX: 'center',
-                originY: 'center',
-                fill: 'rgba(66, 134, 244, 0.7)',
-                stroke: 'rgba(255, 255, 255, 1)',
-                strokeWidth: 1,
-                scaleX: 1,
-                scaleY: 1,
-                flipX: false,
-                flipY: false,
-                opacity: 1,
-                visible: true,
-                fillRule: 'nonzero',
-                hasBorders: false,
-                hasControls: false,
-                hasRotatingPoint: false,
-                lockMovementX: true,
-                lockMovementY: true,
-                lockScalingX: true,
-                lockScalingY: true,
-                lockUniScaling: true,
-                lockRotation: true
-            },
+            show_case_id:'',
             shop: [],
             shopPlan: [],
             shopName: '',
             plansName: '',
+            planId: 0,
             tableOnlineList: [],
+            onlineShowCaseList:[],
+            planShowCaseNumber:0,
             planShowCase: [],
             tableData: [],
             goodsName: '',
@@ -123,10 +105,17 @@ export default {
             formLabelWidth: '120px',
         }
     },
+    components: {
+        Viewer
+    },
     mounted: function () {
         this.uid=localStorage.getItem('uid');
         this.getFindShop()//获取门店
-        
+        this.$bus.$on('viewerSelectedShowcase', scId => {
+            // 选中了展柜，展柜 id 为 scId
+            this.show_case_id=scId
+            this.getOnlineShowCaseList() 
+        })
     },
     wach: {
         canvas() {
@@ -134,34 +123,8 @@ export default {
         },
     },
     methods: {
-        renderObjects() {
-            // 绘制接口中获取的形状
-            if (this.canvas) {
-                this.planShowCase.forEach( shape => {
-                    let coord = _.merge(shape.coord, this.coorDefaults)
-                    let object = {}
-                    if (coord.type === 'rect' || coord.type === 0) {
-                        object = new window.fabric.Rect(coord)
-                    } else if (coord.type === 'circle' || coord.type === 1) {
-                        object = new window.fabric.Circle(coord)
-                    } else {
-                        return false
-                    } 
-                    object.set('fill', )
-                    object.set('id', shape.data.id)
-                    object.set('data', {
-                        name:shape.data.name,
-                        plan_id: shape.data.plan_id,
-                        type: shape.data.show_case_type,
-                        sku_group: shape.data.sku_group_ids
-                    })
-                    this.canvas.add(object)
-                })
-               
-            }
-        },
         getOnlineShowCaseList() {
-            let OnlineListParams = { show_case_id: show_case_id };
+            let OnlineListParams = { show_case_id: this.show_case_id };
             requestOnlineShowCase(OnlineListParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -170,6 +133,7 @@ export default {
                         type: 'error'
                     });
                 } else {
+                    this.onlineShowCaseList=result
 
                 }
             })
@@ -189,7 +153,7 @@ export default {
                             type: 'success',
                             message: '下架成功!'
                         });
-                        this.tableOnlineList.splice(index, 1);
+                        this.onlineShowCaseList.splice(index, 1);
                         this.getList();
 
                     }
@@ -205,7 +169,7 @@ export default {
             const goods_spec_ids = this.multipleSelection.map(v => {
                 return v.id
             }).join()
-            let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: show_case_id };
+            let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: this.show_case_id };
             requestGoodsOnline(listParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -224,13 +188,13 @@ export default {
 
         },
         getPlanShowCaseList() {
-            const plan_id = this.shopPlan.filter(v => {
+            this.planId = this.shopPlan.filter(v => {
                 return v.value === this.plansName;
             }).map(v => v.id).pop();
 
-            let planListParams = { plan_id: plan_id };
+            let planListParams = { plan_id: this.planId };
             requestPlanShowCaseList(planListParams).then(data => {
-                let { error_code, result } = data;
+                let { error_code, result ,total_count} = data;
                 if (error_code !== 0) {
                     this.$message({
                         message: "返回数据有误",
@@ -239,6 +203,8 @@ export default {
                 } else {
                     
                     this.planShowCase = result
+                    this.planShowCaseNumber= total_count
+                    this.$bus.$emit('initViewer')
                 }
             })
         },
@@ -274,7 +240,7 @@ export default {
             this.getOnlineList(this.plansName, this.currentPage, this.pageSize)
         },
         getFindShop() {
-            console.log(this.uid )
+           
             const shopPlanParams = { uid:this.uid };
             requestFindShop(shopPlanParams).then(data => {
                 let { error_code, result } = data;

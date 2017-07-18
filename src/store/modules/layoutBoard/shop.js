@@ -3,12 +3,12 @@ import api from './../../../api/request'
 import _ from 'lodash'
 
 let lstore
-let shopIds = []
-let uids = []
+let shopIds = ''
+let uids = ''
 if (window.localStorage) {
   lstore = window.localStorage
-  try { shopIds = JSON.parse(lstore.getItem('shop_ids')) || [] } catch (err) { shopIds = [] }
-  try { uids = JSON.parse(lstore.getItem('uids')) || [ ] } catch (err) { uids = [] }
+  try { shopIds = parseInt(lstore.getItem('shop_id')) || '' } catch (err) { shopIds = '' }
+  try { uids = parseInt(lstore.getItem('uid')) || '' } catch (err) { uids = '' }
 }
 
 class Shop {
@@ -25,8 +25,9 @@ const state = {
   // inputUid: '1209811640320002'
   shopIds,
   uids,
-  inputShopId: '',
-  inputUid: ''
+  // 变量名兼容老逻辑，实际为门店 id 和 uid，取自 localstorage
+  inputShopId: shopIds,
+  inputUid: uids
 }
 
 const getters = {
