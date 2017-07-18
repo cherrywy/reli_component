@@ -118,11 +118,11 @@ export default {
 
         },
         submit() {
-           console.log(this.specs);
+       
            this.specs = this.specs.filter(v=>{
                 return v.spec_value.length;
            });
-           console.log(this.specs);
+        
             this.batch = this.getBatchParam(this.specs)
             const goods_id = this.$route.query.goods_id;
             const brand_id = this.brand.filter(v => {
