@@ -2,19 +2,8 @@
     <section>
          <el-row>
             <el-col :span ='24' style='margin-top:20px;'>
-                    <el-col :span='20'>
-                            <span>本页显示 
-                            <el-select v-model="value" placeholder="5" style='width:80px'>
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                            </el-select> 条</span>
-                    </el-col>
 
-                    <el-col :span='4' align='right'>
+                    <el-col :span='24' align='right'>
                         <el-button type="primary" @click="dialogFormVisible = true">上传图片</el-button>
                     </el-col>
                     <el-col :span='24'>
@@ -70,19 +59,15 @@
             </el-dialog>
 
             <el-col :span='24' align='right'>
-                    <div class="block">
-                        <el-pagination
-                        layout="prev, pager, next"
-                        :total="50">
-                        </el-pagination>
-                    </div>
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5, 10,]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
+                </el-pagination>
             </el-col>
         </el-row>
     </section>
 </template>
 
 <script>
-import { updataimgs,requestUpload,allPic_imgs,deleteimgs} from '../../../api/display'
+import { getImgsList,updataimgs,requestUpload,allPic_imgs,deleteimgs} from '../../../api/display'
 export default {
     data() {
       return {
@@ -90,17 +75,10 @@ export default {
         formLabelWidth: '100px',
         dialogDelete:false,
         btn_show:false,
+        loading:true,
         upload_params:{
             type:'image'
         },
-        options: [{
-          value: '5',
-          label: '5'
-        }, {
-          value: '10',
-          label: '10'
-        }],
-        value: '',
         img_url:'',
         imgInfomation:{
             jump_url:'',
@@ -113,14 +91,22 @@ export default {
         }],
         displayId:null,
         inx:null,
-        new_list:null
+        new_list:null,
+        totalinfo:null,
+        pageinationInfo: {
+            currentPage: 1,
+            pageSize: 5,
+            total: 0,
+        },
+        condition: {},
       };
     },
     mounted(){
         this.getImgsList()
     },
     methods:{
-       handleAvatarSuccess(res, file) {
+        handleAvatarSuccess(res, file) {
+        //图片上传成功
          this.btn_show = true
          this.imgInfomation.pic_url = res.result.file_download_url
         },
@@ -135,9 +121,9 @@ export default {
                     jump_url:this.imgInfomation.jump_url,
                     id:data.result.id
                 }
-                //console.log(newImg)
                 this.tableData.unshift(newImg)
                 this.new_list = this.tableData
+                this.imgInfomation.pic_url = ''
             })
         },
         getImgsList(){
@@ -145,11 +131,18 @@ export default {
             let id = {
 				uid:'1209811640320002'
 			}
-            allPic_imgs(id).then(data=>{  
-                this.tableData = data.result
+            getImgsList(id).then(data=>{  
+                this.tableData = data.result.map(v =>{
+                    return{
+                        pic_url:v.data.pic_url,
+                        jump_url:v.data.jump_url
+                    }
+                })
+                this.pageinationInfo.total = this.tableData.length
             })
         },
         deleteList(index,banner_id){
+            //删除商品
             this.$confirm('删除该商品后将无法撤回，是否继续', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -164,7 +157,25 @@ export default {
                        this.getImgsList()
                 })  
             })
-         }
+         },
+
+         //分页
+         
+         handleCurrentChange(currentPage) {
+             //当前页变动时候触发的事件
+            console.log(currentPage)
+            this.pageinationInfo.currentPage = currentPage;
+            //this.handleRefresh();
+        },
+         handleSizeChange(size) {
+            //pageSize 改变时会触发
+           // console.log(size)
+            this.pageinationInfo.pageSize = size;
+            //this.handleRefresh();
+        },
+        // handleRefresh(){
+        //     this.getImgsList(this.pageinationInfo, this.condition);
+        // }
 	}
 };
 </script>

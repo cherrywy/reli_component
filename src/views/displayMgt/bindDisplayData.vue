@@ -20,7 +20,7 @@ export default {
           activeName2: 'first',
 		  options: [{value: 5,label: 5}, {value: 10,label: 10}],
 		  value: '',
-		  currentView: 'displayViewOne',
+		  currentView: 'displayViewTwo',
 		  lists:null
 		}
     },

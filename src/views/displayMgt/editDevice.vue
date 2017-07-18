@@ -20,7 +20,7 @@ import {carouselImgs} from '../../api/display'
         return {
 			dialogImageUrl: '',
        		dialogVisible: false,
-			currentView: 'diaplayMgeOne'
+			currentView: 'diaplayMgeTwo'
 		}
     },
 	props:{

@@ -38,7 +38,7 @@
                                     <span>找不到商品？去<el-button type='text' @click='addgoods'>添加</el-button></span>
                                 </el-form-item>
                                 <el-form-item  :label-width="formLabelWidth">
-                                    <el-table :data="arr" style='marign-top:10px;'  @cell-click="handleSelect" @selection-change="selectionchange">
+                                    <el-table :data="arr" style='marign-top:10px;'  @cell-click="handleSelect">
                                             <el-table-column label="选择" width="200" type='selection'></el-table-column>
                                             <el-table-column label="商品名称" prop='name'></el-table-column>
                                     </el-table>
@@ -191,10 +191,8 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
                 //更新绑定素材的时候获取商品列表
                  data.result.video_list.map(v =>{
                    if(goods_id == v.video.goods.info_id){
-                        v.video.goods.info_title_pics.map(val => {
-                           this.obj.url = val
+                           this.obj.url = v.video.goods.pic_url
                            this.fileList.push(this.obj)
-                       })  
                        this.tag_goods_value = v.video.goods.tag_goods_value
                        this.form = {
                             goods_name:v.video.goods.info_name,

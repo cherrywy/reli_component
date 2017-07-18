@@ -92,10 +92,13 @@ export default {
                uid:'1209811640320002' 
             }
             updatavideo(id).then(data=>{  
+                console.log(data.result.video_list);
                 this.tableData = data.result.video_list.map(v=>{
-                    //console.log(v.video.goods.info_id)
+                    // const {goods} = v.video;
+                    const goods_pics = v.video.goods.info_title_pics?v.video.goods.info_title_pics[0]:null;
+                    const img = v.video.goods.pic_url?v.video.goods.pic_url:goods_pics;
                     return {
-                        img:v.video.goods.pic_url,
+                        img:img,
                         goodname:v.video.goods.info_name,
                         goodtag:v.video.goods.tag_goods_value,
                         goodprice:v.video.goods.price_goods_value,
@@ -103,13 +106,9 @@ export default {
                         bindaddress:v.video.goods.vedio_url_url,
                         id:v.video.goods.info_id
                     }
-                });
+                })
+                console.log(this.tableData)
             })
-        },
-        //解除绑定
-        deletegoods(index,row){
-            this.dialogDelete = true;
-            this.inx = index
         },
         deletegoods(index,goods_id){
             //确认解除
@@ -120,7 +119,8 @@ export default {
             }).then(() =>{
                 goods_id = this.tableData[index].id
                 let banId = {
-                   goods_id:goods_id
+                   goods_id:goods_id,
+                   uid:'1209811640320002'
                 }
                 deleteBindGoods(banId).then(data => {
                     this.tableData.splice(this.inx,1)
@@ -130,10 +130,9 @@ export default {
          },
          changeDiaplay(index){
             let id= this.tableData[index].id
-            //console.log(id)
+            //console.log(this.tableData[index])
             const path = '/bindList?goods_id=' + id;
             this.$router.push({ path: path });
-			//this.$router.push({path:'/bindList',hash:id});
          }
 
 	}

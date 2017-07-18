@@ -38,7 +38,9 @@ export const deleteBindGoods = params => { return axios.post(`${apiServer}/v10/a
 export const changeDiaplay = params => { return axios.post(`${apiServer}/v10/a/goods/folder_dd/edit.json`, params).then(res => res.data); };
 //绑定素材中选择商品
 export const changeGoodsList = params => { return axios.post(`${apiServer}/v10/a/goods/list.json`, params).then(res => res.data); };
-
+//批量上传商品
+export const online_goods = params => { return axios.post(`${apiServer}/v10/c/folder_dd/batch_bind.json`, params).then(res => res.data); };
+ 
 
 //门店  广告机列表
 
@@ -52,6 +54,10 @@ export const bind_id_goods = params => { return axios.post(`${apiServer}/v10/fol
 //广告机-删除折叠广告机轮播图#
 
 export const delete_id_goods = params => { return axios.post(`${apiServer}/v10/c/folder_dd/remove_goods.json`, params).then(res => res.data); };
+//广告机-绑定折叠广告机轮播图#
+export const bind_imgs = params => { return axios.post(`${apiServer}/v10/c/fold_dd/bind_banner.json`, params).then(res => res.data); };
+//删除绑定轮播图
+export const delete_bind_imgs = params => { return axios.post(`${apiServer}/v10/c/fold_dd/remove_banner.json`, params).then(res => res.data); };
 
 /****-----------
  * ---
