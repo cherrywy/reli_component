@@ -15,7 +15,7 @@
 				</li>
 			</ul>
 
-			<el-card class='card viewer-card'>
+			<el-card class='card'>
 				<Viewer :planId="planId" />
 				<!-- <img :src="img_url" width='350px' height='300px'> -->
 				<div style="padding: 14px;" align='center'>
@@ -148,12 +148,6 @@ export default {
 		border-radius:5px;
 	}
 	.card{
-		width:600px;
+		width:700px;
 	}
-</style>
-<style scoped>
-.viewer-card {
-	transform: scale(0.8, 0.8);
-	transform-origin: top left;
-}
 </style>
