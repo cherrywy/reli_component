@@ -201,6 +201,8 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
         handleClose(goods_name) {
             //标签关闭
             goods_name= null
+            //var index = this.ruleForm.tags.indexOf(tag);
+            //this.ruleForm.tags.splice(index,1);
         },
         handleTag(tag){
             this.tag_goods_value = null

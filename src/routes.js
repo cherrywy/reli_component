@@ -39,8 +39,7 @@ let routes = [
         name: '首页',
         iconCls: '/static/home_click.png',
         children: [
-            { path: '/', component: home, name: '首页',hidden:true }  
-            
+            { path: '/', component: home, name: '首页',hidden:false }  
         ]
     },
     {
