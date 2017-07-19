@@ -21,9 +21,6 @@
 					<el-button type="text" class="button" @click='onlinegoods'>上传商品</el-button>
 				</div>
 			</el-card>
-			<canvas id="myCanvas"  ref='imyCanvas' width="200" height="100"
-				style="border:1px solid #000000;">
-			</canvas>
 			<span style='font-size:15px;line-height:80px;'>地址：{{info.street}}</span>
 		</el-col>
 	</section>

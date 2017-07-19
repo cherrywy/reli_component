@@ -145,8 +145,8 @@
                 this.tableData = data.result.list.map(v =>{
                     return {
                         goodname:v.list_goods_info_name,
-                        state:(v.goods_id_state ==0?'未下载':(v.goods_id_state==1?'正在下载':'正常')),
-                        id:v.goods_id_goods_id
+                        state:(v.goods_id_state == 0?'未下载':(v.goods_id_state == 1?'正在下载':(v.goods_id_state == -1?'下载失败':'正常'))),
+                        id:v.goods_id_goods_id,
                     }
                 })
             })
