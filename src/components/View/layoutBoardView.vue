@@ -16,7 +16,7 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div class="row">
+    <div class="row" v-show='isShowcase'>
       <div class="col-xs-12">
         <Paint></Paint>
       </div>
@@ -63,6 +63,7 @@ export default {
   },
   data() {
     return {
+      isShowcase:false,
       uid: '',
       shop: [],
       shopPlan: [],
@@ -122,6 +123,7 @@ export default {
       })
     },
     async getPlanList() {
+      this.isShowcase=true
       const shop_id = this.shop.filter(v => {
         return v.value === this.shopName;
       }).map(v => v.id).pop();

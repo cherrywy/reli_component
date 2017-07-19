@@ -46,7 +46,7 @@
                         </div>
                     </el-form-item>
                 </el-form>
-                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;background: rgb(112, 165, 236)">保存</el-button>
+                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;background: rgb(112, 165, 236);border: none;">保存</el-button>
             </el-card>
         </el-row>
     
