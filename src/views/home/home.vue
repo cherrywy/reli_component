@@ -11,12 +11,13 @@
 			<h4>{{info.shop}}</h4>
 			<ul  class='imgs'>
 				<li class='li_img' v-for='plan in info.plans'>
-					<img :src="plan.image_url" @click='clickImg(plan)' class='imgstyle'>
+					<img :src="plan.image_url" @click='clickImg(plan.id)' class='imgstyle'>
 				</li>
 			</ul>
 
 			<el-card class='card'>
-				<img :src="img_url" width='350px' height='300px'>
+				<Viewer :planId="planId" />
+				<!-- <img :src="img_url" width='350px' height='300px'> -->
 				<div style="padding: 14px;" align='center'>
 					<el-button type="text" class="button" @click='onlinegoods'>上传商品</el-button>
 				</div>
@@ -27,6 +28,8 @@
 </template>
 <script>
 import {shop_imgs,get_shop_imgs} from '../../api/display'
+import Viewer from './../../components/SharedBlocks/Viewer'
+
 export default {
     data() {
         return {
@@ -35,10 +38,19 @@ export default {
 			img_url:'',
 			skuInfo:'',
 			skuId:'',
-			uid:''
+			uid:'',
+			planId: 0
 		}
 	}, 
+	components: {
+		Viewer
+	},
 	mounted() {
+		// viewer 组件加载完成后立即让它画图
+		this.$bus.$off('viewer.mounted')
+		this.$bus.$on('viewer.mounted', () => {
+			this.$bus.$emit('initViewer', {selectable: false})
+		})
 		 this.uid = localStorage.getItem('uid');
         this.get_list();
 		//this.sku_list();
@@ -68,6 +80,8 @@ export default {
 				let info = {
 					plan_id:this.skuId
 				}
+				// 设置 planId 让 Viewer 组件绘图
+				this.planId = parseInt(this.infos[0].plans[0].id)
 				get_shop_imgs(info).then(data=>{
 					this.skuInfo = data.result.map(v=>{
 						//console.log(v.data)
@@ -95,20 +109,24 @@ export default {
 		onlinegoods(){
 			alert('跳到上传商品页')
 		},
-		clickImg(plan){
-			this.img_url = plan.image_url
-			let info = {
-				plan_id:plan.id
-			}
-			
-			get_shop_imgs(info).then(data=>{
-				this.skuInfo = data.result.map(v=>{
-					return{
-						type:v.data.type
-					}
-				})
+		clickImg(id){
+			this.planId = parseInt(id)
+			this.$nextTick(() => {
+				this.$bus.$emit('initViewer', {selectable: false})
 			})
-			//console.log(this.skuInfo)
+			// this.img_url = plan.image_url
+			// let info = {
+			// 	plan_id:plan.id
+			// }
+			
+			// get_shop_imgs(info).then(data=>{
+			// 	this.skuInfo = data.result.map(v=>{
+			// 		return{
+			// 			type:v.data.type
+			// 		}
+			// 	})
+			// })
+			// console.log(this.skuInfo)
 		 }
 	}
 }
@@ -130,6 +148,6 @@ export default {
 		border-radius:5px;
 	}
 	.card{
-		width:400px;
+		width:700px;
 	}
 </style>

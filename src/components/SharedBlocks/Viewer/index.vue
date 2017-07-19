@@ -79,7 +79,8 @@ export default {
         lockScalingX: true,
         lockScalingY: true,
         lockUniScaling: true,
-        lockRotation: true
+        lockRotation: true,
+        selectable: true
       }
     }
   },
@@ -118,6 +119,7 @@ export default {
       }
       delete this.$data.canvas
       window.$('.canvas-container').remove()
+      window.$('#stageForViewer').remove()
       
       let newCanvasDom = document.createElement('canvas')
       newCanvasDom.setAttribute('id', 'stageForViewer')
@@ -225,38 +227,39 @@ export default {
           }
           this.state.previousSelected = object
           let originalShowcaseId = this.state.activeObj.data.original_showcase_id
-          // iPad web view hook
-          this.$bus.$emit('viewerSelectedShowcase', originalShowcaseId)
-        })
 
-        this.canvas.on({
-          'before:selection:cleared': this.resetFillAndStroke,
-          'selection:cleared': this.preserveSelection
+          // iPad web view hook
+          this.$bus.$emit('viewerSelectedShowcase', this.state.activeObj)
         })
 
         if (Array.isArray(this.showcaseList) && this.showcaseList.length > 0) {
           this.renderObjects(this.showcaseList)
         }
-        this.state.previousSelected = object
-        // let originalShowcaseId = this.state.activeObj.data.original_showcase_id
-       
-        // iPad web view hook
-        this.$bus.$emit('viewerSelectedShowcase', this.state.activeObj)
-      })
 
-      this.canvas.on({
-        'before:selection:cleared': this.resetFillAndStroke,
-        'selection:cleared': this.preserveSelection
+        this.canvas.on({
+          'before:selection:cleared': this.resetFillAndStroke,
+          'selection:cleared': this.preserveSelection
+        })
       })
     }
   },
   mounted () {
+    this.$bus.$emit('viewer.mounted')
+  },
+  created () {
     this.$bus.$off('initViewer')
     this.$bus.$off('route.update')
     this.switchActivePlan()
 
-    this.$bus.$on('initViewer', async () => {
+    this.$bus.$on('initViewer', async options => {
       await this.setCurrentPlanById(this.planId)
+      if (typeof options === 'object' && Object.keys(options).length > 0) {
+        if (typeof options.selectable === 'boolean') {
+          this.coorDefaults.selectable = options.selectable
+        }
+      } else {
+        this.coorDefaults.selectable = true
+      }
       this.init()
     })
     this.$bus.$on('route.update', () => {
