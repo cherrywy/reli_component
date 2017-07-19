@@ -47,7 +47,7 @@
 						<template v-else>
 							<li class="el-submenu">
 								<div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;" :class="$route.path==item.children[0].path?'is-active li-active':''" @click="$router.push(item.children[0].path)">
-									<img :src="item.iconCls" width="20" height="20" style="vertical-align: middle;margin-right: 2px;">
+									<img :src="item.icon" width="20" height="20" style="vertical-align: middle;margin-right: 2px;">
 								</div>
 							</li>
 						</template>

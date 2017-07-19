@@ -215,9 +215,10 @@ export default {
           this.resetFillAndStroke({target: this.state.previousSelected})
         }
         this.state.previousSelected = object
-        let originalShowcaseId = this.state.activeObj.data.original_showcase_id
+        // let originalShowcaseId = this.state.activeObj.data.original_showcase_id
+       
         // iPad web view hook
-        this.$bus.$emit('viewerSelectedShowcase', originalShowcaseId)
+        this.$bus.$emit('viewerSelectedShowcase', this.state.activeObj)
       })
 
       this.canvas.on({
@@ -227,6 +228,7 @@ export default {
     }
   },
   mounted () {
+    this.init()
     this.$bus.$on('initViewer', async () => {
       await this.setCurrentPlanById(this.planId)
       this.init()
