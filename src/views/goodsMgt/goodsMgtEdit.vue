@@ -46,8 +46,9 @@
                         </div>
                     </el-form-item>
                 </el-form>
-                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;background: rgb(112, 165, 236)">保存</el-button>
+                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;background: rgb(112, 165, 236);border: none;">保存</el-button>
             </el-col>
+    
         </el-row>
     
     </section>
@@ -58,9 +59,9 @@ import env from '../../env'
 export default {
     data() {
         return {
-            action:`${env.apiServer}/util/file/upload.json`,
-            uid:'',
-            head_office_id:'',
+            action: `${env.apiServer}/util/file/upload.json`,
+            uid: '',
+            head_office_id: '',
             labelPosition: 'top',
             bigcategory: [],
             smallcategory: [],
@@ -80,8 +81,8 @@ export default {
         }
     },
     mounted() {
-        this.uid=localStorage.getItem('uid');
-        this.head_office_id=localStorage.getItem('head_office_id');
+        this.uid = localStorage.getItem('uid');
+        this.head_office_id = localStorage.getItem('head_office_id');
         this.loadAll(0);
         this.loadAll(1);
         this.brandHistory();
@@ -104,13 +105,13 @@ export default {
                     spec_name: '',
                     spec_value: []
                 });
-              
+
             } else {
                 this.$message({
-                        message: "目前只能添加3个规格",
-                        type: 'warning'
-                    });
-            
+                    message: "目前只能添加3个规格",
+                    type: 'warning'
+                });
+
             }
         },
         handleAvatarSuccess(res, file) {
@@ -119,11 +120,11 @@ export default {
 
         },
         submit() {
-       
-           this.specs = this.specs.filter(v=>{
+
+            this.specs = this.specs.filter(v => {
                 return v.spec_value.length;
-           });
-        
+            });
+
             this.batch = this.getBatchParam(this.specs)
             const goods_id = this.$route.query.goods_id;
             const brand_id = this.brand.filter(v => {
@@ -204,22 +205,22 @@ export default {
                     function getSpecsResult(data) {
                         const result_specs_to_params = (data) => {
                             let specs = [];
-                            if(!data){
+                            if (!data) {
                                 return [];
                             }
-                            if (data.hasOwnProperty('spec_spec1_name')&&data['spec_spec1_name']) {
+                            if (data.hasOwnProperty('spec_spec1_name') && data['spec_spec1_name']) {
                                 specs.push({
                                     spec_name: data['spec_spec1_name'],
                                     spec_value: data['spec_spec1_values']
                                 })
                             }
-                            if (data.hasOwnProperty('spec_spec2_name')&&data['spec_spec2_name']) {
+                            if (data.hasOwnProperty('spec_spec2_name') && data['spec_spec2_name']) {
                                 specs.push({
                                     spec_name: data['spec_spec2_name'],
                                     spec_value: data['spec_spec2_values']
                                 })
                             }
-                            if (data.hasOwnProperty('spec_spec3_name'&&data['spec_spec3_name'])) {
+                            if (data.hasOwnProperty('spec_spec3_name' && data['spec_spec3_name'])) {
                                 specs.push({
                                     spec_name: data['spec_spec3_name'],
                                     spec_value: data['spec_spec3_values']
@@ -231,12 +232,12 @@ export default {
                     }
 
                     this.specs = getSpecsResult(result.list) ? getSpecsResult(result.list) : []
-                    
+
                 }
             })
         },
         loadAll(type, parent_key_word) {
-            let bigParams = { uid:this.uid, type: type, parent_key_word: parent_key_word };
+            let bigParams = { uid: this.uid, type: type, parent_key_word: parent_key_word };
             requestSearchHistory(bigParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -314,11 +315,11 @@ export default {
             }
         },
         getBatchParam(specs) {
-            
+
             const com_data = (specs) => {
-                
+
                 const result = specs.map((v, index) => {
-                    const { spec_name, spec_value=[]} = v;
+                    const { spec_name, spec_value = [] } = v;
                     return spec_value.map(v => {
                         const obj = {};
                         obj[`spec${index + 1}_name`] = spec_name;

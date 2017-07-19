@@ -19,7 +19,7 @@
 				<Viewer :planId="planId" />
 				<!-- <img :src="img_url" width='350px' height='300px'> -->
 				<div style="padding: 14px;" align='center'>
-					<el-button type="text" class="button" @click='onlinegoods'>上架商品</el-button>
+					<el-button type="text" class="button" @click='onlinegoods(info)'>上架商品</el-button>
 				</div>
 			</el-card>
 			<span style='font-size:15px;line-height:80px;'>地址：{{info.street}}</span>
@@ -37,9 +37,10 @@ export default {
 			total_count:0,
 			img_url:'',
 			skuInfo:'',
-			skuId:'',
+			planId:'',
 			uid:'',
-			planId: 0
+			planId:'',
+			planName:'',
 		}
 	}, 
 	components: {
@@ -67,18 +68,27 @@ export default {
 					  shop:v.shop,
 					  plans:v.plans,
 					  street:v.street,
+					  shopId:v.id,
+					  shopName:v.shop,
 				  }
 			  })
+			   console.log(this.infos)
 			   this.img_url = this.infos.map(val =>{
 					return val.plans[0].image_url
 			 	})
-				this.skuId = this.infos.map(v =>{
+				this.planId = this.infos.map(v =>{
 					 return v.plans[0].id
 				})
-				this.skuId = this.skuId[0]
+				this.planName = this.infos.map(v =>{
+					 return v.plans[0].name
+				})
+				this.planId = this.planId[0]
+				 console.log('planid'+this.planId)
+				  console.log('planname'+this.planName)
+				this.planName = this.planName[0]
 				//获取默认的展柜
 				let info = {
-					plan_id:this.skuId
+					plan_id:this.planId
 				}
 				// 设置 planId 让 Viewer 组件绘图
 				this.planId = parseInt(this.infos[0].plans[0].id)
@@ -103,30 +113,20 @@ export default {
 						}
 					})
 				})
-				console.log(this.$refs.imyCanvas)
 			})
 		},
-		onlinegoods(){
-			 this.$router.push({ path: '/goodsMgtOnline' });
+		onlinegoods(info){
+			console.log(info)
+			let shopId = info.shopId
+			let shopName = info.shop
+			const path = '/goodsMgtOnline?shopId='+shopId+'&shopNam='+shopName+'&planId='+this.planId+'&planName='+this.planName
+			this.$router.push({ path: path});
 		},
 		clickImg(id){
 			this.planId = parseInt(id)
 			this.$nextTick(() => {
 				this.$bus.$emit('initViewer', {selectable: false})
 			})
-			// this.img_url = plan.image_url
-			// let info = {
-			// 	plan_id:plan.id
-			// }
-			
-			// get_shop_imgs(info).then(data=>{
-			// 	this.skuInfo = data.result.map(v=>{
-			// 		return{
-			// 			type:v.data.type
-			// 		}
-			// 	})
-			// })
-			// console.log(this.skuInfo)
 		 }
 	}
 }
@@ -151,7 +151,6 @@ export default {
 		width:600px;
 	}
 </style>
-
 <style scoped>
 .viewer-card {
 	transform: scale(0.8, 0.8);

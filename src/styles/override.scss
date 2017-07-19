@@ -98,6 +98,7 @@
 .el-upload__input {
   display: none !important;
 }
+
 .el-table__footer-wrapper thead div, .el-table__header-wrapper thead div {
     background-color: #fff !important;
     color: #1f2d3d;
@@ -107,4 +108,16 @@
     overflow: hidden;
     background-color: #fff !important;
     text-align: left;
+}
+.container .header[data-v-0b786b79] {
+    background: #70a5ec !important;
+    padding: 10px;
+}
+.container .toolbox[data-v-0b786b79] {
+   
+    background: #70a5ec !important;
+    
+}
+.el-button--info {
+    border:none !important;
 }

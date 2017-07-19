@@ -29,7 +29,7 @@
         <el-card class="box-card" v-if="isCase">
             <div slot="header" class="clearfix">
                 <span style="line-height: 36px;">{{show_case_type}}-{{show_case_name}}</span>
-                <el-button style="float: right;background: rgb(112, 165, 236)" type="primary" @click="getOnlineList('', 0, 5)">上架商品</el-button>
+                <el-button style="float: right;background: rgb(112, 165, 236);border: none;" type="primary" @click="getOnlineList('', 0, 5)">上架商品</el-button>
                 <el-dialog :visible.sync="dialogFormVisible">
                     <el-form>
                         <el-form-item label="">
@@ -67,7 +67,7 @@
     
                 <el-table-column label="操作" align="center">
                     <template scope="scope">
-                        <el-button size="small" style="background:#E0595B;opacity:0.66;color:#000" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
+                        <el-button size="small" style="background:#E0595B;opacity:0.66;color:#fff;border: none;" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -109,6 +109,12 @@ export default {
         next()
     },
     mounted: function () {
+        // if($route.query){
+        //     this.shopName=this.$route.query.planId
+        //     this.planId = this.$route.query.planId;
+        //     getPlanShowCaseList()
+
+        // }
         this.uid = localStorage.getItem('uid');
         this.getFindShop()//获取门店
         this.$bus.$on('viewerSelectedShowcase', scObj => {
@@ -124,11 +130,6 @@ export default {
             }
             this.getOnlineShowCaseList()
         })
-    },
-    wach: {
-        canvas() {
-            this.renderObjects()
-        },
     },
     methods: {
         getOnlineShowCaseList() {
@@ -165,18 +166,12 @@ export default {
                             type: 'success',
                             message: '下架成功!'
                         });
-                        console.log(index);
                         this.onlineShowCaseList.splice(index, 1);
                         this.getOnlineShowCaseList();
 
                     }
                 })
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '数据返回错误'
-                });
-            });
+            })
         },
         submit() {
         
