@@ -38,6 +38,7 @@ let routes = [
         component: Home,
         name: '首页',
         iconCls: '/static/home_click.png',
+        iconCls0: '/static/home.png',
         children: [
             { path: '/', component: home, name: '首页',hidden:true }  
             
@@ -47,6 +48,7 @@ let routes = [
         path: '/',
         component: Home,
         iconCls: '/static/md_click.png',
+         iconCls1: '/static/md.png',
         name: '门店管理',
         children: [
             {
@@ -60,6 +62,7 @@ let routes = [
         path: '/',
         component: Home,
         iconCls: '/static/sp_click.png',
+        iconCls2: '/static/sp.png',
         name: '商品管理',
         children: [
             { path: '/goodsMgtList', component: goodsMgtList, name: '商品管理' },
@@ -73,6 +76,7 @@ let routes = [
         path: '/',
         component: Home,
         iconCls: '/static/ad_click.png',
+        iconCls3: '/static/ad.png',
         name: '广告管理',
         children: [
             { 
