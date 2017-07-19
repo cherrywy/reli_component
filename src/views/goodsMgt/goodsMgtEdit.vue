@@ -1,7 +1,7 @@
  <template>
     <section>
         <el-row :gutter="20">
-            <el-card class="box-card">
+            <el-col>
                 <el-form :label-position="labelPosition" label-width="80px">
                     <el-form-item label="商品类目">
                         <el-autocomplete class="inline-input" v-model="big_category" :fetch-suggestions="querySearch" placeholder="大类目"></el-autocomplete>
@@ -46,8 +46,8 @@
                         </div>
                     </el-form-item>
                 </el-form>
-                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;">保存</el-button>
-            </el-card>
+                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;background: rgb(112, 165, 236)">保存</el-button>
+            </el-col>
         </el-row>
     
     </section>

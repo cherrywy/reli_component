@@ -2,11 +2,11 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12">
-        <div class="canvas" ref="canvas">
-          <canvas id="stage"></canvas>
-          <div class="popup">
+        <div class="canvas" id="canvasForViewerWrapper" ref="canvas">
+          <canvas id="stageForViewer"></canvas>
+          <!-- <div class="popup">
             <Popup :styles="popup.styles" :activeObject="state.activeObj"></Popup>
-          </div>
+          </div> -->
           <transition name="fade">
             <div class="overlay" v-if="ui.initializing">
               <div class="indicator">
@@ -46,8 +46,10 @@ export default {
     ])
   },
   watch: {
-    canvas () {
-      this.renderObjects()
+    showcaseList (after) {
+      this.$nextTick(() => {
+        if (Array.isArray(after) && after.length > 0) this.renderObjects(after)
+      })
     }
   },
   data () {
@@ -55,7 +57,7 @@ export default {
       canvas: {},
       popup: { styles: { top: 0, left: 0, opacity: 0 }, spin: { show: false } },
       state: { activeObj: {data: { name: '', sku_group: [{ image_url: '' }] }}, previousSelected: null },
-      ui: { initializing: true },
+      ui: { initializing: false },
       coorDefaults: {
         originX: 'center',
         originY: 'center',
@@ -109,6 +111,19 @@ export default {
         img.src = url
       })
     },
+    switchActivePlan () {
+      this.hidePopup()
+      if (this.canvas && this.canvas.dispose) {
+        this.canvas.dispose()
+      }
+      delete this.$data.canvas
+      window.$('.canvas-container').remove()
+      
+      let newCanvasDom = document.createElement('canvas')
+      newCanvasDom.setAttribute('id', 'stageForViewer')
+      window.$('#canvasForViewerWrapper').append(newCanvasDom)
+      this.$data.state.activeObj = null
+    },
     resetCanvas (bypass) {
       if (this.canvas.getObjects().length > 0) {
         let objects = this.canvas.getObjects()
@@ -119,11 +134,11 @@ export default {
         this.hidePopup()
       }
     },
-    renderObjects () {
+    renderObjects (list) {
       // 绘制接口中获取的形状
-      if (this.canvas) {
+      if (this.canvas && Array.isArray(list) && list.length > 0) {
         this.resetCanvas()
-        this.showcaseList.forEach(shape => {
+        list.forEach(shape => {
           let coord = _.merge(shape.coord, this.coorDefaults)
           let object = {}
           if (coord.type === 'rect' || coord.type === 0) {
@@ -144,8 +159,6 @@ export default {
           this.canvas.add(object)
         })
         this.canvas.deactivateAll().renderAll()
-      } else {
-        console.error('Canvas not ready!')
       }
     },
     resetFillAndStroke (event) {
@@ -168,6 +181,7 @@ export default {
     },
     async init () {
       if (!this.currentPlan) return false
+      this.switchActivePlan()
 
       let imageURL = this.currentPlan.data.image_url
       let image
@@ -182,42 +196,52 @@ export default {
       image.width = image.width * fixedHeight / image.height
       image.height = fixedHeight
 
-      if (this.canvas && this.canvas.dispose) {
-        try {
-          this.canvas.dispose()
-        } catch (err) {}
-      }
+      this.$nextTick(() => {
+        delete this.$data.canvas
+        this.$data.canvas = new Fabric('stageForViewer', {
+          width: image.width,
+          height: image.height,
+          backgroundImage: imageURL
+        })
 
-      this.canvas = null
-      this.$set(this.$data, 'canvas', new Fabric('stage', {
-        width: image.width,
-        height: image.height,
-        backgroundImage: imageURL
-      }))
+        this.toggleInitializing(false)
 
-      this.toggleInitializing(false)
+        this.canvas.on('object:selected', event => {
+          // 同时更新 popup 层的位置
+          if (Array.isArray(event.target._objects)) {
+            // 如果是组选择，不显示浮层
+            return false
+          }
+          let object = event.target
+          // let bound = object.aCoords
+          // this.$data.popup.styles.top = bound.tr.y
+          // this.$data.popup.styles.left = document.getElementsByClassName('canvas-container')[0].offsetLeft + bound.tr.x + 15
+          this.$data.state.activeObj = object
+          // if (!this.canvas.getActiveGroup() && this.$data.state.activeObj) this.showPopup()
+          object.set('fill', 'rgba(191, 241, 255, 0.8)')
+          object.set('stroke', 'rgba(255, 238, 0, 1)')
+          if (this.state.previousSelected !== object) {
+            this.resetFillAndStroke({target: this.state.previousSelected})
+          }
+          this.state.previousSelected = object
+          let originalShowcaseId = this.state.activeObj.data.original_showcase_id
+          // iPad web view hook
+          this.$bus.$emit('viewerSelectedShowcase', originalShowcaseId)
+        })
 
-      this.canvas.on('object:selected', event => {
-        // 同时更新 popup 层的位置
-        if (Array.isArray(event.target._objects)) {
-          // 如果是组选择，不显示浮层
-          return false
-        }
-        let object = event.target
-        let bound = object.aCoords
-        this.$data.popup.styles.top = bound.tr.y
-        this.$data.popup.styles.left = document.getElementsByClassName('canvas-container')[0].offsetLeft + bound.tr.x + 15
-        this.$data.state.activeObj = object
-        // if (!this.canvas.getActiveGroup() && this.$data.state.activeObj) this.showPopup()
-        object.set('fill', 'rgba(191, 241, 255, 0.8)')
-        object.set('stroke', 'rgba(255, 238, 0, 1)')
-        if (this.state.previousSelected !== object) {
-          this.resetFillAndStroke({target: this.state.previousSelected})
+        this.canvas.on({
+          'before:selection:cleared': this.resetFillAndStroke,
+          'selection:cleared': this.preserveSelection
+        })
+
+        if (Array.isArray(this.showcaseList) && this.showcaseList.length > 0) {
+          this.renderObjects(this.showcaseList)
         }
         this.state.previousSelected = object
-        let originalShowcaseId = this.state.activeObj.data.original_showcase_id
+        // let originalShowcaseId = this.state.activeObj.data.original_showcase_id
+       
         // iPad web view hook
-        this.$bus.$emit('viewerSelectedShowcase', originalShowcaseId)
+        this.$bus.$emit('viewerSelectedShowcase', this.state.activeObj)
       })
 
       this.canvas.on({
@@ -227,9 +251,16 @@ export default {
     }
   },
   mounted () {
+    this.$bus.$off('initViewer')
+    this.$bus.$off('route.update')
+    this.switchActivePlan()
+
     this.$bus.$on('initViewer', async () => {
       await this.setCurrentPlanById(this.planId)
       this.init()
+    })
+    this.$bus.$on('route.update', () => {
+      this.switchActivePlan()
     })
   }
 }

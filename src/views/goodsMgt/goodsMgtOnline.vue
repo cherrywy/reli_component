@@ -16,11 +16,8 @@
                 </el-form-item>
             </el-form>
         </el-row>
-        <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;">
+        <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;" v-show="planShowCase.length>0">
             <el-card style="margin: 0 auto;position:relative">
-                <!--<div class="canvas" ref="canvas">
-                        <canvas id="stage"></canvas>
-                    </div>-->
                 <Viewer :planId="planId" />
                 <div style="bottom: 0;position: absolute;">
                     <div class="bottom">
@@ -29,18 +26,18 @@
                 </div>
             </el-card>
         </el-row>
-        <el-card class="box-card">
+        <el-card class="box-card" v-if="isCase">
             <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">卡片名称</span>
-                <el-button style="float: right;" type="primary" @click="getOnlineList('', 0, 5)">上架商品</el-button>
+                <span style="line-height: 36px;">{{show_case_type}}-{{show_case_name}}</span>
+                <el-button style="float: right;background: rgb(112, 165, 236)" type="primary" @click="getOnlineList('', 0, 5)">上架商品</el-button>
                 <el-dialog :visible.sync="dialogFormVisible">
                     <el-form>
                         <el-form-item label="">
                             <el-input v-model="goodsName" placeholder="请输入商品名称搜索" icon='search' :on-icon-click="searchGoodsName" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-button type="text" style="float:right" @click="goodsNew()">
-                            <span style="color:#333">找不到商品？去</span>添加</el-button <el-form-item>
-                        <el-table ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
+                            <span style="color:#333">找不到商品？去</span>添加</el-button> 
+                        <el-table ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" style="width: 100%;margin-bottom: 20px;height: 380px;scoll-y: auto;overflow-y: scroll;" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" width="55">
                             </el-table-column>
                             <el-table-column prop='goods_name' label="商品名称">
@@ -51,14 +48,11 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <el-row class="row center">
-                            <el-pagination style="margin: 20px auto;float:right" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total"> </el-pagination>
-                        </el-row>
                         </el-form-item>
                     </el-form>
                     <div style="text-align:center">
     
-                        <el-button type="primary" style="margin:auto 0" @click="submit">保存</el-button>
+                        <el-button type="primary" style="margin:auto 0;background: rgb(112, 165, 236)" @click="submit">保存</el-button>
                     </div>
                 </el-dialog>
             </div>
@@ -66,14 +60,14 @@
                 <el-table-column prop='goods_name' label="商品名称">
                 </el-table-column>
                 <el-table-column prop="" label="商品规格" align="center">
-                     <template scope="scope">
-                                    {{scope.row.spec1_value?scope.row.spec1_value:''}} {{scope.row.spec2_value?","+scope.row.spec2_value:''}}{{scope.row.spec3_value?","+scope.row.spec3_value:''}}
-                                </template>
+                    <template scope="scope">
+                        {{scope.row.spec1_value?scope.row.spec1_value:''}} {{scope.row.spec2_value?","+scope.row.spec2_value:''}}{{scope.row.spec3_value?","+scope.row.spec3_value:''}}
+                    </template>
                 </el-table-column>
     
                 <el-table-column label="操作" align="center">
                     <template scope="scope">
-                        <el-button size="small" type="danger" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
+                        <el-button size="small" style="background:#E0595B;opacity:0.66;color:#000" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -87,7 +81,9 @@ import { requestOnline, requestFindShop, requestFindShopPlan, requestSearchSpec,
 export default {
     data() {
         return {
-            uid: '',
+            isCase:false,
+            show_case_type: '',
+            uid: 0,
             show_case_id: '',
             shop: [],
             shopPlan: [],
@@ -98,11 +94,8 @@ export default {
             onlineShowCaseList: [],
             planShowCaseNumber: 0,
             planShowCase: [],
-            tableData: [],
+            show_case_name:'',
             goodsName: '',
-            currentPage: 1,
-            pageSize: 5,
-            total: 0,
             multipleSelection: [],
             dialogFormVisible: false,
             formLabelWidth: '120px',
@@ -111,12 +104,24 @@ export default {
     components: {
         Viewer
     },
+    beforeRouteUpdate (after, before, next) {
+        this.$bus.$emit('route.update')
+        next()
+    },
     mounted: function () {
         this.uid = localStorage.getItem('uid');
         this.getFindShop()//获取门店
-        this.$bus.$on('viewerSelectedShowcase', scId => {
+        this.$bus.$on('viewerSelectedShowcase', scObj => {
             // 选中了展柜，展柜 id 为 scId
-            this.show_case_id = scId
+            this.isCase=true
+            this.show_case_id = scObj.data.original_showcase_id
+            this.show_case_name=scObj.data.name
+            if (scObj.data.type === 10) {
+                this.show_case_type = '中岛柜'
+            }
+            if (scObj.data.type === 20) {
+                this.show_case_type = '背柜'
+            }
             this.getOnlineShowCaseList()
         })
     },
@@ -136,6 +141,8 @@ export default {
                         type: 'error'
                     });
                 } else {
+                    
+
                     this.onlineShowCaseList = result
 
                 }
@@ -151,7 +158,6 @@ export default {
             }).then(() => {
 
                 let removeParams = { goods_spec_id: goods_spec_id, show_case_id: this.show_case_id };
-                console.log(removeParams);
                 requestGoodsOffline(removeParams).then(data => {
                     let { error_code, result } = data;
                     if (error_code == 0) {
@@ -173,12 +179,18 @@ export default {
             });
         },
         submit() {
-
+        
             const goods_spec_ids = this.multipleSelection.map(v => {
                 return v.id
             }).join()
-            let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: this.show_case_id };
-            console.log(listParams);
+            if(goods_spec_ids.length===0){
+                this.$message({
+                        message: "您还没有选择任何商品",
+                        type: 'warning'
+                    });
+            }else{
+                 let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: this.show_case_id };
+           
             requestGoodsOnline(listParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -187,6 +199,7 @@ export default {
                         type: 'error'
                     });
                 } else {
+                    
                     this.$message({
                         message: "保存成功",
                         type: 'success'
@@ -196,6 +209,8 @@ export default {
 
                 }
             })
+            }
+           
 
         },
         getPlanShowCaseList() {
@@ -221,9 +236,9 @@ export default {
         },
         getOnlineList(key_word, pageNum, limit) {
             this.dialogFormVisible = true;
-            let listParams = { uid: this.uid, page: pageNum, limit: limit };
+            let listParams = { uid: parseInt(this.uid), page: pageNum, limit: 20000 };
             if (key_word) {
-                listParams['key_word'] = key_word
+                listParams['keyword'] = key_word
             }
             requestSearchSpec(listParams).then(data => {
                 let { error_code, result, total_count } = data;
@@ -233,22 +248,19 @@ export default {
                         type: 'error'
                     });
                 } else {
+
                     this.tableOnlineList = result
-                    this.total = total_count;
+
                 }
             })
         },
         searchGoodsName() {
-            this.getOnlineList(this.goodsName, 0, this.pageSize)
+            this.getOnlineList(this.goodsName, 0, 20000)
             this.key_word = ''
-        },
-        handleCurrentChange(val) {
-            this.currentPage = val;
-            this.getOnlineList(this.plansName, this.currentPage, this.pageSize)
         },
         handleSizeChange(val) {
             this.pageSize = val;
-            this.getOnlineList(this.plansName, this.currentPage, this.pageSize)
+            this.getOnlineList(this.goodsName, this.currentPage, this.pageSize)
         },
         getFindShop() {
 
@@ -312,15 +324,16 @@ export default {
     width: 1080px;
     margin: 20px auto;
 }
+
 .container .canvas[data-v-5ae3712d] {
     overflow-x: hidden !important;
 }
+
 .container .canvas .overlay[data-v-5ae3712d] {
 
     top: 100px !important;
 
     height: 20% !important;
-   
 }
 
 .image {
