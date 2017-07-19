@@ -98,3 +98,13 @@
 .el-upload__input {
   display: none !important;
 }
+.el-table__footer-wrapper thead div, .el-table__header-wrapper thead div {
+    background-color: #fff !important;
+    color: #1f2d3d;
+}
+.el-table th {
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: #fff !important;
+    text-align: left;
+}

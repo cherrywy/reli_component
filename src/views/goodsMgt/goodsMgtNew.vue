@@ -1,7 +1,7 @@
  <template>
     <section>
         <el-row :gutter="20">
-            <el-card class="box-card">
+            <el-col >
                 <el-form :label-position="labelPosition" label-width="80px">
                     <el-form-item label="商品类目">
                         <el-select v-model="big_category" filterable allow-create placeholder="大类目" @change="searchHistoryNew(0,big_category)">
@@ -54,7 +54,7 @@
                     </el-form-item>
                 </el-form>
                 <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;background: rgb(112, 165, 236)">提交</el-button>
-            </el-card>
+            </el-col>
         </el-row>
     
     </section>
