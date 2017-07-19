@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div class="canvas" ref="canvas" tabindex="-1" @keyup.67="toggleFreeDraw">
+    <div class="canvas" id="canvasForPaintWrapper" ref="canvas" tabindex="-1" @keyup.67="toggleFreeDraw">
       <canvas id="stage"></canvas>
       <div class="popup">
         <Popup :styles="popup.styles"
@@ -306,6 +306,19 @@ export default {
         this.$data.canvas.deactivateAll().renderAll()
         this.hidePopup()
       }
+    },
+    switchActivePlan () {
+      this.hidePopup()
+      if (this.canvas && this.canvas.dispose) {
+        this.canvas.dispose()
+      }
+      delete this.$data.canvas
+      window.$('.canvas-container').remove()
+      
+      let newCanvasDom = document.createElement('canvas')
+      newCanvasDom.setAttribute('id', 'stageForViewer')
+      window.$('#canvasForViewerWrapper').append(newCanvasDom)
+      this.$data.state.activeObj = null
     },
     renderObjects () {
       // 绘制接口中获取的形状
@@ -608,9 +621,9 @@ export default {
 
     // 画布初始化和事件监听入口
     async init () {
-      console.log('init')
-      console.log('plan', this.$data.plan)
       if (!this.$data.plan) return false
+      this.switchActivePlan()
+      this.hidePopup()
 
       let imageURL = this.$data.plan.image_url
       let image
@@ -624,21 +637,12 @@ export default {
       image.width = image.width * fixedHeight / image.height
       image.height = fixedHeight
 
-      if (this.$data.canvas && this.$data.canvas.dispose) {
-        try {
-          this.$data.canvas.dispose()
-        } catch (err) {
-          //
-        }
-      }
-      this.$data.canvas = null
+      delete this.$data.canvas
       this.$data.canvas = new Canvas('stage', {
         width: image.width,
         height: image.height,
         backgroundImage: imageURL
       })
-
-      console.log(this.$data.canvas)
 
       // 绘图：落笔
       this.$data.canvas.on('mouse:down', event => {
@@ -814,6 +818,7 @@ export default {
     }
   },
   mounted () {
+    this.switchActivePlan()
     this.$nextTick(() => {
       this.init()
     })
