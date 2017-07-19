@@ -83,8 +83,8 @@ let routes = [
                 component: bindDisplayData,
                 name: '素材绑定',
                 children:[
-                  {path:'/bindDisplayData/viewTwoimgs',component:viewTwoimgs,name: '素材绑定',hidden: true},
-                  {path:'/bindDisplayData/viewTwovideo',component:viewTwovideo,name: '素材绑定',hidden: true},
+                  {path:'/bindDisplayData/viewTwoimgs',component:viewTwoimgs,name: '轮播图',hidden: true},
+                  {path:'/bindDisplayData/viewTwovideo',component:viewTwovideo,name: '商品',hidden: true},
                 ]
             },
             { path: '/manageDisplayDevice', component: manageDisplayDevice, name: '广告机管理' },

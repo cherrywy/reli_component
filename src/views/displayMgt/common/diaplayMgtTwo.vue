@@ -1,44 +1,77 @@
 <template>
     <section>
+    <el-row>
             <el-col :span='24'>
                 <span style='line-height:50px;font-size:18px;'>轮播图</span>
             </el-col>
             <el-col :span='24'>
-            <ul v-for='img in img_lists'  style='float:left;list-style:none;'>
-                <li>
-                    <img width='150' height='150' :src="img.pic_url"  @click="delete_bind_img(img)" style='border:1px #999 dashed;margin-right:15px;'>
-                </li>
-            </ul>
-            <p>
-            <el-button style='width:150px;height:150px;border-style:dashed;margin-left:50px;' @click='add_imgs'><i class="el-icon-plus"></i></el-button>
-            </p>
-            <el-dialog  :visible.sync="dialogTableVisible">
-                <template>
-                  <el-table :data="imgLists" style='marign-top:10px;'  @cell-click="handleSelect" @selection-change="imgs_selectionchange">
-                        <el-table-column  width="200" type='selection'></el-table-column>
-                        <el-table-column  prop='pic_url'>
-                             <template scope="scope">
-                                <img width='80' height='80' :src="scope.row.pic_url">
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <div style='width:100%;float:left;margin-bottom:20px;' align='center'>
-                        <el-button @click='add_imgs_lun'>添加</el-button>
-                    </div>
-                </template>
-                
-            </el-dialog>
-           </el-col>
-           <el-col :span='24' style='margin-top:20px;'>
-                 <span style='line-height:50px;font-size:18px;'>显示商品</span>
-           </el-col>
-               
-            <el-col :span='4' :push='20'>
-                  <el-button @click='update_goods' class='updataimg'>上传商品</el-button>
+                <ul v-for='img in img_lists'  style='float:left;list-style:none;'>
+                    <li>
+                        <img width='150' height='150' :src="img.pic_url"  @click="delete_bind_img(img)" style='border:1px #999 dashed;margin-right:15px;'>
+                    </li>
+                </ul>
+                <p>
+                    <el-button style='width:150px;height:150px;border-style:dashed;margin-left:50px;' @click='add_imgs'><i class="el-icon-plus"></i></el-button>
+                </p>
+                <el-dialog  :visible.sync="dialogTableVisible">
+                    <template>
+                    <el-table :data="imgLists" style='marign-top:10px;'  @cell-click="handleSelect" @selection-change="imgs_selectionchange">
+                            <el-table-column  width="200" type='selection'></el-table-column>
+                            <el-table-column  prop='pic_url'>
+                                <template scope="scope">
+                                    <img width='80' height='80' :src="scope.row.pic_url">
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div style='width:100%;float:left;margin-bottom:20px;' align='center'>
+                            <el-button @click='add_imgs_lun'>添加</el-button>
+                        </div>
+                    </template> 
+                </el-dialog>
             </el-col>
-              
-            <el-col :span='24' style='margin-top:20px'>
-               
+
+            <el-col :span='24'>
+                <span style='line-height:50px;font-size:18px;'>显示商品</span>
+                <el-button @click='update_goods' class='updataimg' align='right' style='margin-top:5px'>发布商品</el-button>
+                    
+                    <el-dialog :visible.sync="dialogFormVisible">
+                        <el-form :model="form" align='left'>
+                            <el-form-item  :label-width="formLabelWidth">
+                                <el-input v-model="input" 
+                                    placeholder="请输入商品名称搜索" 
+                                    auto-complete="off" 
+                                    icon='search' class='inp_seach'
+                                    :on-icon-click='search'
+                                    @change='change_Search'
+                                    style='width:200px;'></el-input>
+                            </el-form-item>
+
+                            <el-form-item  :label-width="formLabelWidth" align='right'>
+                                <span>找不到商品？去<el-button type='text' @click='addDisplay'>添加</el-button></span>
+                            </el-form-item>
+
+                            <el-form-item  :label-width="formLabelWidth">
+                                <el-table :data="gridData" style='marign-top:10px;' @cell-click="clickSelect" @selection-change="goods_selectionchange">
+                                        <el-table-column type='selection' label="选择" width="200"></el-table-column>
+                                        <el-table-column prop="name" label="商品名称" ></el-table-column>
+                                </el-table>
+                            </el-form-item>
+
+                        </el-form>
+
+                        <el-form align='right'>
+                            <div class="block">
+                                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5, 10,]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
+                                </el-pagination>
+                            </div>
+                        </el-form>
+
+                        <div slot="footer" class="dialog-footer" align='center'>
+                            <el-button type="primary" @click="save_Goods">发 布</el-button>
+                        </div>
+
+                    </el-dialog>
+             </el-col>
                 <el-table
                     :data="tableData"
                     style="width: 100%;">
@@ -65,39 +98,8 @@
                         </template>
                     </el-table-column>
                 </el-table>
-            </el-col>
-            <el-dialog :visible.sync="dialogFormVisible">
-                <el-form :model="form">
-                    <el-form-item  :label-width="formLabelWidth">
-                        <el-input v-model="input" 
-                            placeholder="请输入商品名称搜索" 
-                            auto-complete="off" 
-                            icon='search' class='inp_seach'
-                            :on-icon-click='search'
-                            style='width:200px;'></el-input>
-                    </el-form-item>
-                    <el-form-item  :label-width="formLabelWidth" align='right'>
-                        <span>找不到商品？去<el-button type='text' @click='addDisplay'>添加</el-button></span>
-                    </el-form-item>
-                    <el-form-item  :label-width="formLabelWidth">
-                        <el-table :data="gridData" style='marign-top:10px;' @cell-click="clickSelect" @selection-change="goods_selectionchange">
-                                <el-table-column type='selection' label="选择" width="200"></el-table-column>
-                                <el-table-column prop="name" label="商品名称" ></el-table-column>
-                        </el-table>
-                    </el-form-item>
-                </el-form>
-                <el-form align='right'>
-                    <div class="block">
-                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5, 10,]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
-                    </el-pagination>
-                    </div>
-                </el-form>
-                <div slot="footer" class="dialog-footer" align='center'>
-                    <el-button type="primary" @click="save_Goods">保 存</el-button>
-                </div>
-            </el-dialog>
-
           
+           </el-row>    
     </section>
 </template>
 <script>
@@ -304,6 +306,14 @@
         search(){
            let name = this.input
            this.gridData = this.gridData.filter(function(v){
+               return new RegExp(`${name}`,'i').test(v.name);
+           })
+        },
+        //搜索框 清楚改变
+        change_Search(){
+            let name = this.input;
+            this.update_goods()
+            this.gridData = this.gridData.filter(function(v){
                return new RegExp(`${name}`,'i').test(v.name);
            })
         },

@@ -40,7 +40,7 @@
     		</el-table>
 		</el-col>
 		<el-col :span='24' align='right'>
-			<el-pagination @size-change="sizeChange" @current-change="currentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5, 10,]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
+			<el-pagination @size-change="sizeChange" @current-change="currentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[10]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
             </el-pagination>
 		</el-col>
 	</el-row>
@@ -66,7 +66,7 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 			},
 			pageinationInfo: {
 				currentPage: 1,
-				pageSize: 5,
+				pageSize: 10,
 				total: 0,
 			},
 			shopId:'',

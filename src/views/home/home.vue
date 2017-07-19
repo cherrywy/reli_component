@@ -11,12 +11,12 @@
 			<h4>{{info.shop}}</h4>
 			<ul  class='imgs'>
 				<li class='li_img' v-for='plan in info.plans'>
-					<img :src="plan.image_url" @click='clickImg(plan.id)' class='imgstyle'>
+					<img :src="plan.image_url" @click='clickImg(plan)' class='imgstyle'>
 				</li>
 			</ul>
 
 			<el-card class='card'>
-				<Viewer :planId="planId" />
+				<Viewer :planId="planId"/>
 				<!-- <img :src="img_url" width='350px' height='300px'> -->
 				<div style="padding: 14px;" align='center'>
 					<el-button type="text" class="button" @click='onlinegoods(info)'>上架商品</el-button>
@@ -39,7 +39,6 @@ export default {
 			skuInfo:'',
 			planId:'',
 			uid:'',
-			planId:'',
 			planName:'',
 		}
 	}, 
@@ -72,7 +71,6 @@ export default {
 					  shopName:v.shop,
 				  }
 			  })
-			   console.log(this.infos)
 			   this.img_url = this.infos.map(val =>{
 					return val.plans[0].image_url
 			 	})
@@ -83,8 +81,6 @@ export default {
 					 return v.plans[0].name
 				})
 				this.planId = this.planId[0]
-				 console.log('planid'+this.planId)
-				  console.log('planname'+this.planName)
 				this.planName = this.planName[0]
 				//获取默认的展柜
 				let info = {
@@ -115,19 +111,20 @@ export default {
 				})
 			})
 		},
-		onlinegoods(info){
-			console.log(info)
+		
+		clickImg(plan){
+			this.planId = parseInt(plan.id)
+			this.planName = plan.name
+			this.$nextTick(() => {
+				this.$bus.$emit('initViewer', {selectable: false})
+			})
+		 },
+		 onlinegoods(info){
 			let shopId = info.shopId
 			let shopName = info.shop
 			const path = '/goodsMgtOnline?shopId='+shopId+'&shopNam='+shopName+'&planId='+this.planId+'&planName='+this.planName
 			this.$router.push({ path: path});
 		},
-		clickImg(id){
-			this.planId = parseInt(id)
-			this.$nextTick(() => {
-				this.$bus.$emit('initViewer', {selectable: false})
-			})
-		 }
 	}
 }
 </script>

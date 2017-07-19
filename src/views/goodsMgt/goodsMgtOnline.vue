@@ -88,6 +88,7 @@ export default {
             shop: [],
             shopPlan: [],
             shopName: '',
+            shopId:'',
             plansName: '',
             planId: 0,
             tableOnlineList: [],
@@ -110,6 +111,15 @@ export default {
     },
     mounted: function () {
         this.uid = localStorage.getItem('uid');
+        if(this.$route.query){
+            console.log(this.$route.query)
+            this.shopId=this.$route.query.shopId
+             this.shopName=this.$route.query.shopNam
+            // console.log(this.shopName)
+            this.planId = this.$route.query.planId
+            this.plansName = this.$route.query.planName
+            this.getPlanShowCaseList()
+        }
         this.getFindShop()//获取门店
         this.$bus.$on('viewerSelectedShowcase', scObj => {
             // 选中了展柜，展柜 id 为 scId
@@ -165,7 +175,7 @@ export default {
                             type: 'success',
                             message: '下架成功!'
                         });
-                        console.log(index);
+                        //console.log(index);
                         this.onlineShowCaseList.splice(index, 1);
                         this.getOnlineShowCaseList();
 
@@ -213,12 +223,20 @@ export default {
            
 
         },
+        
         getPlanShowCaseList() {
-            this.planId = this.shopPlan.filter(v => {
-                return v.value === this.plansName;
-            }).map(v => v.id).pop();
+            let plan_id = '';
+            if(this.$route.query){
+               //this.getFindShopPlan()
+               plan_id = this.$route.query.planId
+            }else{
+                    plan_id = this.shopPlan.filter(v => {
+                         return v.value === this.plansName;
+                      }).map(v => v.id).pop();
 
-            let planListParams = { plan_id: this.planId };
+            } 
+            let planListParams = { plan_id: plan_id };
+            console.log(this.planId)
             requestPlanShowCaseList(planListParams).then(data => {
                 let { error_code, result, total_count } = data;
                 if (error_code !== 0) {
@@ -263,7 +281,7 @@ export default {
             this.getOnlineList(this.goodsName, this.currentPage, this.pageSize)
         },
         getFindShop() {
-
+            
             const shopPlanParams = { uid: this.uid };
             requestFindShop(shopPlanParams).then(data => {
                 let { error_code, result } = data;
@@ -285,9 +303,16 @@ export default {
             })
         },
         getFindShopPlan() {
-            const shop_id = this.shop.filter(v => {
-                return v.value === this.shopName;
-            }).map(v => v.id).pop();
+            let shop_id = '';
+            if (this.shopId){
+                shop_id =this.$route.query.shopId
+                this.plansName = this.$route.query.planName
+            }else {
+                shop_id = this.shop.filter(v => {
+                    return v.value === this.shopName;
+                }).map(v => v.id).pop();
+            }
+
             const shopPlanParams = { uid: this.uid, shop_id: shop_id };
             requestFindShopPlan(shopPlanParams).then(data => {
                 let { error_code, result } = data;

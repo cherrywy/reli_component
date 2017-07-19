@@ -111,9 +111,15 @@ export default {
         },
         handleAvatarSuccess(res, file) {
         //图片上传成功
-         this.btn_show = true
-         //console.log(res)
-        if(res.error_code !== 0){
+         let upimg = {
+                url:res.result.file_download_url
+        }
+        this.fileList.push(upimg)
+        if(this.fileList.length>1){
+            this.fileList.splice(0,1)
+        }else{
+            this.btn_show = true
+            if(res.error_code !== 0){
                 this.$message({
                     message:res.error_msg,
                     type: 'error'
@@ -121,6 +127,8 @@ export default {
             }else{
                 this.imgInfomation.pic_url = res.result.file_download_url
             }
+        }
+         
         },
         bindimgs(){
             //上传图片
