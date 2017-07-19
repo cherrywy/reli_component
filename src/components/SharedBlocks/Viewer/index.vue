@@ -1,17 +1,23 @@
 <template>
-  <div class="canvas" id="canvasForViewerWrapper" ref="canvas">
-    <canvas id="stageForViewer"></canvas>
-    <!-- <div class="popup">
-      <Popup :styles="popup.styles" :activeObject="state.activeObj"></Popup>
-    </div> -->
-    <transition name="fade">
-      <div class="overlay" v-if="ui.initializing">
-        <div class="indicator">
-          <p><i class="fa fa-spinner fa-spin"></i></p>
-          <p>载入中...</p>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="canvas" id="canvasForViewerWrapper" ref="canvas">
+          <canvas id="stageForViewer"></canvas>
+          <!-- <div class="popup">
+            <Popup :styles="popup.styles" :activeObject="state.activeObj"></Popup>
+          </div> -->
+          <transition name="fade">
+            <div class="overlay" v-if="ui.initializing">
+              <div class="indicator">
+                <p><i class="fa fa-spinner fa-spin"></i></p>
+                <p>载入中...</p>
+              </div>
+            </div>
+          </transition>
         </div>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
