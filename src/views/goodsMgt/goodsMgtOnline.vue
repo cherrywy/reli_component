@@ -37,7 +37,7 @@
                         </el-form-item>
                         <el-button type="text" style="float:right" @click="goodsNew()">
                             <span style="color:#333">找不到商品？去</span>添加</el-button> 
-                        <el-table ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" style="width: 100%;    height: 400px;scoll-y: auto;overflow-y: scroll;" @selection-change="handleSelectionChange">
+                        <el-table ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" style="width: 100%;margin-bottom: 20px;height: 380px;scoll-y: auto;overflow-y: scroll;" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" width="55">
                             </el-table-column>
                             <el-table-column prop='goods_name' label="商品名称">

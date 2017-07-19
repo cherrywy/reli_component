@@ -14,7 +14,7 @@
             </p>
             <el-dialog  :visible.sync="dialogTableVisible">
                 <template>
-                  <el-table :data="imgLists" style='marign-top:10px;'  @cell-click="handleSelect">
+                  <el-table :data="imgLists" style='marign-top:10px;'  @cell-click="handleSelect" @selection-change="imgs_selectionchange">
                         <el-table-column  width="200" type='selection'></el-table-column>
                         <el-table-column  prop='pic_url'>
                              <template scope="scope">
@@ -80,7 +80,7 @@
                         <span>找不到商品？去<el-button type='text' @click='addDisplay'>添加</el-button></span>
                     </el-form-item>
                     <el-form-item  :label-width="formLabelWidth">
-                        <el-table :data="gridData" style='marign-top:10px;' @cell-click="clickSelect">
+                        <el-table :data="gridData" style='marign-top:10px;' @cell-click="clickSelect" @selection-change="goods_selectionchange">
                                 <el-table-column type='selection' label="选择" width="200"></el-table-column>
                                 <el-table-column prop="name" label="商品名称" ></el-table-column>
                         </el-table>
@@ -208,14 +208,17 @@
                 this.gridData = this.gridData.slice(startIndex,endIndex)
           })
       },
-     clickSelect(row){
-            //this.good_name = row.name
-            console.log
-            let newid= row.goods_id
-            if(this.goodId.indexOf(newid) == -1){
-                this.goodId.push(newid)
-            }
-     },
+    goods_selectionchange(val){
+        this.goodId = val.map(data=>{
+           return data.goods_id
+        })
+        //console.log(this.goodId)
+    },
+    imgs_selectionchange(val){
+        this.ids = val.map(data =>{
+            return data.banner_ids
+        })
+    },
     save_Goods(){
         this.dialogFormVisible = false;
         let val = {
@@ -263,16 +266,16 @@
                 })
             })
       },
-      handleSelect(row){    
-          //选择图片
-         if(this.ids.indexOf(row.banner_ids) == -1){
-             this.ids.push(row.banner_ids)
-         }
-         this.add_info = {
-             pic_url:row.pic_url,
-             banner_ids:row.banner_ids
-         }
-      },
+    //   handleSelect(row){    
+    //       //选择图片
+    //      if(this.ids.indexOf(row.banner_ids) == -1){
+    //          this.ids.push(row.banner_ids)
+    //      }
+    //      this.add_info = {
+    //          pic_url:row.pic_url,
+    //          banner_ids:row.banner_ids
+    //      }
+    //   },
       add_imgs_lun(){
          //点击添加 绑定轮播图
          this.dialogTableVisible =false

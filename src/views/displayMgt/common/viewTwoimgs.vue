@@ -30,16 +30,16 @@
             </el-col>
             <el-col :span='24' style='margin-top:-10px'>
                     <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
-            <el-table-column label="商品图片" width="120" align="center">
+            <el-table-column label="商品图片" width="200" align="center">
                 <template scope="scope">
-                    <img width='50' height='50' :src="scope.row.pic_url">
+                    <img width='60' height='60' :src="scope.row.pic_url">
                 </template>
     
             </el-table-column>
-            <el-table-column prop="jump_url" label="url地址" align="center">
+            <el-table-column prop="jump_url" label="url地址" align="center" >
             </el-table-column>
         
-            <el-table-column label="操作" align="center" width="150">
+            <el-table-column label="操作" align="center" width="200">
                 <template scope="scope">
                     <el-button class='btn_red_color' size='small' @click="deleteList(scope.$index, scope.row.banner_id)">删除</el-button>
                 </template>

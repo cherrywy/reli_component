@@ -19,7 +19,7 @@
 				<Viewer :planId="planId" />
 				<!-- <img :src="img_url" width='350px' height='300px'> -->
 				<div style="padding: 14px;" align='center'>
-					<el-button type="text" class="button" @click='onlinegoods'>上传商品</el-button>
+					<el-button type="text" class="button" @click='onlinegoods'>上架商品</el-button>
 				</div>
 			</el-card>
 			<span style='font-size:15px;line-height:80px;'>地址：{{info.street}}</span>
@@ -107,7 +107,7 @@ export default {
 			})
 		},
 		onlinegoods(){
-			alert('跳到上传商品页')
+			 this.$router.push({ path: '/goodsMgtOnline' });
 		},
 		clickImg(id){
 			this.planId = parseInt(id)
