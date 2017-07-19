@@ -18,7 +18,7 @@
     
         <el-col :span="24" style="margin-bottom:20px">
     
-            <el-button type="primary" style="float:right;background:#70a5ec" @click="goodsNew">添加商品</el-button>
+            <el-button type="primary" style="float:right;background:#70a5ec;border: none;" @click="goodsNew">添加商品</el-button>
     
         </el-col>
         <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
@@ -46,7 +46,7 @@
             <el-table-column label="操作" align="center" width="150">
                 <template scope="scope">
                     <el-button size="small" type="info" style="background:#70a5ec" @click="handleEdit(scope.row.goods_id)">编辑</el-button>
-                    <el-button size="small" style="background:#E0595B;opacity:0.66;color:#000" @click="handleDelete(scope.$index, scope.row.goods_id)">删除</el-button>
+                    <el-button size="small" type="info" style="background:#E0595B;opacity:0.66;" @click="handleDelete(scope.$index, scope.row.goods_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
