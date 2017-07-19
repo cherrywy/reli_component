@@ -11,12 +11,11 @@
 			<h4>{{info.shop}}</h4>
 			<ul  class='imgs'>
 				<li class='li_img' v-for='plan in info.plans'>
-					<img :src="plan.image_url" @click='clickImg(plan)' class='imgstyle'>
+					<img :src="plan.image_url" @click='clickImg(plan.id)' class='imgstyle'>
 				</li>
 			</ul>
 
 			<el-card class='card'>
-				<img :src="img_url" width='350px' height='300px'>
 				<Viewer :planId="planId" />
 				<!-- <img :src="img_url" width='350px' height='300px'> -->
 				<div style="padding: 14px;" align='center'>
