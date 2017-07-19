@@ -2,8 +2,8 @@
 	<section>
 		<el-row>
 			<el-col :span ='24' style='margin-top:20px;'>
-				<el-button class='device' @click='deviceStyle("displayViewOne")'>广告机1</el-button>
-				<el-button class='device' @click='deviceStyle("displayViewTwo")'>广告机2</el-button>	
+				<!--<el-button class='device' @click='deviceStyle("displayViewOne")'>广告机1</el-button>-->
+				<div class='device' @click='deviceStyle("displayViewTwo")'></div>
 			</el-col>
 		</el-row>
 		<components :is='currentView'></components>
@@ -13,15 +13,15 @@
 import displayViewOne from './common/displayViewOne.vue'
 import displayViewTwo from './common/displayViewTwo.vue'
 
-import { getImgsList } from '../../api/display';
-import { updatavideo } from '../../api/display';
+import { getImgsList,updatavideo,allPic_imgs } from '../../api/display';
 export default {
     data() {
         return {
           activeName2: 'first',
 		  options: [{value: 5,label: 5}, {value: 10,label: 10}],
 		  value: '',
-		  currentView: 'displayViewOne'
+		  currentView: 'displayViewTwo',
+		  lists:null
 		}
     },
 	props:{
@@ -41,11 +41,19 @@ export default {
 	methods:{
 		deviceStyle:function (str) {
 			this.currentView = str
-			getImgsList('1209811640320002').then(data => {
-				console.log(data)
+			let id = {
+				uid:'1209811640320002'
+			}
+			getImgsList(id).then(data => {
+				//console.log(data)
 			})
-			updatavideo('1209811640320002').then(data => {
-				console.log(data)
+			updatavideo(id).then(data => {
+				//console.log(data)
+			})
+			allPic_imgs(id).then(data => {
+				this.lists = data.result
+				let imgList =this.lists
+				//console.log(this.lists)
 			})
 		}
 	}
@@ -56,6 +64,13 @@ export default {
 		width:150px;
 		height:200px;
 		margin-right:20px;
+		background:url('../../../static/twoad.jpeg') no-repeat;
+		background-size:100% 100%;
+	}
+	.device:active{
+		border:1px blue solid;
+		width:150px;
+		height:200px;
 	}
 	.div{
 		border:1px red solid;
