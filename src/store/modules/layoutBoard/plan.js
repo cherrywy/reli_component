@@ -66,7 +66,7 @@ const actions = {
     let params = _.merge(value, {
       name: value.name,
       image_url: value.image_url,
-      shop_id: ctx.rootState.lbShop.inputShopId,
+      shop_id: ctx.rootState.lbShop.selectedShopId,
       uid: parseInt(ctx.rootState.lbShop.inputUid)
     })
     let result = await api.request('/a/plan/new.json', params)
