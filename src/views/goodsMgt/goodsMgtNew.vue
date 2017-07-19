@@ -8,11 +8,11 @@
                             <el-option v-for="item in bigcategory" :key="item.id" :label="item.name" :value="item.value">
                             </el-option>
                         </el-select>
-                         <el-select v-model="small_category" filterable allow-create placeholder="小类目"@change="searchHistoryNew(1,small_category)">
+                        <el-select v-model="small_category" filterable allow-create placeholder="小类目" @change="searchHistoryNew(1,small_category)">
                             <el-option v-for="item in smallcategory" :key="item.id" :label="item.name" :value="item.value">
                             </el-option>
                         </el-select>
-                        
+    
                     </el-form-item>
                     <el-form-item label="商品品牌">
                         <el-select v-model="brand_name" @change="getBrandId(brand_name)" filterable allow-create placeholder="请选择品牌">
@@ -53,19 +53,19 @@
                         </div>
                     </el-form-item>
                 </el-form>
-                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;">提交</el-button>
+                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;background: rgb(112, 165, 236)">提交</el-button>
             </el-card>
         </el-row>
     
     </section>
 </template>
  <script>
-import { requestHistoryNew,requestSearchHistory, requestNew, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
+import { requestHistoryNew, requestSearchHistory, requestNew, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
 import env from '../../env';
 export default {
     data() {
         return {
-            action:`${env.apiServer}/util/file/upload.json`,
+            action: `${env.apiServer}/util/file/upload.json`,
             uid: '',
             head_office_id: '',
             labelPosition: 'top',
@@ -98,7 +98,7 @@ export default {
             this.specs.splice(index, 1);
         },
         getSkuVulue(name) {
-          this.searchHistoryNew(2,name)
+            this.searchHistoryNew(2, name)
             this.loadAll(3, name);
         },
         addSku() {
@@ -135,7 +135,7 @@ export default {
             this.batch = this.getBatchParam(this.specs)
             var newParams = {
                 uid: this.uid,
-                batch:this.batch,
+                batch: this.batch,
                 big_category: this.big_category,
                 brand_id: brand_id,
                 name: this.name,
@@ -188,8 +188,18 @@ export default {
                 }
             })
         },
-        searchHistoryNew(type,key_word,parent_key_word){
-           let historyNewParams = { uid: this.uid, type: type, key_word: key_word ,parent_key_word:parent_key_word};
+        searchHistoryNew(type, key_word, parent_key_word) {
+            if (type === 3) {
+                if (Array.isArray(key_word)) {
+                    if (key_word.length > 0) {
+                        key_word = key_word[key_word.length - 1];
+                    }
+
+
+                }
+            }
+            let historyNewParams = { uid: this.uid, type: type, key_word: key_word, parent_key_word: parent_key_word };
+
             requestHistoryNew(historyNewParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -198,7 +208,7 @@ export default {
                         type: 'error'
                     });
                 } else {
-                   
+
 
                 }
             })

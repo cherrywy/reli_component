@@ -93,7 +93,7 @@
     position:absolute;
     top:0px;
     left:0px;
-    background:url(../../static/bg.png) no-repeat;
+    background:url(../../static/bg.jpg) no-repeat;
     background-size:100% 100%;
   }
   .login-container {

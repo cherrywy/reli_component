@@ -11,6 +11,9 @@ import goodsMgtDataImport from './views/goodsMgt/goodsMgtDataImport.vue'
 
 import layoutManage from './components/View/layoutBoardView.vue'
 import bindDisplayData from './views/displayMgt/bindDisplayData.vue'
+import viewTwoimgs from './views/displayMgt/common/viewTwoimgs.vue'
+import viewTwovideo from './views/displayMgt/common/viewTwovideo.vue'
+
 import bindList from './views/displayMgt/bindList.vue'
 import manageDisplayDevice from './views/displayMgt/manageDisplayDevice.vue'
 import editDevice from './views/displayMgt/editDevice.vue'
@@ -35,6 +38,7 @@ let routes = [
         component: Home,
         name: '首页',
         iconCls: '/static/home_click.png',
+        iconCls0: '/static/home.png',
         children: [
             { path: '/', component: home, name: '首页',hidden:true }  
             
@@ -44,6 +48,7 @@ let routes = [
         path: '/',
         component: Home,
         iconCls: '/static/md_click.png',
+         iconCls1: '/static/md.png',
         name: '门店管理',
         children: [
             {
@@ -57,6 +62,7 @@ let routes = [
         path: '/',
         component: Home,
         iconCls: '/static/sp_click.png',
+        iconCls2: '/static/sp.png',
         name: '商品管理',
         children: [
             { path: '/goodsMgtList', component: goodsMgtList, name: '商品管理' },
@@ -70,9 +76,18 @@ let routes = [
         path: '/',
         component: Home,
         iconCls: '/static/ad_click.png',
+        iconCls3: '/static/ad.png',
         name: '广告管理',
         children: [
-            { path: '/bindDisplayData', component: bindDisplayData, name: '素材绑定' },
+            { 
+                path: '/bindDisplayData/viewTwoimgs', 
+                component: bindDisplayData,
+                name: '素材绑定',
+                children:[
+                  {path:'/bindDisplayData/viewTwoimgs',component:viewTwoimgs,name: '素材绑定',hidden: true},
+                  {path:'/bindDisplayData/viewTwovideo',component:viewTwovideo,name: '素材绑定',hidden: true},
+                ]
+            },
             { path: '/manageDisplayDevice', component: manageDisplayDevice, name: '广告机管理' },
             { path: '/editDevice', component: editDevice, name: '查看编辑广告机',hidden:true },
             { path: '/bindList', component: bindList, name: '素材绑定',hidden:true },

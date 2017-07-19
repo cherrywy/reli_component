@@ -1,11 +1,8 @@
 <template>
     <section>
          <el-row>
-            <el-col :span ='24' style='margin-top:20px;'>
-
-                    <el-col :span='24' align='right'>
-                        <el-button type="primary" @click="addImg">上传图片</el-button>
-                    </el-col>
+            <el-col :span ='24' style='margin-top:20px;'>      
+                    <el-button type="primary" class='updataimg' @click="addImg">上传图片</el-button> 
                     <el-col :span='24'>
                         <el-dialog  :visible.sync="dialogFormVisible" >
                             <el-form :model="imgInfomation">
@@ -18,7 +15,7 @@
                                         :max='1'
                                         :file-list="fileList"
                                         :on-success='handleAvatarSuccess'>
-                                        <el-button size="small" type="primary">选择文件</el-button>
+                                        <el-button size="small" type="primary" style='margin-top:8px;' class='updataimg'>选择文件</el-button>
                                     </el-upload>                       
                                 </el-form-item>
                                 <el-form-item label="跳转地址：" :label-width="formLabelWidth" align='left'>
@@ -26,12 +23,12 @@
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer" align='center'>
-                                <el-button type="primary" @click="bindimgs">绑 定</el-button>
+                                <el-button type="primary" @click="bindimgs" class='updataimg'>绑 定</el-button>
                             </div>  
                         </el-dialog>
                     </el-col>   
             </el-col>
-            <el-col :span='24' style='margin-top:20px'>
+            <el-col :span='24' style='margin-top:-10px'>
                     <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
             <el-table-column label="商品图片" width="120" align="center">
                 <template scope="scope">
@@ -44,7 +41,7 @@
         
             <el-table-column label="操作" align="center" width="150">
                 <template scope="scope">
-                    <el-button @click="deleteList(scope.$index, scope.row.banner_id)">删除</el-button>
+                    <el-button class='btn_red_color' size='small' @click="deleteList(scope.$index, scope.row.banner_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -85,7 +82,7 @@ export default {
         imgInfomation:{
             jump_url:'',
             pic_url:'',
-            uid:'1209811640320002'
+            uid:''
         },
         tableData:[{
             pic_url:'',
@@ -99,9 +96,11 @@ export default {
             pageSize: 5,
             total: 0,
         },
+        uid:'',
       };
     },
     mounted(){
+        this.uid = localStorage.getItem('uid');
         this.getImgsList()
     },
     methods:{
@@ -126,15 +125,15 @@ export default {
         bindimgs(){
             //上传图片
             this.dialogFormVisible = false
-            this.imgInfomation.uid = 1209811640320002
+            this.imgInfomation.uid = this.uid
             updataimgs(this.imgInfomation).then(data=>{
                 let newImg = {
                     pic_url:this.imgInfomation.pic_url,
                     jump_url:this.imgInfomation.jump_url,
                     id:data.result.id
                 }
-                this.tableData.unshift(newImg)
-                this.new_list = this.tableData
+               // this.tableData.unshift(newImg)
+              //  this.new_list = this.tableData
                 this.imgInfomation.pic_url = ''
                 this.getImgsList()
             })
@@ -143,7 +142,7 @@ export default {
         getImgsList(){
             //加载轮播图信息
             let id = {
-				uid:'1209811640320002',
+				uid:this.uid,
                 page:this.pageinationInfo.currentPage,
                 limit:this.pageinationInfo.pageSize
 			}
@@ -183,16 +182,44 @@ export default {
          
          handleCurrentChange(currentPage) {
              //当前页变动时候触发的事件
-            console.log(currentPage)
             this.pageinationInfo.currentPage = currentPage;
            this.getImgsList()
         },
          handleSizeChange(size) {
             //pageSize 改变时会触发
-            console.log(size)
             this.pageinationInfo.pageSize = size;
             this.getImgsList()
         },
 	}
 };
 </script>
+<style>
+    .updataimg{
+        margin-top:-55px;
+        float:right;
+        background-color:#70a5ec;
+        outline:none;
+        border:none;
+    }
+    .updataimg:hover{
+        margin-top:-55px;
+        float:right;
+        background-color:#70a5ec;
+        outline:none;
+        border:none;
+    }
+    .btn_red_color{
+        background:#E0595B;
+        opacity:0.66;
+        outline:none;
+        color:black;
+        border:none;
+    }
+    .btn_red_color:hover{
+        background:#E0595B;
+        opacity:0.66;
+        border:none;
+        outline:none;
+        color:black;
+    }
+</style>

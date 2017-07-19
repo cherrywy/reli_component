@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<el-row>
-			<el-col :span ='24' style='margin-top:20px;'>
+			<el-col :span ='24' style='margin-top:20px;' align='center'>
 				<!--<el-button class='device' @click='deviceStyle("displayViewOne")'>广告机1</el-button>-->
 				<div class='device' @click='deviceStyle("displayViewTwo")'></div>
 			</el-col>
@@ -21,7 +21,8 @@ export default {
 		  options: [{value: 5,label: 5}, {value: 10,label: 10}],
 		  value: '',
 		  currentView: 'displayViewTwo',
-		  lists:null
+		  lists:null,
+		  uid:''
 		}
     },
 	props:{
@@ -38,11 +39,14 @@ export default {
 		displayViewOne,
 		displayViewTwo
 	},
+	mounted() {
+        this.uid = localStorage.getItem('uid');
+    },
 	methods:{
 		deviceStyle:function (str) {
 			this.currentView = str
 			let id = {
-				uid:'1209811640320002'
+				uid:this.uid
 			}
 			getImgsList(id).then(data => {
 				//console.log(data)
@@ -63,7 +67,6 @@ export default {
 	.device{
 		width:150px;
 		height:200px;
-		margin-right:20px;
 		background:url('../../../static/twoad.jpeg') no-repeat;
 		background-size:100% 100%;
 	}

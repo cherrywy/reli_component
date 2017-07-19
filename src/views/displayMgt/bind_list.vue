@@ -155,7 +155,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
                price:'',
                propaganda:'',
                propaganda_pic:'',
-               uid:'1209811640320002',
+               uid:'',
                video_url:'',
         },
         goodId:'',
@@ -163,16 +163,18 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
         video_upload_params:{type:'video'},
         good_name:'',
         selectAry:[],
+        uid:'',
       };
     },
     mounted() {
+        this.uid = localStorage.getItem('uid');
         this.getGoodsList();
     },
 	methods:{
         getGoodsList(){
             const goods_id = this.$route.query.goods_id
             let uid ={
-                 uid:'1209811640320002'
+                 uid:this.uid
             }
             updatavideo(uid).then(data => {
                 //更新绑定素材的时候获取商品列表
@@ -244,7 +246,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
                price:info.price_goods_value,
                propaganda:info.propaganda_intro_goods_value,
                propaganda_pic:'',
-               uid:'1209811640320002',
+               uid:this.uid,
                video_url:this.videoList,
            }
            changeDiaplay(this.saveInfomations).then(data=>{
@@ -258,7 +260,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
         changeGoods(){
             this.dialogFormVisible = true
             let id = {
-               uid:'1209811640320002' 
+               uid:this.uid 
             }
             changeGoodsList(id).then(data => {
                 this.arr = data.result.list.map(v=>{
@@ -289,7 +291,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
             }   
         },
         search(){
-            alert(1)
+            //alert(1)
            let name = this.searchVal
            this.arr = this.arr.filter(function(v){
                return new RegExp(`${name}`,'i').test(v.name);

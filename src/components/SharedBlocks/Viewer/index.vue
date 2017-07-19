@@ -237,6 +237,16 @@ export default {
         if (Array.isArray(this.showcaseList) && this.showcaseList.length > 0) {
           this.renderObjects(this.showcaseList)
         }
+        this.state.previousSelected = object
+        // let originalShowcaseId = this.state.activeObj.data.original_showcase_id
+       
+        // iPad web view hook
+        this.$bus.$emit('viewerSelectedShowcase', this.state.activeObj)
+      })
+
+      this.canvas.on({
+        'before:selection:cleared': this.resetFillAndStroke,
+        'selection:cleared': this.preserveSelection
       })
     }
   },
