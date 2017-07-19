@@ -26,7 +26,7 @@
                 </div>
             </el-card>
         </el-row>
-        <el-card class="box-card" v-if="isCase">
+        <el-card class="box-card" v-show="isCase">
             <div slot="header" class="clearfix">
                 <span style="line-height: 36px;">{{show_case_type}}-{{show_case_name}}</span>
                 <el-button style="float: right;background: rgb(112, 165, 236);border: none;" type="primary" @click="getOnlineList('', 0, 5)">上架商品</el-button>
@@ -117,9 +117,18 @@ export default {
         // }
         this.uid = localStorage.getItem('uid');
         this.getFindShop()//获取门店
+        this.$bus.$off('viewerSelectedShowcase')
         this.$bus.$on('viewerSelectedShowcase', scObj => {
             // 选中了展柜，展柜 id 为 scId
+            // 由于 Viewer 组件的特殊逻辑“取消选择展柜时保留选中状态”，导致
+            // 切换平面图时，自动发生的“取消选择”事件再次出发选中事件，
+            // 引起一次多余的 viewerSelectedShowcase 事件。解决方式：
+            // 因为切换平面图后，本组件的 planId 已与先前不同，所以多余的
+            // 事件参数传来的 scObj 的 plan_id 和现在不等，判断这个值
+            // 即可判定是否为多余的一次选中事件，中止执行。
+            if (scObj.data.plan_id !== this.planId) return false
             this.isCase=true
+            
             this.show_case_id = scObj.data.original_showcase_id
             this.show_case_name=scObj.data.name
             if (scObj.data.type === 10) {
@@ -209,6 +218,9 @@ export default {
 
         },
         getPlanShowCaseList() {
+            this.isCase=false
+            console.log(this.isCase);
+            
             this.planId = this.shopPlan.filter(v => {
                 return v.value === this.plansName;
             }).map(v => v.id).pop();
@@ -222,7 +234,6 @@ export default {
                         type: 'error'
                     });
                 } else {
-
                     this.planShowCase = result
                     this.planShowCaseNumber = total_count
                     this.$bus.$emit('initViewer')
