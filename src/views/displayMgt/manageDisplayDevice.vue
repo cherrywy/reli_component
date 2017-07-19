@@ -70,9 +70,11 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 				total: 0,
 			},
 			shopId:'',
+			uid:''
         }
       },
 	mounted(){
+		this.uid = localStorage.getItem('uid');
         this.getFocusList()
     },
 		computed:{
@@ -99,7 +101,7 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 		},
 		getFocusList(){//加载页面时候加载门店		
 			let uid = {
-				uid:'1209811640320002'
+				uid:this.uid
 			}
 			getShop(uid).then(data =>{
 				data.result.map(v =>{
@@ -147,7 +149,40 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 			})
         },
 	    handleIconClick(input2){
-			 this.getFocusList();
+			 //this.getFocusList();
+			 let name = this.input2
+				let param ={}
+				if(name){
+				   param = {
+						name:this.input2,
+						shop_id:this.shopId+'',
+						//page:this.pageinationInfo.currentPage,
+						//limit:this.pageinationInfo.pageSize,
+					}
+				}else{
+					param = {
+						shop_id:this.shopId+'',
+						//page:this.pageinationInfo.currentPage,
+						//limit:this.pageinationInfo.pageSize,
+					}
+				}
+				search_goods(param).then(data=>{ 
+					this.pageinationInfo.total = data.total_count
+					let time = Date.parse(new Date())
+					this.tableData = data.result.map( v=>{
+						return{
+							name:v.data.name,
+							shop:v.data.shop_name || '无门店信息',
+							state:(time - v.data.heartbeat_time >= 1800)?'不正常':'正常',
+							id:v.id
+						}
+					})
+					this.tableData.map(ast => {
+						if(this.options.indexOf(ast.shop) == -1){
+							this.options.push(ast.shop)
+						}
+					})
+				})
 		},
 		iconClick(){
 			this.getFocusList();

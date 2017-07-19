@@ -20,7 +20,8 @@ import {carouselImgs} from '../../api/display'
         return {
 			dialogImageUrl: '',
        		dialogVisible: false,
-			currentView: 'diaplayMgeTwo'
+			currentView: 'diaplayMgeTwo',
+			uid:''
 		}
     },
 	props:{
@@ -33,6 +34,9 @@ import {carouselImgs} from '../../api/display'
 		diaplayMgeOne,
 		diaplayMgeTwo
 	},
+	mounted() {
+        this.uid = localStorage.getItem('uid');
+    },
 	methods:{
 		handleRemove(file, fileList) {
           
@@ -43,7 +47,7 @@ import {carouselImgs} from '../../api/display'
 		},
 		switchDiaplay:function(vx){
 			this.currentView = vx
-			let par = {uid:'1209811640320002'}
+			let par = {uid:this.uid}
 			carouselImgs(par).then(data => {
 				console.log(data)
 			})

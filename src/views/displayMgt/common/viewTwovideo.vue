@@ -60,10 +60,13 @@ export default {
             pageSize: 5,
             total: 0,
          },
-         input:''
+         input:'',
+         uid:'',
+         state:'viewTwovideo'
         }
     },
-	mounted(){
+	mounted:function(){
+        this.uid = localStorage.getItem('uid');
         this.getVideoList()
 	},
     computed:{
@@ -85,7 +88,7 @@ export default {
         getVideoList(){
             //加载视频信息
             let id = {
-               uid:'1209811640320002' 
+               uid:this.uid
             }
             updatavideo(id).then(data=>{  
                 this.pageinationInfo.total = data.result.video_list.length
@@ -120,7 +123,7 @@ export default {
                 goods_id = this.tableData[index].id
                 let banId = {
                    goods_id:goods_id,
-                   uid:'1209811640320002'
+                   uid:this.uid
                 }
                 deleteBindGoods(banId).then(data => {
                     this.tableData.splice(this.inx,1)

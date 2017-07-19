@@ -2,7 +2,6 @@
     <section>
          <el-row>
             <el-col :span ='24' style='margin-top:20px;'>
-
                     <el-col :span='24' align='right'>
                         <el-button type="primary" @click="addImg">上传图片</el-button>
                     </el-col>
@@ -85,7 +84,7 @@ export default {
         imgInfomation:{
             jump_url:'',
             pic_url:'',
-            uid:'1209811640320002'
+            uid:''
         },
         tableData:[{
             pic_url:'',
@@ -99,9 +98,11 @@ export default {
             pageSize: 5,
             total: 0,
         },
+        uid:'',
       };
     },
     mounted(){
+        this.uid = localStorage.getItem('uid');
         this.getImgsList()
     },
     methods:{
@@ -126,15 +127,15 @@ export default {
         bindimgs(){
             //上传图片
             this.dialogFormVisible = false
-            this.imgInfomation.uid = 1209811640320002
+            this.imgInfomation.uid = this.uid
             updataimgs(this.imgInfomation).then(data=>{
                 let newImg = {
                     pic_url:this.imgInfomation.pic_url,
                     jump_url:this.imgInfomation.jump_url,
                     id:data.result.id
                 }
-                this.tableData.unshift(newImg)
-                this.new_list = this.tableData
+               // this.tableData.unshift(newImg)
+              //  this.new_list = this.tableData
                 this.imgInfomation.pic_url = ''
                 this.getImgsList()
             })
@@ -143,7 +144,7 @@ export default {
         getImgsList(){
             //加载轮播图信息
             let id = {
-				uid:'1209811640320002',
+				uid:this.uid,
                 page:this.pageinationInfo.currentPage,
                 limit:this.pageinationInfo.pageSize
 			}
@@ -183,13 +184,11 @@ export default {
          
          handleCurrentChange(currentPage) {
              //当前页变动时候触发的事件
-            console.log(currentPage)
             this.pageinationInfo.currentPage = currentPage;
            this.getImgsList()
         },
          handleSizeChange(size) {
             //pageSize 改变时会触发
-            console.log(size)
             this.pageinationInfo.pageSize = size;
             this.getImgsList()
         },

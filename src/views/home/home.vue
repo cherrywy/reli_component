@@ -35,16 +35,18 @@ export default {
 			img_url:'',
 			skuInfo:'',
 			skuId:'',
+			uid:''
 		}
 	}, 
 	mounted() {
+		 this.uid = localStorage.getItem('uid');
         this.get_list();
 		//this.sku_list();
     },
 	methods:{
 		get_list(){
 			let uid = {
-				uid:'1209811640320002'
+				uid:this.uid
 			}
 			shop_imgs(uid).then(data => {
 			  this.total_count = data.total_count

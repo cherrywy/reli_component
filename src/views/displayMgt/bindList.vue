@@ -163,7 +163,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                price:'',
                propaganda:'',
                propaganda_pic:'',
-               uid:'1209811640320002',
+               uid:'',
                video_url:'',
         },
         goodId:'',
@@ -177,10 +177,14 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
          upload_video:{
              type:'video',
              with_suffix:1
-         }
+         },
+         uid:'',
+         head_office_id:''
       };
     },
     mounted() {
+        this.uid = localStorage.getItem('uid');
+        this.head_office_id = localStorage.getItem('head_office_id');
         this.getGoodsList();
     },
 	methods:{
@@ -188,7 +192,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
             const goods_id = this.$route.query.goods_id
             let inf ={
                  goods_id:this.$route.query.goods_id,
-                 head_office_id:'1272126733659370'
+                 head_office_id:this.head_office_id
             }
             find_one_goods(inf).then(data => {
                 //更新绑定素材的时候获取商品列表
@@ -199,10 +203,12 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 if(img.url){
                     this.fileList.push(img)
                 }
-                let video = {
-                    url:val.vedio_url[0].data.url
+                if(val.vedio_url[0].data.url !== ''){
+                   let video = {
+                        url:val.vedio_url[0].data.url
+                    } 
+                    this.videoList.push(video)
                 }
-                this.videoList.push(video)
                 this.seleValue = val.tag[0].data.goods_value
                 this.form = {
                      goods_name:val.info[0].data.name,
@@ -214,7 +220,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 
             })
             let info = {
-                uid:'1209811640320002',
+                uid:this.uid,
                 type:4,
                 key_word:this.tag_goods_value
             }
@@ -264,32 +270,32 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
            console.log(this.fileList[0])
            this.saveInfomations = {
                goods_url:this.fileList[0]?this.fileList[0].url:'',
-               details_intro:info.propaganda_intro,
+               details_intro:info.details_intro,
                details_tag:this.seleValue,
                goods_id:this.$route.query.goods_id || this.goodId,
                goods_tag:this.seleValue,
                goods_tag_url:'',
                jump_url:info.tag_url,
                price:info.price_goods_value,
-               propaganda:info.details_intro,
+               propaganda:info.propaganda_intro,
                propaganda_pic:'',
-               uid:'1209811640320002',
+               uid:this.uid,
                video_url:this.videoList[0]?this.videoList[0].url:'',
            }
-           //console.log(this.saveInfomations)
            changeDiaplay(this.saveInfomations).then(data=>{
-               this.$router.push({ path: '/bindDisplayData' });
                this.$message({
                     message: "上传成功",
                     type: 'success'
-                });
+                }).then(
+                   this.$router.push({path:'/bindDisplayData/viewTwovideo'})
+                )
            })
-           this.$route.go(-1)
+            
         },
         changeGoods(){
             this.dialogFormVisible = true
             let id = {
-               uid:'1209811640320002'
+               uid:this.uid
             }
             changeGoodsList(id).then(data => {
                 let pageSize = this.pageinationInfo.pageSize //每页显示5条
@@ -356,7 +362,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
         },
         remoteMethod(){
             let inf = {
-                uid:'1209811640320002',
+                uid:this.uid,
                 type:4,
                 key_word:this.seleValue
             }

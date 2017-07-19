@@ -11,6 +11,9 @@ import goodsMgtDataImport from './views/goodsMgt/goodsMgtDataImport.vue'
 
 import layoutManage from './components/View/layoutBoardView.vue'
 import bindDisplayData from './views/displayMgt/bindDisplayData.vue'
+import viewTwoimgs from './views/displayMgt/common/viewTwoimgs.vue'
+import viewTwovideo from './views/displayMgt/common/viewTwovideo.vue'
+
 import bindList from './views/displayMgt/bindList.vue'
 import manageDisplayDevice from './views/displayMgt/manageDisplayDevice.vue'
 import editDevice from './views/displayMgt/editDevice.vue'
@@ -68,7 +71,15 @@ let routes = [
         iconCls: '/static/ad_click.png',
         name: '广告管理',
         children: [
-            { path: '/bindDisplayData', component: bindDisplayData, name: '素材绑定' },
+            { 
+                path: '/bindDisplayData/viewTwoimgs', 
+                component: bindDisplayData,
+                name: '素材绑定',
+                children:[
+                  {path:'/bindDisplayData/viewTwoimgs',component:viewTwoimgs,name: '素材绑定',hidden: true},
+                  {path:'/bindDisplayData/viewTwovideo',component:viewTwovideo,name: '素材绑定',hidden: true},
+                ]
+            },
             { path: '/manageDisplayDevice', component: manageDisplayDevice, name: '广告机管理' },
             { path: '/editDevice', component: editDevice, name: '查看编辑广告机',hidden:true },
             { path: '/bindList', component: bindList, name: '素材绑定',hidden:true },

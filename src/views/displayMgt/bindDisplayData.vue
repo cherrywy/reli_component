@@ -21,7 +21,8 @@ export default {
 		  options: [{value: 5,label: 5}, {value: 10,label: 10}],
 		  value: '',
 		  currentView: 'displayViewTwo',
-		  lists:null
+		  lists:null,
+		  uid:''
 		}
     },
 	props:{
@@ -38,11 +39,14 @@ export default {
 		displayViewOne,
 		displayViewTwo
 	},
+	mounted() {
+        this.uid = localStorage.getItem('uid');
+    },
 	methods:{
 		deviceStyle:function (str) {
 			this.currentView = str
 			let id = {
-				uid:'1209811640320002'
+				uid:this.uid
 			}
 			getImgsList(id).then(data => {
 				//console.log(data)

@@ -101,9 +101,8 @@
 </template>
 <script>
  import {delete_bind_imgs,bind_id_Imgs,carouselImgs,bind_id_goods,delete_id_goods,updatavideo,online_goods,allPic_imgs,bind_imgs} from '../../../api/display'
+  import moment from 'moment';
   export default {
-      
-     
     data() {
       return {
         img_lists:[],
@@ -128,9 +127,11 @@
             pageSize: 5,
             total: 0,
          },
+         uid:'',
       };
     },
-    mounted() {
+    mounted:function() {
+        this.uid = localStorage.getItem('uid');
         this.getimg_List();
     },
     methods: {
@@ -139,7 +140,7 @@
             let bind_id = this.$route.query.id   
             let info = {
                 display_device_id:bind_id,
-                uid:'1209811640320002'
+                uid:this.uid
             }
             bind_id_goods(info).then(data=>{
                 this.tableData = data.result.list.map(v =>{
@@ -161,7 +162,6 @@
                     }
                     this.img_lists.push(urls)      
                 })
-                console.log(this.img_lists)
             })
         },
 
@@ -175,7 +175,7 @@
                 let banId = {
                    goods_id:this.tableData[index].id,
                    display_device_id:this.$route.query.id,
-                   uid:1209811640320002
+                   uid:this.uid
                 }
                 delete_id_goods(banId).then(data => {
                     this.tableData.splice(index,1)
@@ -191,7 +191,7 @@
           //上传商品
           this.dialogFormVisible = true
           let  inf = {
-              uid:"1209811640320002"
+              uid:this.uid
           }
           updatavideo(inf).then(data =>{
             let pageSize = this.pageinationInfo.pageSize //每页显示5条
@@ -209,6 +209,7 @@
       },
      clickSelect(row){
             //this.good_name = row.name
+            console.log
             let newid= row.goods_id
             if(this.goodId.indexOf(newid) == -1){
                 this.goodId.push(newid)
@@ -219,7 +220,7 @@
         let val = {
             display_device_id:this.$route.query.id,
             goods_ids:this.goodId+'',
-            uid:"1209811640320002"
+            uid:this.uid
         }
         online_goods(val).then(data=>{
              this.getimg_List();
@@ -248,7 +249,7 @@
           //加载所有素材图
             this.dialogTableVisible = true
             let id = {
-                uid:'1209811640320002'
+                uid:this.uid
             }
             this.imgLists=[]
             allPic_imgs(id).then(data =>{
@@ -277,7 +278,7 @@
          let inf = {
              dispaly_device_id:this.$route.query.id,
              banner_ids:this.ids+',',
-             uid:'1209811640320002'
+             uid:this.uid
          }
         bind_imgs(inf).then(()=>{
             this.img_lists =[]
@@ -287,13 +288,11 @@
       //分页
          handleCurrentChange(currentPage) {
              //当前页变动时候触发的事件
-            console.log(currentPage)
             this.pageinationInfo.currentPage = currentPage;
-           this.update_goods()
+            this.update_goods()
         },
          handleSizeChange(size) {
             //pageSize 改变时会触发
-            console.log(size)
             this.pageinationInfo.pageSize = size;
             this.update_goods()
         },
