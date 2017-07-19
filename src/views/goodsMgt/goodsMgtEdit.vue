@@ -17,7 +17,7 @@
                         <el-input placeholder='请输入商品名称' v-model="name" style="width:200px"></el-input>
                     </el-form-item>
                     <el-form-item label="商品图片">
-                        <el-upload class="avatar-uploader" action="http://118.89.232.160:10001/util/file/upload.json" name="pic" :show-file-list="false" :on-success="handleAvatarSuccess">
+                        <el-upload class="avatar-uploader" :action="action" name="pic" :show-file-list="false" :on-success="handleAvatarSuccess">
                             <img v-if="imageUrl" :src="imageUrl" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
@@ -54,10 +54,11 @@
 </template>
  <script>
 import { requestSearchHistory, requestEdit, requestUpdate, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
-
+import env from '../../env'
 export default {
     data() {
         return {
+            action:`${env.apiServer}/util/file/upload.json`,
             uid:'',
             head_office_id:'',
             labelPosition: 'top',

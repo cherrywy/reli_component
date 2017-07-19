@@ -17,13 +17,14 @@
             </el-form>
         </el-row>
         <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;">
-            <el-card style="margin: 0 auto; width:500px;height:300px;position:relative">
-                <div class="canvas" ref="canvas">
-                    <canvas id="stage"></canvas>
-                </div>
+            <el-card style="margin: 0 auto;position:relative">
+                <!--<div class="canvas" ref="canvas">
+                        <canvas id="stage"></canvas>
+                    </div>-->
+                <Viewer :planId="planId" />
                 <div style="bottom: 0;position: absolute;">
                     <div class="bottom">
-                        <el-button type="text" class="button">展柜数量:{{planShowCase.show_case_type}}</el-button>
+                        <el-button type="text" class="button">展柜数量:{{planShowCaseNumber}}</el-button>
                     </div>
                 </div>
             </el-card>
@@ -61,15 +62,18 @@
                     </div>
                 </el-dialog>
             </div>
-            <el-table :data="tableOnlineList" border style="width: 100%;margin-top: 15px;">
+            <el-table :data="onlineShowCaseList" border style="width: 100%;margin-top: 15px;">
                 <el-table-column prop='goods_name' label="商品名称">
                 </el-table-column>
-                <el-table-column prop="" label="商品图片" align="center">
+                <el-table-column prop="" label="商品规格" align="center">
+                     <template scope="scope">
+                                    {{scope.row.spec1_value?scope.row.spec1_value:''}} {{scope.row.spec2_value?","+scope.row.spec2_value:''}}{{scope.row.spec3_value?","+scope.row.spec3_value:''}}
+                                </template>
                 </el-table-column>
     
                 <el-table-column label="操作" align="center">
                     <template scope="scope">
-                        <el-button size="small" type="danger" @click="handleOffline(scope.$index, scope.row.goods_spec_id)">下架</el-button>
+                        <el-button size="small" type="danger" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -78,40 +82,21 @@
     </section>
 </template>
 <script>
+import Viewer from './../../components/SharedBlocks/Viewer'
 import { requestOnline, requestFindShop, requestFindShopPlan, requestSearchSpec, requestOnlineShowCase, requestPlanShowCaseList, requestGoodsOnline, requestGoodsOffline } from '../../api/goodsServer';
 export default {
     data() {
         return {
-            uid:'',
-            canvas: null,
-            coorDefaults: {
-                originX: 'center',
-                originY: 'center',
-                fill: 'rgba(66, 134, 244, 0.7)',
-                stroke: 'rgba(255, 255, 255, 1)',
-                strokeWidth: 1,
-                scaleX: 1,
-                scaleY: 1,
-                flipX: false,
-                flipY: false,
-                opacity: 1,
-                visible: true,
-                fillRule: 'nonzero',
-                hasBorders: false,
-                hasControls: false,
-                hasRotatingPoint: false,
-                lockMovementX: true,
-                lockMovementY: true,
-                lockScalingX: true,
-                lockScalingY: true,
-                lockUniScaling: true,
-                lockRotation: true
-            },
+            uid: '',
+            show_case_id: '',
             shop: [],
             shopPlan: [],
             shopName: '',
             plansName: '',
+            planId: 0,
             tableOnlineList: [],
+            onlineShowCaseList: [],
+            planShowCaseNumber: 0,
             planShowCase: [],
             tableData: [],
             goodsName: '',
@@ -123,10 +108,17 @@ export default {
             formLabelWidth: '120px',
         }
     },
+    components: {
+        Viewer
+    },
     mounted: function () {
-        this.uid=localStorage.getItem('uid');
+        this.uid = localStorage.getItem('uid');
         this.getFindShop()//获取门店
-        
+        this.$bus.$on('viewerSelectedShowcase', scId => {
+            // 选中了展柜，展柜 id 为 scId
+            this.show_case_id = scId
+            this.getOnlineShowCaseList()
+        })
     },
     wach: {
         canvas() {
@@ -134,34 +126,8 @@ export default {
         },
     },
     methods: {
-        renderObjects() {
-            // 绘制接口中获取的形状
-            if (this.canvas) {
-                this.planShowCase.forEach( shape => {
-                    let coord = _.merge(shape.coord, this.coorDefaults)
-                    let object = {}
-                    if (coord.type === 'rect' || coord.type === 0) {
-                        object = new window.fabric.Rect(coord)
-                    } else if (coord.type === 'circle' || coord.type === 1) {
-                        object = new window.fabric.Circle(coord)
-                    } else {
-                        return false
-                    } 
-                    object.set('fill', )
-                    object.set('id', shape.data.id)
-                    object.set('data', {
-                        name:shape.data.name,
-                        plan_id: shape.data.plan_id,
-                        type: shape.data.show_case_type,
-                        sku_group: shape.data.sku_group_ids
-                    })
-                    this.canvas.add(object)
-                })
-               
-            }
-        },
         getOnlineShowCaseList() {
-            let OnlineListParams = { show_case_id: show_case_id };
+            let OnlineListParams = { show_case_id: this.show_case_id };
             requestOnlineShowCase(OnlineListParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -170,18 +136,22 @@ export default {
                         type: 'error'
                     });
                 } else {
+                    this.onlineShowCaseList = result
 
                 }
             })
         },
 
         handleOffline(index, goods_spec_id) {
+
             this.$confirm('下架该商品后将无法撤回，是否继续', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                let removeParams = { goods_spec_id: goods_spec_id, show_case_id: show_case_id };
+
+                let removeParams = { goods_spec_id: goods_spec_id, show_case_id: this.show_case_id };
+                console.log(removeParams);
                 requestGoodsOffline(removeParams).then(data => {
                     let { error_code, result } = data;
                     if (error_code == 0) {
@@ -189,8 +159,9 @@ export default {
                             type: 'success',
                             message: '下架成功!'
                         });
-                        this.tableOnlineList.splice(index, 1);
-                        this.getList();
+                        console.log(index);
+                        this.onlineShowCaseList.splice(index, 1);
+                        this.getOnlineShowCaseList();
 
                     }
                 })
@@ -202,10 +173,12 @@ export default {
             });
         },
         submit() {
+
             const goods_spec_ids = this.multipleSelection.map(v => {
                 return v.id
             }).join()
-            let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: show_case_id };
+            let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: this.show_case_id };
+            console.log(listParams);
             requestGoodsOnline(listParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -218,27 +191,31 @@ export default {
                         message: "保存成功",
                         type: 'success'
                     });
-                    dialogFormVisible = false;
+                    this.dialogFormVisible = false;
+                    this.getOnlineShowCaseList()
+
                 }
             })
 
         },
         getPlanShowCaseList() {
-            const plan_id = this.shopPlan.filter(v => {
+            this.planId = this.shopPlan.filter(v => {
                 return v.value === this.plansName;
             }).map(v => v.id).pop();
 
-            let planListParams = { plan_id: plan_id };
+            let planListParams = { plan_id: this.planId };
             requestPlanShowCaseList(planListParams).then(data => {
-                let { error_code, result } = data;
+                let { error_code, result, total_count } = data;
                 if (error_code !== 0) {
                     this.$message({
                         message: "返回数据有误",
                         type: 'error'
                     });
                 } else {
-                    
+
                     this.planShowCase = result
+                    this.planShowCaseNumber = total_count
+                    this.$bus.$emit('initViewer')
                 }
             })
         },
@@ -249,7 +226,7 @@ export default {
                 listParams['key_word'] = key_word
             }
             requestSearchSpec(listParams).then(data => {
-                let { error_code, result ,total_count} = data;
+                let { error_code, result, total_count } = data;
                 if (error_code !== 0) {
                     this.$message({
                         message: "返回数据有误",
@@ -274,8 +251,8 @@ export default {
             this.getOnlineList(this.plansName, this.currentPage, this.pageSize)
         },
         getFindShop() {
-            console.log(this.uid )
-            const shopPlanParams = { uid:this.uid };
+
+            const shopPlanParams = { uid: this.uid };
             requestFindShop(shopPlanParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -334,6 +311,16 @@ export default {
 #goods-app {
     width: 1080px;
     margin: 20px auto;
+}
+.container .canvas[data-v-5ae3712d] {
+    overflow-x: hidden !important;
+}
+.container .canvas .overlay[data-v-5ae3712d] {
+
+    top: 100px !important;
+
+    height: 20% !important;
+   
 }
 
 .image {

@@ -59,8 +59,8 @@ export default {
       coorDefaults: {
         originX: 'center',
         originY: 'center',
-        fill: 'rgba(66, 134, 244, 0)',
-        stroke: 'rgba(255, 255, 255, 0)',
+        fill: 'rgba(66, 134, 244, 0.7)',
+        stroke: 'rgba(255, 255, 255, 0.9)',
         strokeWidth: 1,
         scaleX: 1,
         scaleY: 1,
@@ -151,8 +151,8 @@ export default {
     resetFillAndStroke (event) {
       let object = event.target
       if (object) {
-        object.set('fill', 'rgba(255, 255, 255, 0)')
-        object.set('stroke', 'rgba(255, 255, 255, 0)')
+        object.set('fill', 'rgba(66, 134, 244, 0.7)')
+        object.set('stroke', 'rgba(255, 255, 255, 0.9)')
       }
     },
     selectionCleared () {
@@ -182,6 +182,13 @@ export default {
       image.width = image.width * fixedHeight / image.height
       image.height = fixedHeight
 
+      if (this.canvas && this.canvas.dispose) {
+        try {
+          this.canvas.dispose()
+        } catch (err) {}
+      }
+
+      this.canvas = null
       this.$set(this.$data, 'canvas', new Fabric('stage', {
         width: image.width,
         height: image.height,
@@ -208,13 +215,9 @@ export default {
           this.resetFillAndStroke({target: this.state.previousSelected})
         }
         this.state.previousSelected = object
+        let originalShowcaseId = this.state.activeObj.data.original_showcase_id
         // iPad web view hook
-        if (window.clickButtonGetShowcaseIds && typeof window.clickButtonGetShowcaseIds === 'function') {
-          // param type: array of showcase ids
-          let showcaseIds = [this.state.activeObj.data.original_showcase_id]
-          let name = this.state.activeObj.data.name || ''
-          window.clickButtonGetShowcaseIds({ id: showcaseIds, name: name })
-        }
+        this.$bus.$emit('viewerSelectedShowcase', originalShowcaseId)
       })
 
       this.canvas.on({
@@ -224,7 +227,7 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(async () => {
+    this.$bus.$on('initViewer', async () => {
       await this.setCurrentPlanById(this.planId)
       this.init()
     })

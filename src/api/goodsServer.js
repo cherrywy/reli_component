@@ -42,12 +42,12 @@ export const requestEdit =params => { return axios.post(`${apiServer}/a/goods/sh
 export const requestOnline =params => { return axios.post(`${apiServer}/a/goods/online.json`, params).then(res => res.data);};
 export const requestFindShop =params => { return axios.post(`${apiServer}/a/goods/find_shop_plan.json`, params).then(res => res.data);};
 export const requestFindShopPlan =params => { return axios.post(`${apiServer}/a/shop_plan/find.json`, params).then(res => res.data);};
-export const requestSearchSpec=params => { return axios.post(`${apiServer}/a/good_spec/search.json`, params).then(res => res.data);};
+export const requestSearchSpec=params => { return axios.post(`${apiServer}/a/goods_spec/search.json`, params).then(res => res.data);};
 
 export const requestOnlineShowCase=params => { return axios.post(`${apiServer}/a/online_goods/by_show_case.json`, params).then(res => res.data);};
 export const requestPlanShowCaseList=params => { return axios.post(`${apiServer}/a/plan_show_case/list.json`, params).then(res => res.data);};
-export const requestGoodsOnline=params => { return axios.post(`${apiServer}／a/goods/online.json`, params).then(res => res.data);};
-export const requestGoodsOffline=params => { return axios.post(`${apiServer}／a/goods/offline.json`, params).then(res => res.data);};
+export const requestGoodsOnline=params => { return axios.post(`${apiServer}/a/goods/online.json`, params).then(res => res.data);};
+export const requestGoodsOffline=params => { return axios.post(`${apiServer}/a/goods/offline.json`, params).then(res => res.data);};
 export const requestDataImport = params => { 
      return axios({
         url:`${apiServer}/a/goods/sales.json`,

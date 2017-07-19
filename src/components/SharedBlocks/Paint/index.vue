@@ -125,7 +125,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import _ from 'lodash'
@@ -147,12 +146,9 @@ export default {
     ...mapGetters('lbSkuGroup', [
       'getSkuGroupsByShowcaseId'
     ]),
-    plan () {
-      return this.getPlanById(this.$route.params.id)
-    },
     previewJSON () {
-      if (this.canvas) {
-        return this.canvas.getObjects()
+      if (this.$data.canvas) {
+        return this.$data.canvas.getObjects()
       }
     },
     objectCount () {
@@ -212,6 +208,7 @@ export default {
         spin: { show: false },
         unsaved: false
       },
+      plan: null,
       ui: { debug: false, initializing: true, loading: false, notify: false, noticeText: '' },
       issueList: new Set(),
       warningList: new Set()
@@ -232,7 +229,7 @@ export default {
       this.renderObjects()
     },
     'mode.freeDraw' (after) {
-      this.canvas.deactivateAll().renderAll()
+      this.$data.canvas.deactivateAll().renderAll()
       if (after) {
         this.hidePopup()
       }
@@ -292,18 +289,18 @@ export default {
       this.$data.popup.spin.show = value
     },
     resetCanvas (bypass) {
-      if (this.canvas.getObjects().length > 0) {
-        let objects = this.canvas.getObjects()
+      if (this.$data.canvas.getObjects().length > 0) {
+        let objects = this.$data.canvas.getObjects()
         while (objects.length !== 0) {
           objects[0].remove()
         }
-        this.canvas.deactivateAll().renderAll()
+        this.$data.canvas.deactivateAll().renderAll()
         this.hidePopup()
       }
     },
     renderObjects () {
       // 绘制接口中获取的形状
-      if (this.canvas) {
+      if (this.$data.canvas) {
         this.resetCanvas()
         this.showcaseList.forEach(async shape => {
           let coord = _.merge(shape.coord, this.coorDefaults)
@@ -322,22 +319,22 @@ export default {
             type: shape.show_case_type,
             sku_group: await this.getSkuGroupsByShowcaseId(shape.id)
           })
-          this.canvas.add(object)
+          this.$data.canvas.add(object)
         })
-        this.canvas.deactivateAll().renderAll()
+        this.$data.canvas.deactivateAll().renderAll()
         this.toggleInitializing(false)
       }
     },
     selectAll () {
-      if (this.canvas.getObjects().length > 0 && !this.canvas.getActiveGroup()) {
-        this.canvas.setActiveGroup(new window.fabric.Group(this.canvas.getObjects())).renderAll()
+      if (this.$data.canvas.getObjects().length > 0 && !this.$data.canvas.getActiveGroup()) {
+        this.$data.canvas.setActiveGroup(new window.fabric.Group(this.$data.canvas.getObjects())).renderAll()
         this.hidePopup()
       }
     },
     async resetActiveObject () {
       console.log('reset')
-      if (!this.canvas) return false
-      let object = this.canvas.getActiveObject()
+      if (!this.$data.canvas) return false
+      let object = this.$data.canvas.getActiveObject()
       if (object) {
         object.set('angle', 0)
         object.set('skewX', 0)
@@ -346,10 +343,10 @@ export default {
       }
     },
     async updateActiveObject (params) {
-      if (!this.canvas) return false
+      if (!this.$data.canvas) return false
       if (!params) return false
       if (!Array.isArray(params)) params = [params]
-      let object = this.canvas.getActiveObject()
+      let object = this.$data.canvas.getActiveObject()
       if (object) {
         let modified = false
         params.forEach(param => {
@@ -367,18 +364,18 @@ export default {
       object.set('fill', 'rgba(244, 214, 65, 0.7)')
       object.set('unsaved', true)
       this.$data.popup.unsaved = true
-      this.canvas.renderAll()
+      this.$data.canvas.renderAll()
     },
     setObjectSaved (object) {
       if (!object) return false
       object.set('fill', 'rgba(66, 134, 244, 0.7)')
       object.set('unsaved', false)
       this.$data.popup.unsaved = false
-      this.canvas.renderAll()
+      this.$data.canvas.renderAll()
     },
     removeActiveObject () {
-      if (!this.canvas) return false
-      let object = this.canvas.getActiveObject()
+      if (!this.$data.canvas) return false
+      let object = this.$data.canvas.getActiveObject()
       if (!object) return false
       if (object.id) {
         this.$zydialog({
@@ -402,16 +399,16 @@ export default {
       }
     },
     removeObjectFromCanvas (object) {
-      if (object && this.canvas) {
-        this.canvas.remove(object)
-        this.canvas.setActiveGroup(new window.fabric.Group(this.canvas.getObjects())).renderAll()
-        this.canvas.deactivateAll().renderAll()
+      if (object && this.$data.canvas) {
+        this.$data.canvas.remove(object)
+        this.$data.canvas.setActiveGroup(new window.fabric.Group(this.$data.canvas.getObjects())).renderAll()
+        this.$data.canvas.deactivateAll().renderAll()
         this.hidePopup()
       }
     },
     async saveActiveObject () {
-      if (!this.canvas) return false
-      let object = this.canvas.getActiveObject()
+      if (!this.$data.canvas) return false
+      let object = this.$data.canvas.getActiveObject()
       if (!object) return false
       this.$data.ui.loading = true
       if (object.id) {
@@ -435,8 +432,8 @@ export default {
       this.$data.ui.loading = false
     },
     async saveActiveObjectFromSkuTemplate (skuGroupId) {
-      if (!this.canvas) return false
-      let object = this.canvas.getActiveObject()
+      if (!this.$data.canvas) return false
+      let object = this.$data.canvas.getActiveObject()
       if (!object) return false
       this.$data.ui.loading = true
       if (!object.id) {
@@ -579,7 +576,7 @@ export default {
     },
 
     async updatePlanImage (imageUrl) {
-      if (!this.canvas) return false
+      if (!this.$data.canvas) return false
       let image
       try {
         image = await this.prefetchImage(imageUrl)
@@ -591,10 +588,10 @@ export default {
       image.width = image.width * fixedHeight / image.height
       image.height = fixedHeight
 
-      if (image.height) this.canvas.setHeight(image.height)
-      if (image.width) this.canvas.setWidth(image.width)
+      if (image.height) this.$data.canvas.setHeight(image.height)
+      if (image.width) this.$data.canvas.setWidth(image.width)
 
-      this.canvas.setBackgroundImage(imageUrl, this.canvas.renderAll.bind(this.canvas), {
+      this.$data.canvas.setBackgroundImage(imageUrl, this.$data.canvas.renderAll.bind(this.$data.canvas), {
         width: image.width,
         height: image.height
       })
@@ -603,9 +600,11 @@ export default {
 
     // 画布初始化和事件监听入口
     async init () {
-      if (!this.plan) return false
+      console.log('init')
+      console.log('plan', this.$data.plan)
+      if (!this.$data.plan) return false
 
-      let imageURL = this.plan.image_url
+      let imageURL = this.$data.plan.image_url
       let image
       try {
         image = await this.prefetchImage(imageURL)
@@ -624,25 +623,27 @@ export default {
           //
         }
       }
-      this.$data.canvas = {}
-      this.$set(this.$data, 'canvas', new Canvas('stage', {
+      this.$data.canvas = null
+      this.$data.canvas = new Canvas('stage', {
         width: image.width,
         height: image.height,
         backgroundImage: imageURL
-      }))
+      })
+
+      console.log(this.$data.canvas)
 
       // 绘图：落笔
-      this.canvas.on('mouse:down', event => {
+      this.$data.canvas.on('mouse:down', event => {
         if (this.$data.mode.freeDraw === true) {
-          this.canvas.set('selectionColor', 'transparent')
-          this.canvas.set('selectionBorderColor', 'transparent')
+          this.$data.canvas.set('selectionColor', 'transparent')
+          this.$data.canvas.set('selectionBorderColor', 'transparent')
           // 固定已有对象
-          let objects = this.canvas.getObjects()
+          let objects = this.$data.canvas.getObjects()
           objects.forEach(object => {
             object.set('selectable', false)
           })
           // 执行落笔
-          let pointer = this.canvas.getPointer(event.e)
+          let pointer = this.$data.canvas.getPointer(event.e)
           this.toggleDrawing(true)
           this.$data.state.originX = pointer.x
           this.$data.state.originY = pointer.y
@@ -675,16 +676,16 @@ export default {
           this.$set(this.$data.state.currentObj, 'id', null)
           this.$set(this.$data.state.currentObj, 'dirty', true)
 
-          this.canvas.add(this.$data.state.currentObj).setActiveObject(this.$data.state.currentObj)
-          this.canvas.renderAll()
+          this.$data.canvas.add(this.$data.state.currentObj).setActiveObject(this.$data.state.currentObj)
+          this.$data.canvas.renderAll()
         }
       })
       // 结束绘图：落笔
 
       // 绘图：行笔
-      this.canvas.on('mouse:move', event => {
+      this.$data.canvas.on('mouse:move', event => {
         if (this.$data.mode.freeDraw === true && this.$data.state.drawing === true) {
-          let pointer = this.canvas.getPointer(event.e)
+          let pointer = this.$data.canvas.getPointer(event.e)
           if (this.$data.mode.type === 'rect') {
             if (this.$data.state.originX > pointer.x) {
               this.$data.state.currentObj.set({ left: Math.abs(pointer.x) })
@@ -694,7 +695,7 @@ export default {
             }
             this.$data.state.currentObj.set({ width: Math.abs(this.$data.state.originX - pointer.x) })
             this.$data.state.currentObj.set({ height: Math.abs(this.$data.state.originY - pointer.y) })
-            this.canvas.renderAll()
+            this.$data.canvas.renderAll()
           } else if (this.$data.mode.type === 'circle') {
             let radius = Math.max(Math.abs(this.$data.state.originY - pointer.y), Math.abs(this.$data.state.originX - pointer.x)) / 2
             if (radius > this.$data.state.currentObj.strokeWidth) {
@@ -711,20 +712,20 @@ export default {
             } else {
               this.$data.state.currentObj.set({ originY: 'top' })
             }
-            this.canvas.renderAll()
+            this.$data.canvas.renderAll()
           }
         }
       })
       // 结束绘图：行笔
 
       // 绘图：提笔
-      this.canvas.on('mouse:up', event => {
+      this.$data.canvas.on('mouse:up', event => {
         if (this.$data.mode.freeDraw === true && this.$data.state.drawing === true) {
           // 恢复选择框的颜色
-          this.canvas.set('selectionColor', 'rgba(100, 100, 255, 0.3)')
-          this.canvas.set('selectionBorderColor', 'rgba(255, 255, 255, 0.3)')
+          this.$data.canvas.set('selectionColor', 'rgba(100, 100, 255, 0.3)')
+          this.$data.canvas.set('selectionBorderColor', 'rgba(255, 255, 255, 0.3)')
           // 解除固定已有对象
-          let objects = this.canvas.getObjects()
+          let objects = this.$data.canvas.getObjects()
           objects.forEach(object => {
             object.set('selectable', true)
           })
@@ -747,14 +748,14 @@ export default {
           // 设置初始化锁
           this.$data.state.paperDirty = true
           // 解决 fabric 新增物件无法被选中的问题
-          this.canvas.setActiveGroup(new window.fabric.Group(this.canvas.getObjects())).renderAll()
-          this.canvas.deactivateAll().renderAll()
+          this.$data.canvas.setActiveGroup(new window.fabric.Group(this.$data.canvas.getObjects())).renderAll()
+          this.$data.canvas.deactivateAll().renderAll()
         }
       })
       // 结束绘图：提笔
 
       // 将 fabric.js 的默认 scale 行为换算成 object 的 resize 行为
-      this.canvas.on('object:modified', event => {
+      this.$data.canvas.on('object:modified', event => {
         let target = event.target
         if (!target) return false
         if (target.type === 'rect') {
@@ -776,10 +777,10 @@ export default {
         let bound = event.target.aCoords
         this.$data.popup.styles.top = bound.tr.y
         this.$data.popup.styles.left = document.getElementsByClassName('canvas-container')[0].offsetLeft + bound.tr.x + 15
-        if (!this.canvas.getActiveGroup()) this.showPopup()
+        if (!this.$data.canvas.getActiveGroup()) this.showPopup()
       })
 
-      this.canvas.on('object:selected', event => {
+      this.$data.canvas.on('object:selected', event => {
         // 同时更新 popup 层的位置
         if (Array.isArray(event.target._objects)) {
           // 如果是组选择，不显示浮层
@@ -790,12 +791,12 @@ export default {
           this.$data.popup.styles.top = bound.tr.y
           this.$data.popup.styles.left = document.getElementsByClassName('canvas-container')[0].offsetLeft + bound.tr.x + 15
           this.$data.state.activeObj = event.target
-          if (!this.canvas.getActiveGroup() && this.$data.state.activeObj) this.showPopup()
+          if (!this.$data.canvas.getActiveGroup() && this.$data.state.activeObj) this.showPopup()
           this.setActiveShowcase(event.target)
         }
       })
 
-      this.canvas.on({
+      this.$data.canvas.on({
         'object:moving': this.hidePopup,
         'object:scaling': this.hidePopup,
         'object:rotating': this.hidePopup,
@@ -818,6 +819,7 @@ export default {
     this.$bus.$off('saveActiveObjectFromSkuTemplate')
     this.$bus.$off('setObjectUnsaved')
     this.$bus.$off('updatePlanImage')
+    this.$bus.$off('changePaintPlanId')
 
     this.$bus.$on('initPaintCanvas', this.init)
     this.$bus.$on('resetSkewRotate', this.resetActiveObject)
@@ -827,6 +829,7 @@ export default {
     this.$bus.$on('saveActiveObjectFromSkuTemplate', this.saveActiveObjectFromSkuTemplate)
     this.$bus.$on('setObjectUnsaved', this.setObjectUnsaved)
     this.$bus.$on('updatePlanImage', this.updatePlanImage)
+    this.$bus.$on('changePaintPlanId', id => { this.$data.plan = this.getPlanById(id) })
     window.onresize = this.hidePopup
   }
 }
