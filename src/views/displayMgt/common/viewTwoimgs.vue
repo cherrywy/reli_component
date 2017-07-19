@@ -1,10 +1,8 @@
 <template>
     <section>
          <el-row>
-            <el-col :span ='24' style='margin-top:20px;'>
-                    <el-col :span='24' align='right'>
-                        <el-button type="primary" @click="addImg">上传图片</el-button>
-                    </el-col>
+            <el-col :span ='24' style='margin-top:20px;'>      
+                    <el-button type="primary" class='updataimg' @click="addImg">上传图片</el-button> 
                     <el-col :span='24'>
                         <el-dialog  :visible.sync="dialogFormVisible" >
                             <el-form :model="imgInfomation">
@@ -17,7 +15,7 @@
                                         :max='1'
                                         :file-list="fileList"
                                         :on-success='handleAvatarSuccess'>
-                                        <el-button size="small" type="primary">选择文件</el-button>
+                                        <el-button size="small" type="primary" style='margin-top:8px;' class='updataimg'>选择文件</el-button>
                                     </el-upload>                       
                                 </el-form-item>
                                 <el-form-item label="跳转地址：" :label-width="formLabelWidth" align='left'>
@@ -25,12 +23,12 @@
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer" align='center'>
-                                <el-button type="primary" @click="bindimgs">绑 定</el-button>
+                                <el-button type="primary" @click="bindimgs" class='updataimg'>绑 定</el-button>
                             </div>  
                         </el-dialog>
                     </el-col>   
             </el-col>
-            <el-col :span='24' style='margin-top:20px'>
+            <el-col :span='24' style='margin-top:-10px'>
                     <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
             <el-table-column label="商品图片" width="120" align="center">
                 <template scope="scope">
@@ -43,7 +41,7 @@
         
             <el-table-column label="操作" align="center" width="150">
                 <template scope="scope">
-                    <el-button @click="deleteList(scope.$index, scope.row.banner_id)">删除</el-button>
+                    <el-button class='btn_red_color' size='small' @click="deleteList(scope.$index, scope.row.banner_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -195,3 +193,33 @@ export default {
 	}
 };
 </script>
+<style>
+    .updataimg{
+        margin-top:-55px;
+        float:right;
+        background-color:#70a5ec;
+        outline:none;
+        border:none;
+    }
+    .updataimg:hover{
+        margin-top:-55px;
+        float:right;
+        background-color:#70a5ec;
+        outline:none;
+        border:none;
+    }
+    .btn_red_color{
+        background:#E0595B;
+        opacity:0.66;
+        outline:none;
+        color:black;
+        border:none;
+    }
+    .btn_red_color:hover{
+        background:#E0595B;
+        opacity:0.66;
+        border:none;
+        outline:none;
+        color:black;
+    }
+</style>

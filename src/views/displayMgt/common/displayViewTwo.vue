@@ -2,9 +2,9 @@
    <section>
 		<el-col :span ='24' style='margin-top:20px;'>
              <span>素材类型：</span>
-			  <el-radio-group v-model="radio3" @change='changeVie'>
-				<el-radio-button label="轮播图"></el-radio-button>
-				<el-radio-button label="视频" ></el-radio-button>
+			  <el-radio-group v-model="radio3" @change='changeVie' fill='#70a5ec' text-color='white'>
+				<el-radio-button label="轮播图" ></el-radio-button>
+				<el-radio-button label="视频"></el-radio-button>
 			</el-radio-group>
            </el-col>
         <el-col :span='24'>
@@ -58,8 +58,4 @@ export default {
  }
 </script>
 <style>
-	.imgs{
-	
-	}
-	
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<el-row>
-			<el-col :span ='24' style='margin-top:20px;'>
+			<el-col :span ='24' style='margin-top:20px;' align='center'>
 				<!--<el-button class='device' @click='deviceStyle("displayViewOne")'>广告机1</el-button>-->
 				<div class='device' @click='deviceStyle("displayViewTwo")'></div>
 			</el-col>
@@ -67,7 +67,6 @@ export default {
 	.device{
 		width:150px;
 		height:200px;
-		margin-right:20px;
 		background:url('../../../static/twoad.jpeg') no-repeat;
 		background-size:100% 100%;
 	}

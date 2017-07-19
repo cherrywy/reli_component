@@ -1,12 +1,12 @@
 <template>
     <section>
             <el-col :span='24'>
-                <span>轮播图</span>
+                <span style='line-height:50px;font-size:18px;'>轮播图</span>
             </el-col>
             <el-col :span='24'>
             <ul v-for='img in img_lists'  style='float:left;list-style:none;'>
                 <li>
-                    <img width='150' height='150' :src="img.pic_url"  @click="delete_bind_img(img)">
+                    <img width='150' height='150' :src="img.pic_url"  @click="delete_bind_img(img)" style='border:1px #999 dashed;margin-right:15px;'>
                 </li>
             </ul>
             <p>
@@ -30,11 +30,11 @@
             </el-dialog>
            </el-col>
            <el-col :span='24' style='margin-top:20px;'>
-             <h3>显示商品</h3>
+                 <span style='line-height:50px;font-size:18px;'>显示商品</span>
            </el-col>
                
             <el-col :span='4' :push='20'>
-                  <el-button @click='update_goods'>上传商品</el-button>
+                  <el-button @click='update_goods' class='updataimg'>上传商品</el-button>
             </el-col>
               
             <el-col :span='24' style='margin-top:20px'>
@@ -60,6 +60,7 @@
                         <template scope="scope">
                             <el-button
                                 size="small"
+                                class='btn_red_color'
                                 @click="delete_goods(scope.$index)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -319,5 +320,35 @@
         border:1px bule dashed;
         border-radius:5px;
         background:white;
+    }
+    .updataimg{
+        margin-top:-55px;
+        float:right;
+        background-color:#70a5ec;
+        outline:none;
+        border:none;
+        color:white;
+    }
+    .updataimg:hover{
+        margin-top:-55px;
+        float:right;
+        color:white;
+        background-color:#70a5ec;
+        outline:none;
+        border:none;
+    }
+    .btn_red_color{
+        background:#E0595B;
+        opacity:0.66;
+        outline:none;
+        color:white;
+        border:none;
+    }
+    .btn_red_color:hover{
+        background:#E0595B;
+        opacity:0.66;
+        border:none;
+        outline:none;
+        color:white;
     }
 </style>

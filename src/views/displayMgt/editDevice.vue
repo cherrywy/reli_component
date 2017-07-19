@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<el-row>
-			<el-col :span ='24' style='margin-top:20px;'>
+			<el-col :span ='24' style='margin-top:20px;' align='center'>
 				<!--<el-button class='device' @click="switchDiaplay('diaplayMgeOne')">广告机1</el-button>-->
 				<div class='device' @click="switchDiaplay('diaplayMgeTwo')"></div>
 			</el-col>
@@ -61,7 +61,7 @@ import {carouselImgs} from '../../api/display'
 		height:200px;
 		margin-right:20px;
 		background:url('../../../static/twoad.jpeg') no-repeat;
-			background-size:100% 100%;
+		background-size:100% 100%;
 	}
 	.device:active{
 		border:1px blue solid;
