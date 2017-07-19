@@ -57,7 +57,7 @@ export default {
       canvas: {},
       popup: { styles: { top: 0, left: 0, opacity: 0 }, spin: { show: false } },
       state: { activeObj: {data: { name: '', sku_group: [{ image_url: '' }] }}, previousSelected: null },
-      ui: { initializing: true },
+      ui: { initializing: false },
       coorDefaults: {
         originX: 'center',
         originY: 'center',
