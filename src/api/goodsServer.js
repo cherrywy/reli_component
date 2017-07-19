@@ -56,7 +56,7 @@ export const requestDataImport = params => {
         headers: {'Content-Type': 'multipart/form-data'}
     }).then(res => res.data);
 };
-export const requestGoodSpecProcess=params => { return axios.post(`${apiServer}/a/goods_spec_tobe_process/find.json`, params).then(res => res.data);};
+export const requestGoodSpecProcess=params => { return axios.post(`${apiServer}/a/good_spec_tobe_process/find.json`, params).then(res => res.data);};
 export const requestGoodSpecSearch=params => { return axios.post(`${apiServer}/a/goods_spec/search.json`, params).then(res => res.data);};
 export const requestGoodSpecUpdate=params => { return axios.post(`${apiServer}/a/goods_spec/update.json`, params).then(res => res.data);};
 

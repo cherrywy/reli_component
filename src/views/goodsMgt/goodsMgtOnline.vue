@@ -17,10 +17,10 @@
             </el-form>
         </el-row>
         <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;">
-            <el-card style="margin: 0 auto; width:500px;height:300px;position:relative">
+            <el-card style="margin: 0 auto;position:relative">
                 <!--<div class="canvas" ref="canvas">
-                    <canvas id="stage"></canvas>
-                </div>-->
+                        <canvas id="stage"></canvas>
+                    </div>-->
                 <Viewer :planId="planId" />
                 <div style="bottom: 0;position: absolute;">
                     <div class="bottom">
@@ -65,7 +65,10 @@
             <el-table :data="onlineShowCaseList" border style="width: 100%;margin-top: 15px;">
                 <el-table-column prop='goods_name' label="商品名称">
                 </el-table-column>
-                <el-table-column prop="" label="商品图片" align="center">
+                <el-table-column prop="" label="商品规格" align="center">
+                     <template scope="scope">
+                                    {{scope.row.spec1_value?scope.row.spec1_value:''}} {{scope.row.spec2_value?","+scope.row.spec2_value:''}}{{scope.row.spec3_value?","+scope.row.spec3_value:''}}
+                                </template>
                 </el-table-column>
     
                 <el-table-column label="操作" align="center">
@@ -84,16 +87,16 @@ import { requestOnline, requestFindShop, requestFindShopPlan, requestSearchSpec,
 export default {
     data() {
         return {
-            uid:'',
-            show_case_id:'',
+            uid: '',
+            show_case_id: '',
             shop: [],
             shopPlan: [],
             shopName: '',
             plansName: '',
             planId: 0,
             tableOnlineList: [],
-            onlineShowCaseList:[],
-            planShowCaseNumber:0,
+            onlineShowCaseList: [],
+            planShowCaseNumber: 0,
             planShowCase: [],
             tableData: [],
             goodsName: '',
@@ -109,12 +112,12 @@ export default {
         Viewer
     },
     mounted: function () {
-        this.uid=localStorage.getItem('uid');
+        this.uid = localStorage.getItem('uid');
         this.getFindShop()//获取门店
         this.$bus.$on('viewerSelectedShowcase', scId => {
             // 选中了展柜，展柜 id 为 scId
-            this.show_case_id=scId
-            this.getOnlineShowCaseList() 
+            this.show_case_id = scId
+            this.getOnlineShowCaseList()
         })
     },
     wach: {
@@ -133,7 +136,7 @@ export default {
                         type: 'error'
                     });
                 } else {
-                    this.onlineShowCaseList=result
+                    this.onlineShowCaseList = result
 
                 }
             })
@@ -146,9 +149,9 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                
+
                 let removeParams = { goods_spec_id: goods_spec_id, show_case_id: this.show_case_id };
-               console.log(removeParams);
+                console.log(removeParams);
                 requestGoodsOffline(removeParams).then(data => {
                     let { error_code, result } = data;
                     if (error_code == 0) {
@@ -170,7 +173,7 @@ export default {
             });
         },
         submit() {
-            
+
             const goods_spec_ids = this.multipleSelection.map(v => {
                 return v.id
             }).join()
@@ -189,7 +192,7 @@ export default {
                         type: 'success'
                     });
                     this.dialogFormVisible = false;
-                    this.getOnlineShowCaseList() 
+                    this.getOnlineShowCaseList()
 
                 }
             })
@@ -202,16 +205,16 @@ export default {
 
             let planListParams = { plan_id: this.planId };
             requestPlanShowCaseList(planListParams).then(data => {
-                let { error_code, result ,total_count} = data;
+                let { error_code, result, total_count } = data;
                 if (error_code !== 0) {
                     this.$message({
                         message: "返回数据有误",
                         type: 'error'
                     });
                 } else {
-                    
+
                     this.planShowCase = result
-                    this.planShowCaseNumber= total_count
+                    this.planShowCaseNumber = total_count
                     this.$bus.$emit('initViewer')
                 }
             })
@@ -223,7 +226,7 @@ export default {
                 listParams['key_word'] = key_word
             }
             requestSearchSpec(listParams).then(data => {
-                let { error_code, result ,total_count} = data;
+                let { error_code, result, total_count } = data;
                 if (error_code !== 0) {
                     this.$message({
                         message: "返回数据有误",
@@ -248,8 +251,8 @@ export default {
             this.getOnlineList(this.plansName, this.currentPage, this.pageSize)
         },
         getFindShop() {
-           
-            const shopPlanParams = { uid:this.uid };
+
+            const shopPlanParams = { uid: this.uid };
             requestFindShop(shopPlanParams).then(data => {
                 let { error_code, result } = data;
                 if (error_code !== 0) {
@@ -308,6 +311,16 @@ export default {
 #goods-app {
     width: 1080px;
     margin: 20px auto;
+}
+.container .canvas[data-v-5ae3712d] {
+    overflow-x: hidden !important;
+}
+.container .canvas .overlay[data-v-5ae3712d] {
+
+    top: 100px !important;
+
+    height: 20% !important;
+   
 }
 
 .image {
