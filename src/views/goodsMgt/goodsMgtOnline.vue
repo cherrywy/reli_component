@@ -104,6 +104,10 @@ export default {
     components: {
         Viewer
     },
+    beforeRouteUpdate (after, before, next) {
+        this.$bus.$emit('route.update')
+        next()
+    },
     mounted: function () {
         this.uid = localStorage.getItem('uid');
         this.getFindShop()//获取门店

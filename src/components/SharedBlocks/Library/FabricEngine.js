@@ -17,7 +17,7 @@ export default class Canvas {
     })(window.fabric.Object.prototype.toObject)
 
     let canvas = new window.fabric.Canvas(domId, {
-      backgroundColor: 'lightgreen',
+      backgroundColor: 'transparent',
       uniScaleTransform: true,
       selection: false
     })

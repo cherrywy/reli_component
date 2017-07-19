@@ -23,7 +23,7 @@
           </label>
         </div>
 
-        <div class="form-row" v-if="activeObject.id">
+        <div class="form-row" v-if="activeObject && activeObject.id">
           类型：
           <label>
             {{ (selectedObjectType == 10) ? '中岛柜' : '背柜' }}
@@ -33,11 +33,11 @@
         <div class="form-row" v-else>
           类型：
           <label>
-            <input type="radio" value="10" v-model="selectedObjectType" :disabled="activeObject.id"> 中岛柜
+            <input type="radio" value="10" v-model="selectedObjectType" :disabled="activeObject && activeObject.id"> 中岛柜
           </label>
           &nbsp;
           <label>
-            <input type="radio" value="20" v-model="selectedObjectType" :disabled="activeObject.id"> 背柜
+            <input type="radio" value="20" v-model="selectedObjectType" :disabled="activeObject && activeObject.id"> 背柜
           </label>
         </div>
 
@@ -97,7 +97,8 @@ export default {
       'getShopByPlanId'
     ]),
     shopName () {
-      let shop = this.getShopByPlanId(this.$route.params.id)
+      if (!this.activeObject) return ''
+      let shop = this.getShopByPlanId(this.activeObject.plan_id)
       if (shop && shop.name) {
         return shop.name
       } else {

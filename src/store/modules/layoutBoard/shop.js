@@ -27,7 +27,8 @@ const state = {
   uids,
   // 变量名兼容老逻辑，实际为门店 id 和 uid，取自 localstorage
   inputShopId: shopIds,
-  inputUid: uids
+  inputUid: uids,
+  selectedShopId: null
 }
 
 const getters = {
@@ -36,7 +37,8 @@ const getters = {
   inputShopId: state => state.inputShopId,
   inputUid: state => state.inputUid,
   shopIds: state => state.shopIds,
-  uids: state => state.uids
+  uids: state => state.uids,
+  selectedShopId: state => state.selectedShopId
 }
 
 const mutations = {
@@ -68,6 +70,9 @@ const mutations = {
   clearUids (state, value) {
     state.uids = []
     if (lstore) lstore.setItem('uids', null)
+  },
+  setSelectedShopId (state, value) {
+    state.selectedShopId = parseInt(value)
   }
 }
 
@@ -77,6 +82,9 @@ const actions = {
   //   let instances = result.map(item => new Shop(item))
   //   ctx.commit('setList', instances)
   // },
+  setSelectedShopId (ctx, value) {
+    ctx.commit('setSelectedShopId', value)
+  },
   setInputShopId (ctx, value) {
     ctx.commit('setInputShopId', value)
   },
