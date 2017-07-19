@@ -210,7 +210,7 @@ export default {
       },
       plan: null,
       planId: 0,
-      ui: { debug: false, initializing: true, loading: false, notify: false, noticeText: '' },
+      ui: { debug: false, initializing: false, loading: false, notify: false, noticeText: '' },
       issueList: new Set(),
       warningList: new Set()
     }
