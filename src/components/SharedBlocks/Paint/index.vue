@@ -13,7 +13,7 @@
           <label for="selection">
             <i class="fa fa-mouse-pointer"></i> 选择
           </label>-->
-          <input type="checkbox" id="freedraw" v-model="mode.freeDraw">
+          <input type="checkbox" id="freedraw" v-model="mode.freeDraw" :disabled="!plan">
           <label for="freedraw">
             <i class="fa fa-paint-brush"></i> 绘制（C）
           </label>
@@ -47,7 +47,7 @@
             {{ ui.noticeText }}
           </span>
         </transition>-->
-        <button @click="showNewPlanModal" class="save-btn"><i class="fa fa-plus"></i> 新增平面图</button>
+        <button @click="showNewPlanModal" class="save-btn" :disabled="!plan"><i class="fa fa-plus"></i> 新增平面图</button>
         <!--<button class="save-btn" @click="saveAll"><i class="fa fa-floppy-o"></i> 保存</button>-->
       </div>
 
@@ -107,8 +107,8 @@
       </div>
 
       <div class="toolset pull-right">
-        <button class="edit-plan-btn" @click="showUpdatePlanModal">更换背景图片</button>        
-        <button class="delete-btn" @click="_deletePlan">删除平面图</button>
+        <button class="edit-plan-btn" @click="showUpdatePlanModal" :disabled="!plan">更换背景图片</button>        
+        <button class="delete-btn" @click="_deletePlan" :disabled="!plan">删除平面图</button>
       </div>
     </div>
 
@@ -209,6 +209,7 @@ export default {
         unsaved: false
       },
       plan: null,
+      planId: 0,
       ui: { debug: false, initializing: true, loading: false, notify: false, noticeText: '' },
       issueList: new Set(),
       warningList: new Set()
@@ -233,9 +234,17 @@ export default {
       if (after) {
         this.hidePopup()
       }
+    },
+    plan (after) {
+      if (after && after.shop_id) {
+        this.setSelectedShopId(parseInt(this.plan.shop_id))
+      }
     }
   },
   methods: {
+    ...mapActions('lbShop', [
+      'setSelectedShopId'
+    ]),
     ...mapActions('lbShowcase', [
       'removeShowcase',
       'updateShowcase',
@@ -507,19 +516,18 @@ export default {
       })
     },
     _deletePlan () {
-      let planId = this.$route.params.id
-      if (planId) {
+      if (this.planId) {
         this.$zydialog({
           msg: '确定要删除此平面图吗？',
           desc: '删除后无法恢复',
           okDanger: true,
           onOk: async () => {
-            let result = await this.deletePlan(planId)
+            let result = await this.deletePlan(this.planId)
             if (typeof result === 'string') {
               this.$zydialog('错误：无法删除平面图。' + result)
             } else {
-              this.$zydialog('平面图已删除')
-              this.$router.push('/home')
+              // 刷新页面
+              this.$router.go(0)
             }
           }
         })
@@ -669,7 +677,7 @@ export default {
           }
           this.$set(this.$data.state.currentObj, 'data', {
             type: 10,
-            plan_id: parseInt(this.$route.params.id),
+            plan_id: parseInt(this.planId),
             sku_group: [],
             name: ''
           })
@@ -829,7 +837,10 @@ export default {
     this.$bus.$on('saveActiveObjectFromSkuTemplate', this.saveActiveObjectFromSkuTemplate)
     this.$bus.$on('setObjectUnsaved', this.setObjectUnsaved)
     this.$bus.$on('updatePlanImage', this.updatePlanImage)
-    this.$bus.$on('changePaintPlanId', id => { this.$data.plan = this.getPlanById(id) })
+    this.$bus.$on('changePaintPlanId', id => {
+      this.$data.planId = parseInt(id)
+      this.$data.plan = this.getPlanById(parseInt(id))
+    })
     window.onresize = this.hidePopup
   }
 }

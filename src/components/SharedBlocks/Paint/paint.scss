@@ -79,6 +79,11 @@ $theme-color: #3c8dbc;
       box-shadow: 1px 1px 1px rgba(50, 50, 50, 0.2)
     }
 
+    .save-btn:disabled {
+      color: #a6ada6;
+      background: #e6e6e6;
+    }
+
     .delete-btn {
       color: #d32e2e;
       background: #ffffff;
@@ -99,6 +104,11 @@ $theme-color: #3c8dbc;
       box-shadow: 1px 1px 1px rgba(50, 50, 50, 0.2)
     }
 
+    .delete-btn:disabled {
+      color: #a6ada6;
+      background: #e6e6e6;
+    }
+
     .edit-plan-btn {
       color: #3c8dbc;
       background: #ffffff;
@@ -116,6 +126,11 @@ $theme-color: #3c8dbc;
       color: #ffffff;
       background: #3c8dbc;
       box-shadow: 1px 1px 1px rgba(50, 50, 50, 0.2)
+    }
+
+    .edit-plan-btn:disabled {
+      color: #a6ada6;
+      background: #e6e6e6;
     }
 
     .plan-switch {
@@ -167,6 +182,11 @@ $theme-color: #3c8dbc;
         color: #0a9fd1;
         background: #eaeaea;
         box-shadow: inset 1px 1px 3px rgba(100, 100, 100, 0.4);
+      }
+
+      input[type=checkbox]:disabled + label {
+        color: #a6ada6;
+        background: #e6e6e6;
       }
      
       label {
