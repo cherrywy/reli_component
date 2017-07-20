@@ -183,10 +183,6 @@ export default {
                             type: 'success',
                             message: '下架成功!'
                         });
-<<<<<<< HEAD
-=======
-                        //console.log(index);
->>>>>>> 85c4c39fe378ff8e1732145cc9474301c1c08a54
                         this.onlineShowCaseList.splice(index, 1);
                         this.getOnlineShowCaseList();
 
@@ -231,36 +227,12 @@ export default {
         },
         
         getPlanShowCaseList() {
-<<<<<<< HEAD
-
-            this.isCase = false
-
-
-            let plan_id = '';
-            if(this.$route.query){
-           
-               plan_id = this.$route.query.planId
-            }else{
-                    plan_id = this.shopPlan.filter(v => {
-                         return v.value === this.plansName;
-                      }).map(v => v.id).pop();
-
-=======
->>>>>>> 85c4c39fe378ff8e1732145cc9474301c1c08a54
             this.isCase=false
             
             this.planId= this.shopPlan.filter(v => {
                 return v.value === this.plansName;
-            }).map(v => v.id).pop();
-<<<<<<< HEAD
-
-
-            } 
-            let planListParams = { plan_id: plan_id };
-=======
-            
+            }).map(v => v.id).pop();            
             let planListParams = { plan_id: this.planId };
->>>>>>> 85c4c39fe378ff8e1732145cc9474301c1c08a54
             requestPlanShowCaseList(planListParams).then(data => {
                 let { error_code, result, total_count } = data;
                 if (error_code !== 0) {
