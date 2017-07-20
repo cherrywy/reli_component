@@ -90,7 +90,7 @@ export default {
             shop: [],
             shopPlan: [],
             shopName: '',
-            shopId:'',
+            shopId: '',
             plansName: '',
             planId: 0,
             tableOnlineList: [],
@@ -113,10 +113,10 @@ export default {
     },
     mounted: function () {
         this.uid = localStorage.getItem('uid');
-        if(this.$route.query){
-             this.shopName=this.$route.query.shopName
-             this.getFindShopPlan()
-            
+        if (this.$route.query.shopId) {
+            this.shopName = this.$route.query.shopName
+            this.getFindShopPlan()
+
         }
         this.getFindShop()//获取门店
         this.$bus.$off('viewerSelectedShowcase')
@@ -130,7 +130,6 @@ export default {
             // 即可判定是否为多余的一次选中事件，中止执行。
             if (scObj.data.plan_id !== this.planId) return false
             this.isCase = true
-
             this.show_case_id = scObj.data.original_showcase_id
             this.show_case_name = scObj.data.name
             if (scObj.data.type === 10) {
@@ -147,7 +146,6 @@ export default {
             this.dialogFormVisible = true;
             this.goodsName = ''
             this.getOnlineList('', 0, 5)
-
         },
         getOnlineShowCaseList() {
             let OnlineListParams = { show_case_id: this.show_case_id };
@@ -159,8 +157,6 @@ export default {
                         type: 'error'
                     });
                 } else {
-
-
                     this.onlineShowCaseList = result
 
                 }
@@ -225,13 +221,14 @@ export default {
 
 
         },
-        
         getPlanShowCaseList() {
-            this.isCase=false
-            
-            this.planId= this.shopPlan.filter(v => {
+            this.isCase = false
+            this.planId = this.shopPlan.filter(v => {
                 return v.value === this.plansName;
-            }).map(v => v.id).pop();            
+            }).map(v => v.id).pop();
+            if(!this.planId){
+               return
+            }
             let planListParams = { plan_id: this.planId };
             requestPlanShowCaseList(planListParams).then(data => {
                 let { error_code, result, total_count } = data;
@@ -248,8 +245,6 @@ export default {
             })
         },
         getOnlineList(key_word, pageNum, limit) {
-
-
             let listParams = { uid: parseInt(this.uid), page: pageNum, limit: 20000 };
             if (key_word) {
                 listParams['keyword'] = key_word
@@ -272,12 +267,7 @@ export default {
             this.getOnlineList(this.goodsName, 0, 20000)
             this.key_word = ''
         },
-        handleSizeChange(val) {
-            this.pageSize = val;
-            this.getOnlineList(this.goodsName, this.currentPage, this.pageSize)
-        },
         getFindShop() {
-            
             const shopPlanParams = { uid: this.uid };
             requestFindShop(shopPlanParams).then(data => {
                 let { error_code, result } = data;
@@ -299,10 +289,12 @@ export default {
             })
         },
         getFindShopPlan() {
+            this.plansName = ''
+            this.planShowCase =[]
             let shop_id = '';
-            if (this.$route.query.shopId){
-                shop_id =this.$route.query.shopId
-            }else {
+            if (this.$route.query.shopId) {
+                shop_id = this.$route.query.shopId
+            } else {
                 shop_id = this.shop.filter(v => {
                     return v.value === this.shopName;
                 }).map(v => v.id).pop();
