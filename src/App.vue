@@ -64,4 +64,9 @@ body {
 .fade-leave-active {
 	opacity: 0;
 }
+
+.blue-btn {
+    background: rgb(112, 165, 236) !important;
+    border: none !important;
+}
 </style>

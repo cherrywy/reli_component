@@ -7,7 +7,6 @@ let shopIds = ''
 let uids = ''
 if (window.localStorage) {
   lstore = window.localStorage
-  try { shopIds = parseInt(lstore.getItem('shop_id')) || '' } catch (err) { shopIds = '' }
   try { uids = parseInt(lstore.getItem('uid')) || '' } catch (err) { uids = '' }
 }
 
@@ -98,20 +97,20 @@ const actions = {
     ctx.commit('clearUids')
   },
   async getShop (ctx, value) {
-    if (!ctx.state.inputShopId || !ctx.state.inputUid) {
+    if (!ctx.state.selectedShopId || !ctx.state.inputUid) {
       return false
     }
-    let shopRes = await api.request('/a/shop/show.json', { id: parseInt(ctx.state.inputShopId) })
+    let shopRes = await api.request('/a/shop/show.json', { id: parseInt(ctx.state.selectedShopId) })
     if (shopRes.error_code > 0 || !shopRes.result || !shopRes.result.shop || !shopRes.result.shop[0]) {
       return false
     } else {
       let instance = new Shop(shopRes.result.shop[0])
       await ctx.commit('setList', instance)
-      await ctx.commit('insertShopId', { id: parseInt(ctx.state.inputShopId), name: instance.name })
+      await ctx.commit('insertShopId', { id: parseInt(ctx.state.selectedShopId), name: instance.name })
       await ctx.commit('insertUid', ctx.state.inputUid)
       return true
     }
-    // let result = await _.find(mock.list, { id: parseInt(ctx.rootState.lbShop.inputShopId) })
+    // let result = await _.find(mock.list, { id: parseInt(ctx.rootState.lbShop.selectedShopId) })
     // if (!result) {
     //   return false
     // }

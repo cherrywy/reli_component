@@ -71,7 +71,7 @@ const actions = {
     })
     let result = await api.request('/a/plan/new.json', params)
     if (result && result.error_code === 0) {
-      await ctx.dispatch('getPlanListByShopId', ctx.rootState.lbShop.inputShopId)
+      await ctx.dispatch('getPlanListByShopId', ctx.rootState.lbShop.selectedShopId)
       return true
     } else {
       return false
@@ -83,7 +83,7 @@ const actions = {
     }
     let result = await api.request('/a/plan/update.json', value)
     if (result && result.error_code === 0 && result.result && result.result[0]) {
-      await ctx.dispatch('getPlanListByShopId', ctx.rootState.lbShop.inputShopId)
+      await ctx.dispatch('getPlanListByShopId', ctx.rootState.lbShop.selectedShopId)
       return result.result[0]
     } else {
       return result.error_msg || '与服务器通信失败'
@@ -94,7 +94,7 @@ const actions = {
     if (result.error_code > 0 || !result.result) {
       return result.error_msg || '与服务器通信失败'
     }
-    await ctx.dispatch('getPlanListByShopId', ctx.rootState.lbShop.inputShopId)
+    await ctx.dispatch('getPlanListByShopId', ctx.rootState.lbShop.selectedShopId)
     return true
   },
   async setCurrentPlanById (ctx, value) {

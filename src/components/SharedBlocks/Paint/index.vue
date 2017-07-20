@@ -47,7 +47,7 @@
             {{ ui.noticeText }}
           </span>
         </transition>-->
-        <button @click="showNewPlanModal" class="save-btn" :disabled="!plan"><i class="fa fa-plus"></i> 新增平面图</button>
+        <!-- <button @click="showNewPlanModal" class="save-btn" :disabled="!plan"><i class="fa fa-plus"></i> 新增平面图</button> -->
         <!--<button class="save-btn" @click="saveAll"><i class="fa fa-floppy-o"></i> 保存</button>-->
       </div>
 
@@ -85,7 +85,7 @@
 
     <div class="toolbox">
       <div class="toolset">
-        <div>展柜数量：{{ objectCount }}</div>
+        <!-- <div>展柜数量：{{ objectCount }}</div> -->
 
         <!--<div>
           <transition-group name="fade-issue">
@@ -186,11 +186,26 @@ export default {
     return {
       canvas: null,
       shopData: { shopName: '', counters: [], aisles: [], shapes: [], plans: [] },
+      palette: {
+        // 中岛柜色盘
+        '10': {
+          stroke: 'blue',
+          fill: 'rgba(56, 121, 217, 0.9)'
+        },
+        // 背柜色盘
+        '20': {
+          stroke: 'green',
+          fill: 'rgba(196, 223, 184, 0.9)'
+        },
+        // 未保存展柜色盘
+        unsaved: {
+          stroke: 'yellow',
+          fill: 'rgba(255, 238, 188, 0.9)'
+        }
+      },
       coorDefaults: {
         originX: 'center',
         originY: 'center',
-        fill: 'rgba(66, 134, 244, 0.7)',
-        stroke: 'blue',
         strokeWidth: 1,
         scaleX: 1,
         scaleY: 1,
@@ -226,8 +241,14 @@ export default {
         this.init()
       }
     },
-    canvas () {
-      this.renderObjects()
+    showcaseList (after) {
+      this.$nextTick(() => {
+        if (Array.isArray(after) && after.length > 0) {
+          this.renderObjects(after)
+        } else {
+          this.toggleInitializing(false)
+        }
+      })
     },
     'mode.freeDraw' (after) {
       this.$data.canvas.deactivateAll().renderAll()
@@ -341,6 +362,8 @@ export default {
             type: shape.show_case_type,
             sku_group: await this.getSkuGroupsByShowcaseId(shape.id)
           })
+          object.set('stroke', this.palette[object.data.type].stroke)
+          object.set('fill', this.palette[object.data.type].fill)
           this.$data.canvas.add(object)
         })
         this.$data.canvas.deactivateAll().renderAll()
@@ -383,14 +406,15 @@ export default {
     },
     setObjectUnsaved (object) {
       if (!object) return false
-      object.set('fill', 'rgba(244, 214, 65, 0.7)')
+      object.set('fill', this.palette.unsaved.fill)
       object.set('unsaved', true)
       this.$data.popup.unsaved = true
       this.$data.canvas.renderAll()
     },
     setObjectSaved (object) {
       if (!object) return false
-      object.set('fill', 'rgba(66, 134, 244, 0.7)')
+      object.set('stroke', this.palette[object.data.type].stroke)
+      object.set('fill', this.palette[object.data.type].fill)
       object.set('unsaved', false)
       this.$data.popup.unsaved = false
       this.$data.canvas.renderAll()
@@ -664,8 +688,8 @@ export default {
             this.$data.state.currentObj = new window.fabric.Rect({
               left: this.$data.state.originX,
               top: this.$data.state.originY,
-              fill: 'rgba(244, 214, 65, 0.7)',
-              stroke: 'blue',
+              fill: this.palette.unsaved.fill,
+              stroke: this.palette.unsaved.stroke,
               strokeWidth: 1
             })
           } else {
@@ -674,8 +698,8 @@ export default {
               left: this.$data.state.originX,
               top: this.$data.state.originY,
               radius: pointer.x - this.$data.state.originX,
-              fill: 'rgba(244, 214, 65, 0.7)',
-              stroke: 'blue',
+              fill: this.palette.unsaved.fill,
+              stroke: this.palette.unsaved.stroke,
               strokeWidth: 1
             })
           }
@@ -833,6 +857,7 @@ export default {
     this.$bus.$off('setObjectUnsaved')
     this.$bus.$off('updatePlanImage')
     this.$bus.$off('changePaintPlanId')
+    this.$bus.$off('resetPaintCanvas')
 
     this.$bus.$on('initPaintCanvas', this.init)
     this.$bus.$on('resetSkewRotate', this.resetActiveObject)
@@ -845,6 +870,11 @@ export default {
     this.$bus.$on('changePaintPlanId', id => {
       this.$data.planId = parseInt(id)
       this.$data.plan = this.getPlanById(parseInt(id))
+    })
+    this.$bus.$on('resetPaintCanvas', () => {
+      this.plan = null
+      this.planId = 0
+      this.switchActivePlan()
     })
     window.onresize = this.hidePopup
   }

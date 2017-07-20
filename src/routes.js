@@ -47,7 +47,7 @@ let routes = [
         path: '/',
         component: Home,
         iconCls: '/static/img/md_click.png',
-         icon: '/static/img/md.png',
+        icon: '/static/img/md.png',
         name: '门店管理',
         children: [
             {

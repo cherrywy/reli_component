@@ -16,14 +16,14 @@
                 </el-form-item>
             </el-form>
         </el-row>
-        <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;" v-show="planShowCase.length>0">
+        <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;" v-show="planId">
             <el-card style="margin: 0 auto;position:relative">
                 <Viewer :planId="planId" />
-                <div style="bottom: 0;position: absolute;">
-                    <div class="bottom">
-                        <el-button type="text" class="button">展柜数量:{{planShowCaseNumber}}</el-button>
-                    </div>
-                </div>
+                <!--<div style="bottom: 0;position: absolute;">-->
+                    <!--<div class="bottom">-->
+                        <!--<el-button type="text" class="button">展柜数量:{{planShowCaseNumber}}</el-button>-->
+                    <!--</div>-->
+                <!--</div>-->
             </el-card>
         </el-row>
         <el-card class="box-card" v-show="isCase">
@@ -222,7 +222,7 @@ export default {
 
         },
         getPlanShowCaseList() {
-            this.isCase = false
+            this.isCase = false;
             this.planId = this.shopPlan.filter(v => {
                 return v.value === this.plansName;
             }).map(v => v.id).pop();
@@ -232,15 +232,26 @@ export default {
             let planListParams = { plan_id: this.planId };
             requestPlanShowCaseList(planListParams).then(data => {
                 let { error_code, result, total_count } = data;
+
                 if (error_code !== 0) {
                     this.$message({
                         message: "返回数据有误",
                         type: 'error'
                     });
                 } else {
-                    this.planShowCase = result
-                    this.planShowCaseNumber = total_count
-                    this.$bus.$emit('initViewer')
+                    if (total_count===0){//展柜数量为0
+                        this.$message({
+                            message: "该平面图无展柜，请先添加展柜",
+                            type: 'info'
+                        });
+                        this.$bus.$emit('initViewer')
+                        console.log('1111')
+                    }else {
+                        this.planShowCase = result
+                        this.planShowCaseNumber = total_count
+                        this.$bus.$emit('initViewer')
+                        console.log('222')
+                    }
                 }
             })
         },
