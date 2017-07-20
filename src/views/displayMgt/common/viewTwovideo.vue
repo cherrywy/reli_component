@@ -128,8 +128,9 @@ export default {
             })
          },
          changeDiaplay(index){
-            let id= this.tableData[index].id
-            //console.log(this.tableData[index])
+             console.log(this.filteredTableData)
+            let id= this.filteredTableData[index].id
+            console.log(this.filteredTableData[index])
             const path = '/bindList?goods_id=' + id;
             this.$router.push({ path: path });
          },
@@ -138,7 +139,7 @@ export default {
              //当前页变动时候触发的事件
             console.log(currentPage)
             this.pageinationInfo.currentPage = currentPage;
-           this.getVideoList()
+            this.getVideoList()
         },
          handleSizeChange(size) {
             //pageSize 改变时会触发
