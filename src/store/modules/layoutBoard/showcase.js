@@ -195,8 +195,8 @@ const actions = {
       }
       let params = {
         plan_id: value.data.plan_id,
-        uid: parseInt(ctx.rootState.lbShop.inputUid),
-        shop_id: parseInt(ctx.rootState.lbShop.inputShopId),
+        uid: parseInt(ctx.rootState.lbShop.uids),
+        shop_id: parseInt(ctx.rootState.lbShop.selectedShopId),
         show_case_type: parseInt(value.data.type),
         name: value.data.name,
         type: (value.type === 'rect') ? 0 : 1,
