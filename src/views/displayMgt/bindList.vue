@@ -76,7 +76,7 @@
                             type="textarea"
                             :rows="2"
                             placeholder="请输入内容"
-                            v-model="form.propaganda_intro" style='width:300px;'>
+                            v-model="form.propaganda" style='width:300px;'>
                         </el-input>
                     </el-form-item>
                     <el-form-item label="商品介绍：">
@@ -228,7 +228,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                      goods_name:val.info[0].data.name,
                      details_intro:val.details_intro[0].data.goods_value,
                      price_goods_value:val.price[0].data.goods_value,
-                     propaganda_intro:val.propaganda_intro[0].data.goods_value,
+                     propaganda:val.propaganda_intro[0].data.goods_value,
                      tag_url:val.jump_url[0].data.url
                  }
                  //名字标签
@@ -321,14 +321,14 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
            console.log(this.fileList[0])
            this.saveInfomations = {
                goods_url:this.fileList[0]?this.fileList[0].url:'',
-               details_intro:info.propaganda_intro,
+               details_intro:info.details_intro,
                details_tag:this.seleValue,
                goods_id:this.$route.query.goods_id || this.goodId,
                goods_tag:this.seleValue,
                goods_tag_url:'',
                jump_url:info.tag_url,
                price:info.price_goods_value,
-               propaganda:info.details_intro,
+               propaganda:info.propaganda,
                propaganda_pic:'',
                uid:this.uid,
                video_url:this.videoList[0]?this.videoList[0].url:'',

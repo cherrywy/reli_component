@@ -16,7 +16,7 @@
     </el-form>
     </div>
     <div class='footer'>
-      <span class='text'>@Geekniu 2015-2017</span>
+      <span class='text'>@shoppingdata.cn 2017</span>
     </div>
   </div>
 </template>

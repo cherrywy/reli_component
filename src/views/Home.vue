@@ -73,7 +73,7 @@
 			</section>
 		</el-col>
 		<el-col :span="24" class="footer">
-			<span class='text'>@Geekniu 2015-2017</span>
+			<span class='text'>@shoppingdata.cn 2017</span>
 		</el-col>
 	</el-row>
 </template>
