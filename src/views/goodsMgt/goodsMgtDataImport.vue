@@ -9,7 +9,7 @@
                     </el-select>
                 </el-form-item>
                 <el-upload class="avatar-uploader" ref="upload" style="float:right;margin-right:20px;" :action="action" :data="{'uid': uid,'shop_id':shop_id,'header_index':4,'file':fileList.name}" :file-list="fileList" :on-success="handleImportSuccess" :show-file-list="false">
-                    <el-button type="primary" style="background:#70a5ec" @click='loading=true'>导入销售数据</el-button>
+                    <el-button type="primary" style="background:#70a5ec;border: none;" @click='loading=true'>导入销售数据</el-button>
                 </el-upload>
             </el-form>
     
@@ -20,7 +20,7 @@
             <div v-if="dataImprt.length!=0">
                 <div v-for='(item,index) in dataImprt' style="padding:10px;">
                     <span>{{item.data.goods_name}}</span>
-                    <el-button type='text' style="float:right;margin-right:50px" @click='searchGoodsSpec(index,item.id,item.data.goods_name,item.data.goods_number)'>搜索</el-button>
+                    <el-button type='text' style="float:right;margin-right:50px;" @click='searchGoodsSpec(index,item.id,item.data.goods_name,item.data.goods_number)'>搜索</el-button>
     
                 </div>
                 <el-row class="row center">
@@ -222,10 +222,12 @@ export default {
                 let { error_code, result } = data;
                 if (error_code == 0) {
                     this.dataImprt.splice(this.index, 1);
+
                     this.$message({
                         message: "删除成功",
                         type: 'success'
                     });
+                    this.getGoodSpecProcessList()
 
                 }
             })

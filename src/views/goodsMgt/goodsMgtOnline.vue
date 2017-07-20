@@ -26,10 +26,10 @@
                 </div>
             </el-card>
         </el-row>
-        <el-card class="box-card" v-if="isCase">
+        <el-card class="box-card" v-show="isCase">
             <div slot="header" class="clearfix">
                 <span style="line-height: 36px;">{{show_case_type}}-{{show_case_name}}</span>
-                <el-button style="float: right;background: rgb(112, 165, 236)" type="primary" @click="getOnlineList('', 0, 5)">上架商品</el-button>
+                <el-button style="float: right;background: rgb(112, 165, 236);border: none;" type="primary" @click="getOnlineList('', 0, 5)">上架商品</el-button>
                 <el-dialog :visible.sync="dialogFormVisible">
                     <el-form>
                         <el-form-item label="">
@@ -67,7 +67,7 @@
     
                 <el-table-column label="操作" align="center">
                     <template scope="scope">
-                        <el-button size="small" style="background:#E0595B;opacity:0.66;color:#000" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
+                        <el-button size="small" style="background:#E0595B;opacity:0.66;color:#fff;border: none;" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -110,6 +110,12 @@ export default {
         next()
     },
     mounted: function () {
+        // if($route.query){
+        //     this.shopName=this.$route.query.planId
+        //     this.planId = this.$route.query.planId;
+        //     getPlanShowCaseList()
+
+        // }
         this.uid = localStorage.getItem('uid');
         if(this.$route.query){
             console.log(this.$route.query)
@@ -121,9 +127,18 @@ export default {
             this.getPlanShowCaseList()
         }
         this.getFindShop()//获取门店
+        this.$bus.$off('viewerSelectedShowcase')
         this.$bus.$on('viewerSelectedShowcase', scObj => {
             // 选中了展柜，展柜 id 为 scId
+            // 由于 Viewer 组件的特殊逻辑“取消选择展柜时保留选中状态”，导致
+            // 切换平面图时，自动发生的“取消选择”事件再次出发选中事件，
+            // 引起一次多余的 viewerSelectedShowcase 事件。解决方式：
+            // 因为切换平面图后，本组件的 planId 已与先前不同，所以多余的
+            // 事件参数传来的 scObj 的 plan_id 和现在不等，判断这个值
+            // 即可判定是否为多余的一次选中事件，中止执行。
+            if (scObj.data.plan_id !== this.planId) return false
             this.isCase=true
+            
             this.show_case_id = scObj.data.original_showcase_id
             this.show_case_name=scObj.data.name
             if (scObj.data.type === 10) {
@@ -134,11 +149,6 @@ export default {
             }
             this.getOnlineShowCaseList()
         })
-    },
-    wach: {
-        canvas() {
-            this.renderObjects()
-        },
     },
     methods: {
         getOnlineShowCaseList() {
@@ -175,18 +185,16 @@ export default {
                             type: 'success',
                             message: '下架成功!'
                         });
+<<<<<<< HEAD
                         //console.log(index);
+=======
+>>>>>>> origin/master
                         this.onlineShowCaseList.splice(index, 1);
                         this.getOnlineShowCaseList();
 
                     }
                 })
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '数据返回错误'
-                });
-            });
+            })
         },
         submit() {
         
@@ -225,6 +233,7 @@ export default {
         },
         
         getPlanShowCaseList() {
+<<<<<<< HEAD
             let plan_id = '';
             if(this.$route.query){
                //this.getFindShopPlan()
@@ -233,6 +242,14 @@ export default {
                     plan_id = this.shopPlan.filter(v => {
                          return v.value === this.plansName;
                       }).map(v => v.id).pop();
+=======
+            this.isCase=false
+            console.log(this.isCase);
+            
+            this.planId = this.shopPlan.filter(v => {
+                return v.value === this.plansName;
+            }).map(v => v.id).pop();
+>>>>>>> origin/master
 
             } 
             let planListParams = { plan_id: plan_id };
@@ -245,7 +262,6 @@ export default {
                         type: 'error'
                     });
                 } else {
-
                     this.planShowCase = result
                     this.planShowCaseNumber = total_count
                     this.$bus.$emit('initViewer')

@@ -60,7 +60,7 @@ import {carouselImgs} from '../../api/display'
 		width:150px;
 		height:200px;
 		margin-right:20px;
-		background:url('../../../static/twoad.jpeg') no-repeat;
+		background:url('/static/img/twoad.jpeg') no-repeat;
 		background-size:100% 100%;
 	}
 	.device:active{

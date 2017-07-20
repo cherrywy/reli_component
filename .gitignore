@@ -1,7 +1,14 @@
 .DS_Store
-.DS_Store? 
-node_modules
-node_modules/*
-npm-debug.log
-dist
-dist/*
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+test/unit/coverage
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
