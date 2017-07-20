@@ -21,7 +21,8 @@
             <el-table-column label="商品图片" width="120" align="center">
                 <template scope="scope">
                     <img v-if='scope.row.goods_title_pics&&scope.row.goods_title_pics.length!=0' style='margin: 5px;' width='60' height='60' :src="scope.row.goods_title_pics">
-                    <img width='60' height='60' style='margin: 5px;' v-else src="../../../static/pic_blank.png">
+                     <img width='60' height='60' style='margin: 5px;'  v-else src="/static/img/pic_blank.png">
+
                 </template>
     
             </el-table-column>

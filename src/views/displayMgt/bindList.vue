@@ -6,14 +6,13 @@
                     <el-form-item label="请选择商品：">
                         <el-button type='text'  @click="changeGoods">选择商品</el-button>
                         <el-tag
-                            v-model="form.goods_name"
-                            :key="form.goods_name"
+                            v-for='tag in tagArrName'
                             :closable="true"
                             :type="primary"
-                            @close="handleClose(form.goods_name)"
+                            @close="handleClose(tag)"
                             style='margin-left:100px'
                             >
-                            {{form.goods_name}}
+                            {{tag}}
                         </el-tag>
                         <el-dialog :visible.sync="dialogFormVisible">
                             <el-form :model="form">
@@ -65,21 +64,21 @@
                         </el-upload>
                     </el-form-item>
                     <el-form-item label="商品标签：">
-                       <el-select v-model="seleValue" @change="remoteMethod"  @click="updateSelet"  allow-create filterable>
+                       <el-select v-model="seleValue" @change="remoteMethod" allow-create filterable>
                             <el-option v-for="item in options" :key="item.key_word" :label="item.key_word" :value="item.key_word">
                             </el-option>
                         </el-select>
-                        <el-tag :key="seleValue.key_word"
-                            v-model='seleValue.key_word'
+                        <el-tag :key="valtag"
+                            v-for='valtag in tagArrtag'
                             :closable="true"
-                            @close="handleTag(tag)">{{seleValue}}</el-tag>
+                            @close="handleTag(valtag)">{{valtag}}</el-tag>
                     </el-form-item>
                     <el-form-item label="商品推荐语：">
                        <el-input
                             type="textarea"
                             :rows="2"
                             placeholder="请输入内容"
-                            v-model="form.details_intro" style='width:300px;'>
+                            v-model="form.propaganda_intro" style='width:300px;'>
                         </el-input>
                     </el-form-item>
                     <el-form-item label="商品介绍：">
@@ -87,7 +86,7 @@
                             type="textarea"
                             :rows="2"
                             placeholder="请输入内容"
-                            v-model="form.propaganda_intro"
+                            v-model="form.details_intro"
                              style='width:300px;'>
                         </el-input>
                     </el-form-item>
@@ -128,6 +127,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
   export default {
     data() {
       return {
+        showadd:true,
         dialogTableVisible: false,
         searchVal:'',
         bindgoods:{},
@@ -150,7 +150,8 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
         obj:{url:''},
         videoobj:{url:''},
         options: [],
-        seleValue:[],
+        seleValue:'',
+        tagValue:[],
         saveInfomations:{
              banner_urls:'',
                details_intro:'',
@@ -179,7 +180,9 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
              with_suffix:1
          },
          uid:'',
-         head_office_id:''
+         head_office_id:'',
+         tagArrName:[],
+         tagArrtag:[],
       };
     },
     mounted() {
@@ -200,7 +203,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 let img = {
                     url:val.pic[0].data.url?val.pic[0].data.url:val.info[0].data.title_pics[0]
                 }
-                if(img.url){
+                if(img.url !== ''){
                     this.fileList.push(img)
                 }
                 if(val.vedio_url[0].data.url !== ''){
@@ -210,6 +213,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                     this.videoList.push(video)
                 }
                 this.seleValue = val.tag[0].data.goods_value
+               
                 this.form = {
                      goods_name:val.info[0].data.name,
                      details_intro:val.details_intro[0].data.goods_value,
@@ -217,7 +221,19 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                      propaganda_intro:val.propaganda_intro[0].data.goods_value,
                      tag_url:val.jump_url[0].data.url
                  }
-                
+                 //名字标签
+                 this.tagArrName.push(this.form.goods_name)
+                 //商品标签
+                 this.tagArrtag.push(this.seleValue)
+                 console.log(this.tagArrtag)
+
+                if(this.tagArrtag.length>1){
+                    this.$message({
+                        message: "商品只能有一个标签",
+                        type: 'error'
+                     })
+                }
+                 //console.log(this.tagArrName)    
             })
             let info = {
                 uid:this.uid,
@@ -233,12 +249,23 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 })
             })
         },
-        handleClose(goods_name) {
-            //标签关闭
-            goods_name= null
+        handleClose(tag) {
+            //标签关闭判断
+            if(this.$route.fullPath !== '/bindList'){
+                this.$message({
+                    message: "更换素材不能删除商品",
+                    type: 'error'
+                })
+            }else{
+
+                var index = this.tagArrName.indexOf(tag);
+                this.tagArrName.splice(index,1);
+            } 
         },
-        handleTag(tag){
-            this.tag_goods_value = null
+        handleTag(valtag){
+            //商品标签 标签关闭
+            var index = this.tagArrtag.indexOf(valtag);
+            this.tagArrtag.splice(index,1);
         },
         addgoods(){
             //添加商品 跳转页面
@@ -250,6 +277,10 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 url:res.result.file_download_url
             }
             this.fileList.push(upimg)
+            if(this.fileList.length>1){
+                this.fileList.splice(0,1)
+                console.log(this.fileList)
+            }
         },
         videohandleAvatarSuccess(res, file){
             let upimg = {
@@ -270,29 +301,46 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
            console.log(this.fileList[0])
            this.saveInfomations = {
                goods_url:this.fileList[0]?this.fileList[0].url:'',
-               details_intro:info.details_intro,
+               details_intro:info.propaganda_intro,
                details_tag:this.seleValue,
                goods_id:this.$route.query.goods_id || this.goodId,
                goods_tag:this.seleValue,
                goods_tag_url:'',
                jump_url:info.tag_url,
                price:info.price_goods_value,
-               propaganda:info.propaganda_intro,
+               propaganda:info.details_intro,
                propaganda_pic:'',
                uid:this.uid,
                video_url:this.videoList[0]?this.videoList[0].url:'',
            }
            changeDiaplay(this.saveInfomations).then(data=>{
-               this.$message({
-                    message: "上传成功",
-                    type: 'success'
-                }).then(
-                   this.$router.push({path:'/bindDisplayData/viewTwovideo'})
-                )
+               console.log(data)
+               if(data.error_code !== 0){
+                   this.$message({
+                        message:'上传失败',
+                        type: 'error'
+                    })
+               }else{
+                     this.$message({
+                        message: "上传成功",
+                        type: 'success'
+                    }).then(
+                    this.$router.push({path:'/bindDisplayData/viewTwovideo'})
+                    )
+               }
+              
            })
             
         },
         changeGoods(){
+            if(this.tagArrName.length !== 0){
+                this.dialogFormVisible = false
+                this.$message({
+                    message: "只能添加一个商品",
+                    type: 'error'
+                })
+            }
+            else{
             this.dialogFormVisible = true
             let id = {
                uid:this.uid
@@ -309,25 +357,35 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 })
                 this.pageinationInfo.total =  this.arr.length
                 this.arr = this.arr.slice(startIndex,endIndex)
-            })
-
+             })
+            }
+            
         },
         handleSelect(row){
-            //console.log(row)
             this.good_name = row.name
             this.goodId = row.goods_id
             this.selectAry.push(row)
         },
         saveChangeGoods(){
-            if(this.selectAry.length >2){
+            if(this.tagArrName.length == 1){
+                if(!this.tagArrName[0]){
+                    this.$message({
+                        message: "请选择一个商品",
+                         type: 'error'
+                    }) 
+                    this.tagArrName=[]
+                }
+                 this.tagArrName.push(this.good_name)
+            }
+            else if(this.tagArrName.length > 1 ){
                 this.$message({
                    message: "只能选择一个商品",
                    type: 'error'
-                })
+                })       
             }
             else{
-                this.dialogFormVisible = false;
-                this.form.goods_name = this.good_name
+                this.tagArrName.push(this.good_name)
+                this.dialogFormVisible = false
             }   
         },
         //分页
@@ -350,23 +408,33 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
         },
         clear_search_input(){
             //清楚搜素输入框
+           this.changeGoods()
            let name = this.searchVal
-           console.log(this.searchVal)
            if(this.searchVal !== ''){
                 this.arr = this.arr.filter(function(v){
-                      return new RegExp(`${name}`,'i').test(v.name);
+                    return new RegExp(`${name}`,'i').test(v.name);
                 })
            }else{
                  this.changeGoods()
            }
         },
-        remoteMethod(){
-            let inf = {
-                uid:this.uid,
-                type:4,
-                key_word:this.seleValue
+        remoteMethod(seleValue){
+            if(this.options.indexOf(seleValue) == -1){
+                //值不在下拉框中，添加
+                    let inf = {
+                        uid:this.uid,
+                        type:4,
+                        key_word:this.seleValue
+                      }
+                   addstype(inf)
             }
-            addstype(inf)
+            if(this.tagArrtag.length == 0){
+                this.tagArrtag.push(seleValue)
+            }else{
+                this.tagArrtag =[]
+                this.tagArrtag.push(seleValue)
+            }
+            console.log(this.tagArrtag)
             //this.getGoodsList();
         }
     }

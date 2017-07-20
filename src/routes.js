@@ -37,8 +37,8 @@ let routes = [
         path: '/',
         component: Home,
         name: '首页',
-        iconCls: '/static/home_click.png',
-        icon: '/static/home.png',
+        iconCls: '/static/img/home_click.png',
+        icon: '/static/img/home.png',
         children: [
             { path: '/', component: home, name: '首页',hidden:false }  
         ]
@@ -46,8 +46,8 @@ let routes = [
     {
         path: '/',
         component: Home,
-        iconCls: '/static/md_click.png',
-         icon: '/static/md.png',
+        iconCls: '/static/img/md_click.png',
+         icon: '/static/img/md.png',
         name: '门店管理',
         children: [
             {
@@ -60,8 +60,8 @@ let routes = [
     {
         path: '/',
         component: Home,
-        iconCls: '/static/sp_click.png',
-        icon: '/static/sp.png',
+        iconCls: '/static/img/sp_click.png',
+        icon: '/static/img/sp.png',
         name: '商品管理',
         children: [
             { path: '/goodsMgtList', component: goodsMgtList, name: '商品管理' },
@@ -74,8 +74,8 @@ let routes = [
     {
         path: '/',
         component: Home,
-        iconCls: '/static/ad_click.png',
-        icon: '/static/ad.png',
+        iconCls: '/static/img/ad_click.png',
+        icon: '/static/img/ad.png',
         name: '广告管理',
         children: [
             { 
@@ -83,8 +83,8 @@ let routes = [
                 component: bindDisplayData,
                 name: '素材绑定',
                 children:[
-                  {path:'/bindDisplayData/viewTwoimgs',component:viewTwoimgs,name: '素材绑定',hidden: true},
-                  {path:'/bindDisplayData/viewTwovideo',component:viewTwovideo,name: '素材绑定',hidden: true},
+                  {path:'/bindDisplayData/viewTwoimgs',component:viewTwoimgs,name: '轮播图',hidden: true},
+                  {path:'/bindDisplayData/viewTwovideo',component:viewTwovideo,name: '商品',hidden: true},
                 ]
             },
             { path: '/manageDisplayDevice', component: manageDisplayDevice, name: '广告机管理' },

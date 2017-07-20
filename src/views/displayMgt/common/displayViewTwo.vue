@@ -4,7 +4,7 @@
              <span>素材类型：</span>
 			  <el-radio-group v-model="radio3" @change='changeVie' fill='#70a5ec' text-color='white'>
 				<el-radio-button label="轮播图" ></el-radio-button>
-				<el-radio-button label="视频"></el-radio-button>
+				<el-radio-button label="商品"></el-radio-button>
 			</el-radio-group>
            </el-col>
         <el-col :span='24'>
@@ -35,7 +35,7 @@ export default {
 			 let inf = this.$route.path.split("/bindDisplayData/")[1]
 			 console.log(inf);
 			 if(inf == 'viewTwovideo'){
-				 this.radio3 ='视频'
+				 this.radio3 ='商品'
 				 this.cv ='viewTwovideo' 
 			 }
 			 else if(inf == 'viewTwoimgs'){
@@ -49,7 +49,7 @@ export default {
 				this.cv ='viewTwoimgs' 
 				this.$router.push({ path:'/bindDisplayData/viewTwoimgs' })
 			}
-			if(this.radio3 =='视频'){
+			if(this.radio3 =='商品'){
 				this.cv ='viewTwovideo'
 				this.$router.push({ path:'/bindDisplayData/viewTwovideo' })
 			}

@@ -67,7 +67,7 @@ export default {
 	.device{
 		width:150px;
 		height:200px;
-		background:url('../../../static/twoad.jpeg') no-repeat;
+		background:url('/static/img/twoad.jpeg') no-repeat;
 		background-size:100% 100%;
 	}
 	.device:active{

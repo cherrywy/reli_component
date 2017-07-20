@@ -8,7 +8,7 @@ import NProgress from 'nprogress'
 import store from './store'
 import Vuex from 'vuex'
 import routes from './routes'
-import 'font-awesome/css/font-awesome.min.css'
+import 'font-awesome-webpack'
 
 // 导入展柜布局工具依赖
 import ZyDialog from './components/SharedBlocks/ZyDialog/index'
@@ -33,9 +33,9 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.path == '/login') {
-    localStorage.removeItem('uid');
+    localStorage.removeItem('uid')
   }
-  let uid= JSON.parse(localStorage.getItem('uid'));
+  let uid = JSON.parse(localStorage.getItem('uid'))
   if (!uid && to.path != '/login') {
     next({ path: '/login' })
   } else {
@@ -44,15 +44,14 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach(transition => {
-  NProgress.done();
-});
+  NProgress.done()
+})
 
 new Vue({
-  //el: '#app',
-  //template: '<App/>',
+  // el: '#app',
+  // template: '<App/>',
   router,
   store,
-  //components: { App }
+  // components: { App }
   render: h => h(App)
 }).$mount('#app')
-
