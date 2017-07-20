@@ -2,17 +2,13 @@
     <section>
         <el-col :span="24">
             <el-col :span="7">
-                <el-select v-model="brand_name" style="width: 261px;" placeholder="品牌">
+                <el-select v-model="brand_name" style="width: 261px;" placeholder="品牌" @change="searchList()">
                     <el-option v-for="item in brand" :key="item.id" :label="item.name" :value="item.name">
                     </el-option>
                 </el-select>
             </el-col>
             <el-col :span="7" :offset="1">
-                <el-input v-model="key_word" icon="search" placeholder="请输入商品的名称，规格"></el-input>
-            </el-col>
-            <el-col :span="3" :offset="2">
-                <el-button type="text" style="font-size:16px" @click="searchList">搜索</el-button>
-                <el-button type="text" style="font-size:16px" @click="removekeyWord">清空</el-button>
+                <el-input v-model="key_word" @change="searchList()" placeholder="请输入商品的名称，规格"></el-input>
             </el-col>
         </el-col>
     
@@ -22,10 +18,11 @@
     
         </el-col>
         <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
-            <el-table-column label="商品图片" width="120" align="center" >
+            <el-table-column label="商品图片" width="120" align="center">
                 <template scope="scope">
                     <img v-if='scope.row.goods_title_pics&&scope.row.goods_title_pics.length!=0' style='margin: 5px;' width='60' height='60' :src="scope.row.goods_title_pics">
-                     <img width='60' height='60' style='margin: 5px;'  v-else src="/static/pic_blank.png">
+                     <img width='60' height='60' style='margin: 5px;'  v-else src="/static/img/pic_blank.png">
+
                 </template>
     
             </el-table-column>
@@ -34,8 +31,8 @@
             <el-table-column label="规格" width="150" align="center">
                 <template scope="scope">
                     <div v-for="item in scope.row.spec_info">
-                       
-                   {{item.spec1_value?item.spec1_value:''}} {{item.spec2_value?","+item.spec2_value:''}}{{item.spec3_value?","+item.spec3_value:''}}
+    
+                        {{item.spec1_value?item.spec1_value:''}} {{item.spec2_value?","+item.spec2_value:''}}{{item.spec3_value?","+item.spec3_value:''}}
                     </div>
                 </template>
             </el-table-column>
@@ -83,16 +80,12 @@ export default {
     },
     mounted: function () {
         this.uid = localStorage.getItem('uid');
-        this.head_office_id= localStorage.getItem('head_office_id');
+        this.head_office_id = localStorage.getItem('head_office_id');
         this.brandHistory()
         this.getList()
 
     },
     methods: {
-        removekeyWord(){
-           this.brand_name = ''
-            this.key_word = ''
-        },
         brandHistory() {
             let brandParams = { head_office_id: this.head_office_id, name: this.brand_name };
             requestBrandHistory(brandParams).then(data => {
@@ -104,32 +97,38 @@ export default {
                     });
                 } else {
                     this.brand = result.list
+                    this.brand.unshift({ name: '全部' })
                 }
             })
         },
-        getList(brand_name,key_word, pageNum) {
-            let listParams = { uid:this.uid, page: pageNum };
+        getList(brand_name, key_word, pageNum) {
+
+            let listParams = { uid: this.uid, page: pageNum };
             if (brand_name) {
-                listParams['brand_name'] = brand_name
+                if (brand_name === '全部') {
+
+                } else {
+                    listParams['brand_name'] = brand_name
+                }
+
             }
             if (key_word) {
                 listParams['key_word'] = key_word
             }
             requestList(listParams).then(data => {
-                console.log(data.tableData)
-                    this.tableData = data.tableData;
-                   
-                    this.total = data.total_count;
-            }).catch(err=>{
+                this.tableData = data.tableData;
+
+                this.total = data.total_count;
+            }).catch(err => {
                 this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
+                    message: "返回数据有误",
+                    type: 'error'
+                });
             })
         },
         searchList() {
             this.getList(this.brand_name, this.key_word, 0)
-           
+
         },
         handleCurrentChange(val) {
             this.currentPage = val;
