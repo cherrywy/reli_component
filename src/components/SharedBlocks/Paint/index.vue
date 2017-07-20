@@ -186,11 +186,26 @@ export default {
     return {
       canvas: null,
       shopData: { shopName: '', counters: [], aisles: [], shapes: [], plans: [] },
+      palette: {
+        // 中岛柜色盘
+        '10': {
+          stroke: 'blue',
+          fill: 'rgba(56, 121, 217, 0.9)'
+        },
+        // 背柜色盘
+        '20': {
+          stroke: 'green',
+          fill: 'rgba(196, 223, 184, 0.9)'
+        },
+        // 未保存展柜色盘
+        unsaved: {
+          stroke: 'yellow',
+          fill: 'rgba(255, 238, 188, 0.9)'
+        }
+      },
       coorDefaults: {
         originX: 'center',
         originY: 'center',
-        fill: 'rgba(66, 134, 244, 0.7)',
-        stroke: 'blue',
         strokeWidth: 1,
         scaleX: 1,
         scaleY: 1,
@@ -347,6 +362,8 @@ export default {
             type: shape.show_case_type,
             sku_group: await this.getSkuGroupsByShowcaseId(shape.id)
           })
+          object.set('stroke', this.palette[object.data.type].stroke)
+          object.set('fill', this.palette[object.data.type].fill)
           this.$data.canvas.add(object)
         })
         this.$data.canvas.deactivateAll().renderAll()
@@ -389,14 +406,15 @@ export default {
     },
     setObjectUnsaved (object) {
       if (!object) return false
-      object.set('fill', 'rgba(244, 214, 65, 0.7)')
+      object.set('fill', this.palette.unsaved.fill)
       object.set('unsaved', true)
       this.$data.popup.unsaved = true
       this.$data.canvas.renderAll()
     },
     setObjectSaved (object) {
       if (!object) return false
-      object.set('fill', 'rgba(66, 134, 244, 0.7)')
+      object.set('stroke', this.palette[object.data.type].stroke)
+      object.set('fill', this.palette[object.data.type].fill)
       object.set('unsaved', false)
       this.$data.popup.unsaved = false
       this.$data.canvas.renderAll()
@@ -670,8 +688,8 @@ export default {
             this.$data.state.currentObj = new window.fabric.Rect({
               left: this.$data.state.originX,
               top: this.$data.state.originY,
-              fill: 'rgba(244, 214, 65, 0.7)',
-              stroke: 'blue',
+              fill: this.palette.unsaved.fill,
+              stroke: this.palette.unsaved.stroke,
               strokeWidth: 1
             })
           } else {
@@ -680,8 +698,8 @@ export default {
               left: this.$data.state.originX,
               top: this.$data.state.originY,
               radius: pointer.x - this.$data.state.originX,
-              fill: 'rgba(244, 214, 65, 0.7)',
-              stroke: 'blue',
+              fill: this.palette.unsaved.fill,
+              stroke: this.palette.unsaved.stroke,
               strokeWidth: 1
             })
           }
