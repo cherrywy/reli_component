@@ -110,21 +110,11 @@ export default {
         next()
     },
     mounted: function () {
-        // if($route.query){
-        //     this.shopName=this.$route.query.planId
-        //     this.planId = this.$route.query.planId;
-        //     getPlanShowCaseList()
-
-        // }
         this.uid = localStorage.getItem('uid');
         if(this.$route.query){
-            console.log(this.$route.query)
-            this.shopId=this.$route.query.shopId
-             this.shopName=this.$route.query.shopNam
-            // console.log(this.shopName)
-            this.planId = this.$route.query.planId
-            this.plansName = this.$route.query.planName
-            this.getPlanShowCaseList()
+             this.shopName=this.$route.query.shopName
+             this.getFindShopPlan()
+            
         }
         this.getFindShop()//获取门店
         this.$bus.$off('viewerSelectedShowcase')
@@ -185,10 +175,7 @@ export default {
                             type: 'success',
                             message: '下架成功!'
                         });
-<<<<<<< HEAD
                         //console.log(index);
-=======
->>>>>>> origin/master
                         this.onlineShowCaseList.splice(index, 1);
                         this.getOnlineShowCaseList();
 
@@ -233,27 +220,13 @@ export default {
         },
         
         getPlanShowCaseList() {
-<<<<<<< HEAD
-            let plan_id = '';
-            if(this.$route.query){
-               //this.getFindShopPlan()
-               plan_id = this.$route.query.planId
-            }else{
-                    plan_id = this.shopPlan.filter(v => {
-                         return v.value === this.plansName;
-                      }).map(v => v.id).pop();
-=======
             this.isCase=false
-            console.log(this.isCase);
             
-            this.planId = this.shopPlan.filter(v => {
+            this.planId= this.shopPlan.filter(v => {
                 return v.value === this.plansName;
             }).map(v => v.id).pop();
->>>>>>> origin/master
-
-            } 
-            let planListParams = { plan_id: plan_id };
-            console.log(this.planId)
+            
+            let planListParams = { plan_id: this.planId };
             requestPlanShowCaseList(planListParams).then(data => {
                 let { error_code, result, total_count } = data;
                 if (error_code !== 0) {
@@ -320,15 +293,13 @@ export default {
         },
         getFindShopPlan() {
             let shop_id = '';
-            if (this.shopId){
+            if (this.$route.query.shopId){
                 shop_id =this.$route.query.shopId
-                this.plansName = this.$route.query.planName
             }else {
                 shop_id = this.shop.filter(v => {
                     return v.value === this.shopName;
                 }).map(v => v.id).pop();
             }
-
             const shopPlanParams = { uid: this.uid, shop_id: shop_id };
             requestFindShopPlan(shopPlanParams).then(data => {
                 let { error_code, result } = data;
