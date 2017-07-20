@@ -32,7 +32,7 @@
                     <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
             <el-table-column label="商品图片" width="200" align="center">
                 <template scope="scope">
-                    <img width='60' height='60' :src="scope.row.pic_url">
+                    <img width='60' height='60' :src="scope.row.pic_url" :key="scope.row.pic_url">
                 </template>
     
             </el-table-column>
