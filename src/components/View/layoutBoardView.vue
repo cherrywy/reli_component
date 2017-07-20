@@ -15,11 +15,11 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button :type="'success'" :disabled="!shopName" @click="showNewPlanModal">新增平面图</el-button>
+          <el-button type="primary" class="blue-btn" :disabled="!shopName" @click="showNewPlanModal">新增平面图</el-button>
         </el-form-item>
       </el-form>
     </el-row>
-    <div class="row" >
+    <div class="row" v-show="this.planList.length">
       <div class="col-xs-12">
         <Paint></Paint>
       </div>
