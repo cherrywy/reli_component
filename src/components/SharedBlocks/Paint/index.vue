@@ -85,7 +85,7 @@
 
     <div class="toolbox">
       <div class="toolset">
-        <div>展柜数量：{{ objectCount }}</div>
+        <!-- <div>展柜数量：{{ objectCount }}</div> -->
 
         <!--<div>
           <transition-group name="fade-issue">
