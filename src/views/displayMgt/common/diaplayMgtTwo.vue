@@ -15,7 +15,7 @@
                 </p>
                 <el-dialog  :visible.sync="dialogTableVisible">
                     <template>
-                    <el-table :data="imgLists" style='marign-top:10px;'  @cell-click="handleSelect" @selection-change="imgs_selectionchange">
+                    <el-table :data="imgLists" style='marign-top:10px;' @selection-change="imgs_selectionchange">
                             <el-table-column  width="200" type='selection'></el-table-column>
                             <el-table-column  prop='pic_url'>
                                 <template scope="scope">
@@ -35,23 +35,19 @@
                 <el-button @click='update_goods' class='updataimg' align='right' style='margin-top:5px'>发布商品</el-button>
                     
                     <el-dialog :visible.sync="dialogFormVisible">
-                        <el-form :model="form" align='left'>
-                            <el-form-item  :label-width="formLabelWidth">
-                                <el-input v-model="input" 
+                        <el-form align='left'>
+                            <el-form-item>
+                                <el-input v-model="good_search" 
                                     placeholder="请输入商品名称搜索" 
                                     auto-complete="off" 
-                                    icon='search' class='inp_seach'
-                                    :on-icon-click='search'
-                                    @change='change_Search'
-                                    style='width:200px;'></el-input>
+                                    style='width:200px;'>
+                                </el-input>
                             </el-form-item>
-
-                            <el-form-item  :label-width="formLabelWidth" align='right'>
-                                <span>找不到商品？去<el-button type='text' @click='addDisplay'>添加</el-button></span>
+                            <el-form-item align='right'>
+                                <span>找不到商品？去<el-button type='text' @click='addDisplay'>绑定</el-button>商品</span>
                             </el-form-item>
-
-                            <el-form-item  :label-width="formLabelWidth">
-                                <el-table :data="gridData" style='marign-top:10px;' @cell-click="clickSelect" @selection-change="goods_selectionchange">
+                            <el-form-item>
+                                <el-table :data="filteredTableData" style='marign-top:10px;'  @selection-change="goods_selectionchange">
                                         <el-table-column type='selection' label="选择" width="200"></el-table-column>
                                         <el-table-column prop="name" label="商品名称" ></el-table-column>
                                 </el-table>
@@ -115,7 +111,6 @@
         tableData:[],
         dialogFormVisible: false,
         dialogDelete:false,
-        formLabelWidth:'120px',
         gridData:[],
         good_name:'',
         goodId:[],
@@ -131,11 +126,24 @@
             total: 0,
          },
          uid:'',
+         good_search:''
       };
     },
     mounted:function() {
         this.uid = localStorage.getItem('uid');
         this.getimg_List();
+    },
+    computed:{
+        filteredTableData: function () {
+            let name = this.good_search
+            return this.gridData.filter(function(value){
+                if(name == ''){
+                    return true
+                }else{
+                    return new RegExp(`${name}`,'i').test(value.name);
+                }
+            })
+        }
     },
     methods: {
         getimg_List(){
@@ -200,21 +208,22 @@
             let pageSize = this.pageinationInfo.pageSize //每页显示5条
             let startIndex = (this.pageinationInfo.currentPage - 1) * pageSize  //当前页起始下标
             let endIndex =(this.pageinationInfo.currentPage * pageSize )  //当前页起始下标
-              this.gridData = data.result.video_list.map(v => {
+            this.gridData = data.result.video_list.map(v => {
                  return{
                      name:v.video.goods.info_name,
                      goods_id:v.video.goods.info_id,
                  }
-              })
+            })
+
               this.pageinationInfo.total =  this.gridData.length
-                this.gridData = this.gridData.slice(startIndex,endIndex)
-          })
+              this.gridData = this.gridData.slice(startIndex,endIndex)
+              console.log(this.gridData)  
+          }) 
       },
     goods_selectionchange(val){
         this.goodId = val.map(data=>{
            return data.goods_id
         })
-        //console.log(this.goodId)
     },
     imgs_selectionchange(val){
         this.ids = val.map(data =>{
@@ -268,16 +277,6 @@
                 })
             })
       },
-    //   handleSelect(row){    
-    //       //选择图片
-    //      if(this.ids.indexOf(row.banner_ids) == -1){
-    //          this.ids.push(row.banner_ids)
-    //      }
-    //      this.add_info = {
-    //          pic_url:row.pic_url,
-    //          banner_ids:row.banner_ids
-    //      }
-    //   },
       add_imgs_lun(){
          //点击添加 绑定轮播图
          this.dialogTableVisible =false
@@ -301,21 +300,6 @@
             //pageSize 改变时会触发
             this.pageinationInfo.pageSize = size;
             this.update_goods()
-        },
-        //ss
-        search(){
-           let name = this.input
-           this.gridData = this.gridData.filter(function(v){
-               return new RegExp(`${name}`,'i').test(v.name);
-           })
-        },
-        //搜索框 清楚改变
-        change_Search(){
-            let name = this.input;
-            this.update_goods()
-            this.gridData = this.gridData.filter(function(v){
-               return new RegExp(`${name}`,'i').test(v.name);
-           })
         },
         addDisplay(){
             this.$router.push({ path: '/bindList' });

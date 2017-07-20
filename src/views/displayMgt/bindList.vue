@@ -2,7 +2,7 @@
     <section>
         <el-row>
             <el-col :span='24'>
-                <el-form ref="form" :model="bindgoods" >
+                <el-form ref="form" :model="bindgoods" label-position="top">
                     <el-form-item label="请选择商品：">
                         <el-button type='text'  @click="changeGoods">选择商品</el-button>
                         <el-tag
@@ -20,18 +20,16 @@
                                     <el-input 
                                     v-model="searchVal"           
                                     placeholder="请输入商品名称搜索" 
-                                    icon='search' class='inp_seach'
+                                    class='inp_seach'
                                     auto-complete="off" 
                                     style='width:200px;' 
-                                    :file-list="form.fileList"
-                                    @change='clear_search_input'
-                                    :on-icon-click='search'></el-input>
+                                    :file-list="form.fileList"></el-input>
                                 </el-form-item>
                                 <el-form-item  :label-width="formLabelWidth" align='right'>
                                     <span>找不到商品？去<el-button type='text' @click='addgoods'>添加</el-button></span>
                                 </el-form-item>
                                 <el-form-item  :label-width="formLabelWidth">
-                                    <el-table :data="arr" style='marign-top:10px;'  @cell-click="handleSelect">
+                                    <el-table :data="filteredTableData" style='marign-top:10px;'  @cell-click="handleSelect">
                                             <el-table-column label="选择" width="200" type='selection'></el-table-column>
                                             <el-table-column label="商品名称" prop='name'></el-table-column>
                                     </el-table>
@@ -111,7 +109,7 @@
                         multiple>
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                        <div class="el-upload__tip" slot="tip" style='margin-left:100px;color:red;'>注：视频只支持16：9尺寸，且只能上传一个</div>
+                         <div class="el-upload__tip" slot="tip" style='color:red;'>注：视频只支持16：9尺寸，且只能上传一个</div>
                         </el-upload>  
                     </el-form-item>
                     <el-form-item align='center'>
@@ -189,6 +187,18 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
         this.uid = localStorage.getItem('uid');
         this.head_office_id = localStorage.getItem('head_office_id');
         this.getGoodsList();
+    },
+    computed:{
+        filteredTableData: function () {
+            let name = this.searchVal
+            return this.arr.filter(function(value){
+                if(name == ''){
+                    return true
+                }else{
+                    return new RegExp(`${name}`,'i').test(value.name);
+                }
+            })
+        }
     },
 	methods:{
         getGoodsList(){
@@ -279,7 +289,10 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
             this.fileList.push(upimg)
             if(this.fileList.length>1){
                 this.fileList.splice(0,1)
-                console.log(this.fileList)
+                this.$message({
+                    message: "只能上传一张图片，以最新为准",
+                    type: 'error'
+                })
             }
         },
         videohandleAvatarSuccess(res, file){
@@ -287,6 +300,13 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 url:res.result.file_download_url
             }
             this.videoList.push(upimg)
+            if(this.videoList.length>1){
+                this.videoList.splice(0,1)
+                this.$message({
+                    message: "只能上传一个视频，以最新为准",
+                    type: 'error'
+                })
+            }
         },
         handleAvatarRemove(file,fileLis){
             //图片删除
@@ -398,25 +418,6 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
             //pageSize 改变时会触发
             this.pageinationInfo.pageSize = size;
             this.changeGoods()
-        },
-        //ss
-        search(){
-           let name = this.searchVal
-           this.arr = this.arr.filter(function(v){
-               return new RegExp(`${name}`,'i').test(v.name);
-           })
-        },
-        clear_search_input(){
-            //清楚搜素输入框
-           this.changeGoods()
-           let name = this.searchVal
-           if(this.searchVal !== ''){
-                this.arr = this.arr.filter(function(v){
-                    return new RegExp(`${name}`,'i').test(v.name);
-                })
-           }else{
-                 this.changeGoods()
-           }
         },
         remoteMethod(seleValue){
             if(this.options.indexOf(seleValue) == -1){

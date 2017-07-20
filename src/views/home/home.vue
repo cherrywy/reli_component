@@ -1,22 +1,21 @@
 <template>
 	<section>
     	<el-col :span='24'>
-			<h4>欢迎使用智慧门店后台</h4>
+		<div class='title'>欢迎使用智慧门店管理后台</div>
 		</el-col>
-		<el-col>
-			<p>现有门店数量：{{total_count}} </p>
+		<el-col :span='24'>
+			<span style='margin-top:-30px;line-height:60px;color:#70a5ec;'>现有门店数量：{{total_count}} </span>
 		</el-col>
 
 		<el-col :span='12' v-for='info in infos'>
-			<h4>{{info.shop}}</h4>
+			<span style='line-height:40px;font-size:20px;'>{{info.shop}}</span>
 			<el-card class='card'>
-				<!--<Viewer :planId="planId"/>-->
-				<img src="/static/img/gt.jpeg" width='350px' height='300px'>
-				<div style="padding: 14px;" align='center'>
+				<img :src="info.shop_pic" width='350px' height='300px'>
+				<div style="padding: 5px;" align='center'>
 					<el-button type="text" class="button" @click='onlinegoods(info)'>上架商品</el-button>
 				</div>
-			</el-card>
-			<span style='font-size:15px;line-height:80px;'>地址：{{info.street}}</span>
+				<p style='font-size:13px;'>地址：{{info.street}}</p>
+			</el-card>		
 		</el-col>
 	</section>
 </template>
@@ -63,6 +62,7 @@ export default {
 					  street:v.street,
 					  shopId:v.id,
 					  shopName:v.shop,
+					  shop_pic:v.shop_pic
 				  }
 			  })
 			   this.img_url = this.infos.map(val =>{
@@ -142,5 +142,13 @@ export default {
 	.card{
 		width:400px;
 		height:400px;
+	}
+	.title{
+		height:30px;
+		line-height:30px;
+		padding-left:20px;
+		background:#70a5ec;
+		border-radius:5px;
+		color:white;
 	}
 </style>

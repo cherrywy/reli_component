@@ -2,7 +2,7 @@
     <section>
         <el-col :span ='24' v-if='true'>
             <el-col :span='6' style='margin-top:25px;margin-left:-50px;'>
-                 <el-input placeholder="请输入商品名称搜索" v-model="input" icon='search' :on-icon-click='search' @change='searchAll' class='inp_seach'></el-input>
+                 <el-input placeholder="请输入商品名称搜索" v-model="input"  class='inp_seach'></el-input>
             </el-col>
             <el-col :span='18' align='right' style='margin-top:25px;'>
                 <el-button class='btn_color' @click='bindList'>绑定素材</el-button>
@@ -67,14 +67,14 @@ export default {
 	},
     computed:{
         filteredTableData: function () {
-            let goodname = this.input;
+            let name = this.input
             return this.tableData.filter(function(value){
-				if(goodname !== value.goodname || shop == ''){
+                if(name == ''){
                     return true
                 }else{
-                    return value.goodname == goodname
+                    return new RegExp(`${name}`,'i').test(value.goodname);
                 }
-			})
+            })
         }
     },
 	methods:{
@@ -146,19 +146,7 @@ export default {
             this.pageinationInfo.pageSize = size;
             this.getVideoList()
         },
-        search(){
-            let goods_name = this.input;
-            this.tableData = this.tableData.filter(function(value){
-                    return new RegExp(`${goods_name}`,'i').test(value.goodname);
-            })
-		},
-        searchAll(){
-            let goods_name = this.input;
-            this.getVideoList()
-            this.tableData = this.tableData.filter(function(value){
-                    return new RegExp(`${goods_name}`,'i').test(value.goodname);
-            })
-        }
+
 	}
  }
 </script>

@@ -11,7 +11,7 @@
 					</el-option>
 				</el-select>
 			</span>
-			<el-input placeholder="请输入广告机名称搜索" v-model="input2" icon='search' class='inp_seach' :on-icon-click="handleIconClick" @change='iconClick'></el-input>
+			<el-input placeholder="请输入广告机名称搜索" v-model="input2"  class='inp_seach'></el-input>
 		</el-col>
 		<el-col :span='24' style='margin-top:20px;'>
 			<el-table class='table'
@@ -77,15 +77,16 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 		this.uid = localStorage.getItem('uid');
         this.getFocusList()
     },
-		computed:{
+	computed:{
 			filteredTableData: function () {
 				let shop = this.optionsValue;
+				let name = this.input2
 				return this.tableData.filter(function(value){
 					if(shop == '全部'|| shop == ''){
 						if(name == ''){
 							return true
 						}else{
-							return value.name == name 
+							return new RegExp(`${name}`,'i').test(value.name);
 						}
 					}else{
 						return value.shop == shop
@@ -112,23 +113,31 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 				this.shopId = data.result.map(v=>{
 					return v.id
 				})
-				let name = this.input2
 				let param ={}
-				if(name){
-				   param = {
-						name:this.input2,
-						shop_id:this.shopId+'',
+				let name = this.input2
+				if(this.optionsValue =='全部'){
+					param = {
 						page:this.pageinationInfo.currentPage,
 						limit:this.pageinationInfo.pageSize,
 					}
 				}else{
-					param = {
-						shop_id:this.shopId+'',
-						page:this.pageinationInfo.currentPage,
-						limit:this.pageinationInfo.pageSize,
+					if(name){
+						param = {
+							name:this.input2,
+							shop_id:this.shopId+'',
+							page:this.pageinationInfo.currentPage,
+							limit:this.pageinationInfo.pageSize,
+						}
+					}
+					else{
+						param = {
+							name:this.optionsValue,
+							shop_id:this.shopId+'',
+							page:this.pageinationInfo.currentPage,
+							limit:this.pageinationInfo.pageSize,
+						}
 					}
 				}
-				console.log(param)
 				search_goods(param).then(data=>{ 
 					this.pageinationInfo.total = data.total_count
 					let time = Date.parse(new Date())
@@ -148,45 +157,6 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 				})
 			})
         },
-	    handleIconClick(input2){
-			 //this.getFocusList();
-			 let name = this.input2
-				let param ={}
-				if(name){
-				   param = {
-						name:this.input2,
-						shop_id:this.shopId+'',
-						//page:this.pageinationInfo.currentPage,
-						//limit:this.pageinationInfo.pageSize,
-					}
-				}else{
-					param = {
-						shop_id:this.shopId+'',
-						//page:this.pageinationInfo.currentPage,
-						//limit:this.pageinationInfo.pageSize,
-					}
-				}
-				search_goods(param).then(data=>{ 
-					this.pageinationInfo.total = data.total_count
-					let time = Date.parse(new Date())
-					this.tableData = data.result.map( v=>{
-						return{
-							name:v.data.name,
-							shop:v.data.shop_name || '无门店信息',
-							state:(time - v.data.heartbeat_time >= 1800)?'不正常':'正常',
-							id:v.id
-						}
-					})
-					this.tableData.map(ast => {
-						if(this.options.indexOf(ast.shop) == -1){
-							this.options.push(ast.shop)
-						}
-					})
-				})
-		},
-		iconClick(){
-			this.getFocusList();
-		},
 		  //分页
         currentChange(currentPage) {
              //当前页变动时候触发的事件
