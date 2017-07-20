@@ -65,8 +65,6 @@ export default {
       coorDefaults: {
         originX: 'center',
         originY: 'center',
-        fill: 'rgba(66, 134, 244, 0.7)',
-        stroke: 'rgba(255, 255, 255, 0.9)',
         strokeWidth: 1,
         scaleX: 1,
         scaleY: 1,
@@ -85,6 +83,23 @@ export default {
         lockUniScaling: true,
         lockRotation: true,
         selectable: true
+      },
+      palette: {
+        // 中岛柜色盘
+        '10': {
+          stroke: 'blue',
+          fill: 'rgba(56, 121, 217, 0.9)'
+        },
+        // 背柜色盘
+        '20': {
+          stroke: 'green',
+          fill: 'rgba(196, 223, 184, 0.9)'
+        },
+        // 未保存展柜色盘
+        selected: {
+          stroke: 'rgba(255, 238, 0, 1)',
+          fill: 'rgba(191, 241, 255, 0.8)'
+        }
       }
     }
   },
@@ -162,6 +177,8 @@ export default {
             type: shape.show_case_type,
             sku_group: this.getSkuGroupsByShowcaseId(shape.id)
           })
+          object.set('stroke', this.palette[object.data.type].stroke)
+          object.set('fill', this.palette[object.data.type].fill)
           this.canvas.add(object)
         })
         this.canvas.deactivateAll().renderAll()
@@ -170,8 +187,8 @@ export default {
     resetFillAndStroke (event) {
       let object = event.target
       if (object) {
-        object.set('fill', 'rgba(66, 134, 244, 0.7)')
-        object.set('stroke', 'rgba(255, 255, 255, 0.9)')
+        object.set('stroke', this.palette[object.data.type].stroke)
+        object.set('fill', this.palette[object.data.type].fill)
       }
     },
     selectionCleared () {
@@ -224,8 +241,8 @@ export default {
           // this.$data.popup.styles.left = document.getElementsByClassName('canvas-container')[0].offsetLeft + bound.tr.x + 15
           this.$data.state.activeObj = object
           // if (!this.canvas.getActiveGroup() && this.$data.state.activeObj) this.showPopup()
-          object.set('fill', 'rgba(191, 241, 255, 0.8)')
-          object.set('stroke', 'rgba(255, 238, 0, 1)')
+          object.set('fill', this.palette.selected.fill)
+          object.set('stroke', this.palette.selected.stroke)
           if (this.state.previousSelected !== object) {
             this.resetFillAndStroke({target: this.state.previousSelected})
           }
