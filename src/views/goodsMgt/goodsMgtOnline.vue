@@ -29,14 +29,16 @@
         <el-card class="box-card" v-show="isCase">
             <div slot="header" class="clearfix">
                 <span style="line-height: 36px;">{{show_case_type}}-{{show_case_name}}</span>
-                <el-button style="float: right;background: rgb(112, 165, 236);border: none;" type="primary" @click="getOnlineList('', 0, 5)">上架商品</el-button>
+                <el-button style="float: right;background: rgb(112, 165, 236);border: none;" type="primary" @click="getPopPlan()">上架商品</el-button>
                 <el-dialog :visible.sync="dialogFormVisible">
                     <el-form>
                         <el-form-item label="">
-                            <el-input v-model="goodsName" placeholder="请输入商品名称搜索" icon='search' :on-icon-click="searchGoodsName" auto-complete="off"></el-input>
+                            <el-input v-model="goodsName" placeholder="请输入商品名称搜索" @change="searchGoodsName" auto-complete="off"></el-input>
                         </el-form-item>
                         <el-button type="text" style="float:right" @click="goodsNew()">
-                            <span style="color:#333">找不到商品？去</span>添加</el-button> 
+                            <span style="color:#333">找不到商品？去</span>添加
+                            <span style="color:#333">新商品</span>
+                        </el-button>
                         <el-table ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" style="width: 100%;margin-bottom: 20px;height: 380px;scoll-y: auto;overflow-y: scroll;" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" width="55">
                             </el-table-column>
@@ -81,7 +83,7 @@ import { requestOnline, requestFindShop, requestFindShopPlan, requestSearchSpec,
 export default {
     data() {
         return {
-            isCase:false,
+            isCase: false,
             show_case_type: '',
             uid: 0,
             show_case_id: '',
@@ -94,7 +96,7 @@ export default {
             onlineShowCaseList: [],
             planShowCaseNumber: 0,
             planShowCase: [],
-            show_case_name:'',
+            show_case_name: '',
             goodsName: '',
             multipleSelection: [],
             dialogFormVisible: false,
@@ -104,7 +106,7 @@ export default {
     components: {
         Viewer
     },
-    beforeRouteUpdate (after, before, next) {
+    beforeRouteUpdate(after, before, next) {
         this.$bus.$emit('route.update')
         next()
     },
@@ -127,10 +129,10 @@ export default {
             // 事件参数传来的 scObj 的 plan_id 和现在不等，判断这个值
             // 即可判定是否为多余的一次选中事件，中止执行。
             if (scObj.data.plan_id !== this.planId) return false
-            this.isCase=true
-            
+            this.isCase = true
+
             this.show_case_id = scObj.data.original_showcase_id
-            this.show_case_name=scObj.data.name
+            this.show_case_name = scObj.data.name
             if (scObj.data.type === 10) {
                 this.show_case_type = '中岛柜'
             }
@@ -141,6 +143,12 @@ export default {
         })
     },
     methods: {
+        getPopPlan() {
+            this.dialogFormVisible = true;
+            this.goodsName = ''
+            this.getOnlineList('', 0, 5)
+
+        },
         getOnlineShowCaseList() {
             let OnlineListParams = { show_case_id: this.show_case_id };
             requestOnlineShowCase(OnlineListParams).then(data => {
@@ -151,7 +159,7 @@ export default {
                         type: 'error'
                     });
                 } else {
-                    
+
 
                     this.onlineShowCaseList = result
 
@@ -183,44 +191,43 @@ export default {
             })
         },
         submit() {
-        
+
             const goods_spec_ids = this.multipleSelection.map(v => {
                 return v.id
             }).join()
-            if(goods_spec_ids.length===0){
+            if (goods_spec_ids.length === 0) {
                 this.$message({
-                        message: "您还没有选择任何商品",
-                        type: 'warning'
-                    });
-            }else{
-                 let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: this.show_case_id };
-           
-            requestGoodsOnline(listParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    
-                    this.$message({
-                        message: "保存成功",
-                        type: 'success'
-                    });
-                    this.dialogFormVisible = false;
-                    this.getOnlineShowCaseList()
+                    message: "您还没有选择任何商品",
+                    type: 'warning'
+                });
+            } else {
+                let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: this.show_case_id };
 
-                }
-            })
+                requestGoodsOnline(listParams).then(data => {
+                    let { error_code, result } = data;
+                    if (error_code !== 0) {
+                        this.$message({
+                            message: "返回数据有误",
+                            type: 'error'
+                        });
+                    } else {
+
+                        this.$message({
+                            message: "保存成功",
+                            type: 'success'
+                        });
+                        this.dialogFormVisible = false;
+                        this.getOnlineShowCaseList()
+
+                    }
+                })
             }
-           
+
 
         },
         getPlanShowCaseList() {
-            this.isCase=false
-            console.log(this.isCase);
-            
+            this.isCase = false
+
             this.planId = this.shopPlan.filter(v => {
                 return v.value === this.plansName;
             }).map(v => v.id).pop();
@@ -241,7 +248,8 @@ export default {
             })
         },
         getOnlineList(key_word, pageNum, limit) {
-            this.dialogFormVisible = true;
+
+
             let listParams = { uid: parseInt(this.uid), page: pageNum, limit: 20000 };
             if (key_word) {
                 listParams['keyword'] = key_word
