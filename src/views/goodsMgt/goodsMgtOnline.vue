@@ -16,7 +16,7 @@
                 </el-form-item>
             </el-form>
         </el-row>
-        <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;" v-show="planShowCase.length>0">
+        <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;" v-show="planId">
             <el-card style="margin: 0 auto;position:relative">
                 <Viewer :planId="planId" />
                 <!--<div style="bottom: 0;position: absolute;">-->
@@ -226,7 +226,6 @@ export default {
             this.planId = this.shopPlan.filter(v => {
                 return v.value === this.plansName;
             }).map(v => v.id).pop();
-
             if(!this.planId){
                return
             }
@@ -246,10 +245,12 @@ export default {
                             type: 'info'
                         });
                         this.$bus.$emit('initViewer')
+                        console.log('1111')
                     }else {
                         this.planShowCase = result
                         this.planShowCaseNumber = total_count
                         this.$bus.$emit('initViewer')
+                        console.log('222')
                     }
                 }
             })

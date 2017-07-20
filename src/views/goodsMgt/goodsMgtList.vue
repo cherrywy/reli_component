@@ -22,7 +22,6 @@
                 <template scope="scope">
                     <img v-if='scope.row.goods_title_pics&&scope.row.goods_title_pics.length!=0' style='margin: 5px;' width='60' height='60' :src="scope.row.goods_title_pics">
                      <img width='60' height='60' style='margin: 5px;'  v-else src="/static/img/pic_blank.png">
-
                 </template>
     
             </el-table-column>
@@ -31,7 +30,6 @@
             <el-table-column label="规格" width="150" align="center">
                 <template scope="scope">
                     <div v-for="item in scope.row.spec_info">
-    
                         {{item.spec1_value?item.spec1_value:''}} {{item.spec2_value?","+item.spec2_value:''}}{{item.spec3_value?","+item.spec3_value:''}}
                     </div>
                 </template>
@@ -101,16 +99,16 @@ export default {
                 }
             })
         },
+        //列表搜索
         getList(brand_name, key_word, pageNum) {
-
+            //列表搜索条件
             let listParams = { uid: this.uid, page: pageNum };
+            //模糊搜索条件：进行条件添加
             if (brand_name) {
                 if (brand_name === '全部') {
-
                 } else {
                     listParams['brand_name'] = brand_name
                 }
-
             }
             if (key_word) {
                 listParams['key_word'] = key_word
@@ -126,9 +124,9 @@ export default {
                 });
             })
         },
+        //模糊搜索
         searchList() {
             this.getList(this.brand_name, this.key_word, 0)
-
         },
         handleCurrentChange(val) {
             this.currentPage = val;
