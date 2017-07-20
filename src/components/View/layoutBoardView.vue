@@ -14,6 +14,9 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item>
+          <el-button :type="'success'" :disabled="!shopName" @click="showNewPlanModal">新增平面图</el-button>
+        </el-form-item>
       </el-form>
     </el-row>
     <div class="row" >
@@ -61,10 +64,18 @@ export default {
       return this.getShowcaseByPlanId(this.plan_id)
     }
   },
+  watch: {
+    shopId (after) {
+      if (after) {
+        this.setSelectedShopId(parseInt(after))
+      }
+    }
+  },
   data() {
     return {
       uid: '',
       shop: [],
+      shopId: 0,
       shopPlan: [],
       shopName: '',
       plansName: '',
@@ -72,7 +83,9 @@ export default {
     }
   },
   methods: {
-
+    ...mapActions('lbShop', [
+      'setSelectedShopId'
+    ]),
     ...mapActions('lbPlan', [
       'setCurrentPlanById',
       'getPlanListByShopId'
@@ -104,6 +117,7 @@ export default {
       const shop_id = this.shop.filter(v => {
         return v.value === this.shopName;
       }).map(v => v.id).pop();
+      this.shopId = shop_id
       const shopPlanParams = { uid: this.uid, shop_id: shop_id };
       requestFindShopPlan(shopPlanParams).then(data => {
         let { error_code, result } = data;
@@ -155,10 +169,18 @@ export default {
         // this.$router.push('/home')
         // alert('未找到平面图列表')
       }
+    },
+    showNewPlanModal () {
+      this.$bus.$emit('resetNewPlanForm')
+      window.$('#newplanmodal').modal({
+        keyboard: false,
+        backdrop: 'static'
+      })
     }
-
   },
   mounted() {
+    this.$bus.$off('planCreated')
+    this.$bus.$on('planCreated', this.getFindShopPlan)
     this.$nextTick(async () => {
       this.uid = localStorage.getItem('uid');
       this.getFindShop()

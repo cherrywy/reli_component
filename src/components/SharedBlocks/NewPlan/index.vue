@@ -102,6 +102,7 @@ export default {
           if (result) {
             window.$('#newplanmodal').modal('hide')
             this.$zydialog('成功创建平面图')
+            this.$bus.$emit('planCreated')
           } else {
             this.$zydialog('错误：创建平面图失败。')
           }

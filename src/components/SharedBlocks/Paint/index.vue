@@ -47,7 +47,7 @@
             {{ ui.noticeText }}
           </span>
         </transition>-->
-        <button @click="showNewPlanModal" class="save-btn" :disabled="!plan"><i class="fa fa-plus"></i> 新增平面图</button>
+        <!-- <button @click="showNewPlanModal" class="save-btn" :disabled="!plan"><i class="fa fa-plus"></i> 新增平面图</button> -->
         <!--<button class="save-btn" @click="saveAll"><i class="fa fa-floppy-o"></i> 保存</button>-->
       </div>
 
