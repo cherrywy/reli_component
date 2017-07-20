@@ -16,7 +16,7 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div class="row" v-show='isShowcase'>
+    <div class="row" >
       <div class="col-xs-12">
         <Paint></Paint>
       </div>
@@ -63,7 +63,6 @@ export default {
   },
   data() {
     return {
-      isShowcase:false,
       uid: '',
       shop: [],
       shopPlan: [],
@@ -100,6 +99,8 @@ export default {
       })
     },
     getFindShopPlan() {
+      this.planList.length=0 
+      this.plansName = ''
       const shop_id = this.shop.filter(v => {
         return v.value === this.shopName;
       }).map(v => v.id).pop();
@@ -123,20 +124,32 @@ export default {
       })
     },
     async getPlanList() {
-      this.isShowcase=true
+      
       const shop_id = this.shop.filter(v => {
         return v.value === this.shopName;
       }).map(v => v.id).pop();
-       this.plan_id = this.shopPlan.filter(v => {
+
+
+      this.plan_id = this.shopPlan.filter(v => {
         return v.value === this.plansName;
       }).map(v => v.id).pop()
+
+      //todo:切换到新增的门店时，没有plan_id此时不能隐藏新增平面图按钮。传shopid过去，新增该门店下的平面图
+
+      if(!this.plan_id){
+        //切换门店时，不绘制平面图
+        return;
+      }
+
       await this.getPlanListByShopId(shop_id)
       this.setCurrentPlanById(this.plan_id)
       this.$nextTick(() => {
         this.$bus.$emit('changePaintPlanId', this.plan_id)
         this.$bus.$emit('initPaintCanvas')
       })
-      if (this.planList.length === 0) {
+      
+      console.log(this.planList.length)
+      if (this.planList.length === 0) {        
         // this.$router.push('/home')
         // alert('未找到平面图列表')
       }

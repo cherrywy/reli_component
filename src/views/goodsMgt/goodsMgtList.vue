@@ -8,7 +8,7 @@
                 </el-select>
             </el-col>
             <el-col :span="7" :offset="1">
-                <el-input v-model="key_word" @change="searchList()" placeholder="请输入商品的名称，规格"></el-input>
+                <el-input v-model="key_word" @change="searchList()" placeholder="请输入商品的名称"></el-input>
             </el-col>
         </el-col>
     
