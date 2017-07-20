@@ -839,6 +839,7 @@ export default {
     this.$bus.$off('setObjectUnsaved')
     this.$bus.$off('updatePlanImage')
     this.$bus.$off('changePaintPlanId')
+    this.$bus.$off('resetPaintCanvas')
 
     this.$bus.$on('initPaintCanvas', this.init)
     this.$bus.$on('resetSkewRotate', this.resetActiveObject)
@@ -851,6 +852,11 @@ export default {
     this.$bus.$on('changePaintPlanId', id => {
       this.$data.planId = parseInt(id)
       this.$data.plan = this.getPlanById(parseInt(id))
+    })
+    this.$bus.$on('resetPaintCanvas', () => {
+      this.plan = null
+      this.planId = 0
+      this.switchActivePlan()
     })
     window.onresize = this.hidePopup
   }

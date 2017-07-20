@@ -122,6 +122,8 @@ export default {
           });
         }
       })
+      // 清除画板
+      this.$bus.$emit('resetPaintCanvas')
     },
     async getPlanList() {
       
