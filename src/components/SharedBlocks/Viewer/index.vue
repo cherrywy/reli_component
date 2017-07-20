@@ -48,7 +48,11 @@ export default {
   watch: {
     showcaseList (after) {
       this.$nextTick(() => {
-        if (Array.isArray(after) && after.length > 0) this.renderObjects(after)
+        if (Array.isArray(after) && after.length > 0) {
+          this.renderObjects(after)
+        } else {
+          this.toggleInitializing(false)
+        }
       })
     }
   },

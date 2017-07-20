@@ -226,8 +226,14 @@ export default {
         this.init()
       }
     },
-    canvas () {
-      this.renderObjects()
+    showcaseList (after) {
+      this.$nextTick(() => {
+        if (Array.isArray(after) && after.length > 0) {
+          this.renderObjects(after)
+        } else {
+          this.toggleInitializing(false)
+        }
+      })
     },
     'mode.freeDraw' (after) {
       this.$data.canvas.deactivateAll().renderAll()
