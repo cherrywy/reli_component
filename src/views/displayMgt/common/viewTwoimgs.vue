@@ -32,6 +32,7 @@
                     <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
             <el-table-column label="商品图片" width="200" align="center">
                 <template scope="scope">
+                    <!-- Vue.js 列表渲染机制导致图片数据加载之前显示旧图片，添加 key 即可  -->
                     <img width='60' height='60' :src="scope.row.pic_url" :key="scope.row.pic_url">
                 </template>
     
