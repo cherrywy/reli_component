@@ -9,15 +9,9 @@
 
 		<el-col :span='12' v-for='info in infos'>
 			<h4>{{info.shop}}</h4>
-			<ul  class='imgs'>
-				<li class='li_img' v-for='plan in info.plans'>
-					<img :src="plan.image_url" @click='clickImg(plan)' class='imgstyle'>
-				</li>
-			</ul>
-
 			<el-card class='card'>
-				<Viewer :planId="planId"/>
-				<!-- <img :src="img_url" width='350px' height='300px'> -->
+				<!--<Viewer :planId="planId"/>-->
+				<img src="/static/img/gt.jpeg" width='350px' height='300px'>
 				<div style="padding: 14px;" align='center'>
 					<el-button type="text" class="button" @click='onlinegoods(info)'>上架商品</el-button>
 				</div>
@@ -121,8 +115,9 @@ export default {
 		 },
 		 onlinegoods(info){
 			let shopId = info.shopId
+			//console.log(shopId)
 			let shopName = info.shop
-			const path = '/goodsMgtOnline?shopId='+shopId+'&shopNam='+shopName+'&planId='+this.planId+'&planName='+this.planName
+			const path = '/goodsMgtOnline?shopId='+shopId+'&shopName='+shopName
 			this.$router.push({ path: path});
 		},
 	}
@@ -145,6 +140,7 @@ export default {
 		border-radius:5px;
 	}
 	.card{
-		width:700px;
+		width:400px;
+		height:400px;
 	}
 </style>
