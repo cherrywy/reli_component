@@ -21,7 +21,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="商品名称">
-                        <el-input placeholder='请输入商品名称' v-model="name" style="width:200px"></el-input>
+                        <el-input placeholder='请输入商品名称'  v-model="name" class="input_select"></el-input>
                     </el-form-item>
                     <el-form-item label="商品图片">
                         <el-upload class="avatar-uploader" :action="action" name="pic" :show-file-list="false" :on-success="handleAvatarSuccess">
@@ -31,21 +31,21 @@
     
                     </el-form-item>
                     <el-form-item label="商品规格">
-                        <span style="font-size:8px;color:#ccc;margin-right:10px;">商品如果有多个规格，可以点击右边的按钮来“添加规格”</span>
+                        <span class='brand_text'>商品如果有多个规格，可以点击右边的按钮来“添加规格”</span>
                         <el-button type="text" @click="addSku()">添加规格</el-button>
     
                         <div v-for="(spec,index) in specs">
-                            <div style="width:100%;padding:10px;background:#eee;position:relative">
+                            <div class="spec_content">
                                 <el-select class='sku' v-model="spec.spec_name" @change="getSkuVulue(spec.spec_name)" filterable allow-create placeholder="请选择规格">
                                     <el-option v-for="item in sku" :key="item.value" :label="item.label" :value="item.value">
                                     </el-option>
                                 </el-select>
                                 <el-button type="text" @click="deletSku(index)">
-                                    <i class="el-icon-close" style="color:#20a0ff;right: 21px;top: 21px;position: absolute;"></i>
+                                    <i class="el-icon-close goods_close" ></i>
                                 </el-button>
                             </div>
-                            <div v-if="spec.spec_name!='' " style="width:50%;padding:10px;">
-                                <el-select class='sku_value' style=" width:100%;background-color:transparent;-webkit-appearance:none;" v-model="spec.spec_value" @change="searchHistoryNew(3,spec.spec_value,spec.spec_name)" multiple filterable allow-create placeholder="请选择规格值">
+                            <div v-if="spec.spec_name!='' " class='sku_select'>
+                                <el-select class='sku_value'  v-model="spec.spec_value" @change="searchHistoryNew(3,spec.spec_value,spec.spec_name)" multiple filterable allow-create placeholder="请选择规格值">
                                     <el-option v-for="item in skuValue" :key="item.value" :label="item.label" :value="item.value">
                                     </el-option>
                                 </el-select>
@@ -54,7 +54,7 @@
                     </el-form-item>
                 </el-form>
 
-                <el-button type="primary" @click="submit" style="margin:auto 0; width:100%;background: rgb(112, 165, 236);border: none;">提交</el-button>
+                <el-button type="primary" @click="submit" class='blue-btn wt_100'>提交</el-button>
             </el-col>
 
         </el-row>
@@ -106,8 +106,7 @@ export default {
         addSku() {
             if (this.specs.length == 0) {
                 this.loadAll(2);
-
-            }
+                }
             if (this.specs.length < 3) {
                 this.specs.push({
                     spec_name: '',
@@ -115,7 +114,6 @@ export default {
                 });
 
             } else {
-
                 this.$message({
                     message: "目前只能添加3个规格",
                     type: 'warning'
@@ -186,7 +184,6 @@ export default {
                     });
                 } else {
                     this.brand = result.list
-
                 }
             })
         },
@@ -196,8 +193,6 @@ export default {
                     if (key_word.length > 0) {
                         key_word = key_word[key_word.length - 1];
                     }
-
-
                 }
             }
             let historyNewParams = { uid: this.uid, type: type, key_word: key_word, parent_key_word: parent_key_word };
@@ -256,20 +251,6 @@ export default {
 
                 }
             })
-        },
-        remoteMethod(query) {
-            if (query !== '') {
-                this.loading = true;
-                setTimeout(() => {
-                    this.loading = false;
-                    this.options4 = this.list.filter(item => {
-                        return item.label.toLowerCase()
-                            .indexOf(query.toLowerCase()) > -1;
-                    });
-                }, 200);
-            } else {
-                this.options4 = [];
-            }
         },
         getBatchParam(specs) {
             const com_data = (specs) => {
@@ -393,4 +374,6 @@ export default {
     height: 178px;
     display: block;
 }
+
+
 </style>

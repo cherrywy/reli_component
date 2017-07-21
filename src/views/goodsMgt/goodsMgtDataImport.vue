@@ -1,44 +1,44 @@
 <template>
     <section>
-        <el-col :span="24" style="margin-bottom:20px">
-            <el-form :inline="true" class="demo-form-inline" style="margin-left: 10px;">
+        <el-col :span="24" class='mg_bottom_20'>
+            <el-form :inline="true" class="demo-form-inline" >
                 <el-form-item label="请选择门店：">
                     <el-select v-model="shopName" placeholder="请选择门店" @change="getGoodSpecProcessList()">
                         <el-option v-for="item in shop" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-upload class="avatar-uploader" ref="upload" style="float:right;margin-right:20px;" :action="action" :data="{'uid': uid,'shop_id':shop_id,'header_index':4,'file':fileList.name}" :file-list="fileList" :on-success="handleImportSuccess" :show-file-list="false">
-                    <el-button type="primary" style="background:#70a5ec;border: none;" @click='loading=true'>导入销售数据</el-button>
+                <el-upload class="avatar-uploader right mg-r-20" ref="upload"  :action="action" :data="{'uid': uid,'shop_id':shop_id,'header_index':4,'file':fileList.name}" :file-list="fileList" :on-success="handleImportSuccess" :show-file-list="false">
+                    <el-button type="primary" class='blue-btn'@click='loading=true'>导入销售数据</el-button>
                 </el-upload>
             </el-form>
     
         </el-col>
     
-        <el-col :span="24" style="margin-bottom:20px">
+        <el-col :span="24" class='mg_bottom_20'>
             <div v-if="dataImprt.length==0" v-loading="loading" element-loading-text="数据正在导入,请稍后"></div>
             <div v-if="dataImprt.length!=0">
-                <div v-for='(item,index) in dataImprt' style="padding:10px;">
+                <div v-for='(item,index) in dataImprt' class='pd-10'>
                     <span>{{item.data.goods_name}}</span>
-                    <el-button type='text' style="float:right;margin-right:50px;" @click='searchGoodsSpec(index,item.id,item.data.goods_name,item.data.goods_number)'>搜索</el-button>
+                    <el-button type='text' class="right mg-r-50" @click='searchGoodsSpec(index,item.id,item.data.goods_name,item.data.goods_number)'>搜索</el-button>
     
                 </div>
                 <el-row class="row center">
-                    <el-pagination style="margin: 20px auto;float:right" @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" layout="total, prev, pager, next, jumper" :total='total'>
+                    <el-pagination class="right mg_20" @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" layout="total, prev, pager, next, jumper" :total='total'>
                     </el-pagination>
                 </el-row>
             </div>
         </el-col>
     
         <el-dialog class='goods_dialog' :visible.sync="dialogFormVisible" size='small'>
-            <el-form style='text-align: center;'>
+            <el-form class='text_center'>
     
                 <el-form-item :label="oldGoodsName" label-width="150">
-                    <el-input style='width:200px;float:right;' v-model="goodsName" placeholder="请输入商品名称搜索" icon='search' :file-list="fileList" :on-icon-click="searchGoodsName" auto-complete="off"></el-input>
+                    <el-input class='right wt_200'v-model="goodsName" placeholder="请输入商品名称搜索"  :file-list="fileList" @change="searchGoodsName" auto-complete="off"></el-input>
                 </el-form-item>
-                <p v-if='isShowNull' style='color:red;margin:50px auto 100px;text-algin:center'>未搜索到该商品</p>
-                <div v-if='isShow' style="padding:10px;">
-                    <el-table ref="singleTable" :data="specSearchList" highlight-current-row @current-change="handleCurrentSelect" style="width: 100%;height:500px;overflow-y:scroll">
+                <p v-if='isShowNull' class='not_search'>未搜索到该商品</p>
+                <div v-if='isShow' class='pd-10'>
+                    <el-table ref="singleTable" class='case_table' :data="specSearchList" highlight-current-row @current-change="handleCurrentSelect" >
                         <el-table-column type="index" width="100" align='center'>
                         </el-table-column>
                         <el-table-column property="goods_name" label="商品名称" align='center'>
@@ -51,7 +51,7 @@
     
                     </el-table>
     
-                    <el-button type="primary" @click="submit()" style="margin:61px auto 0; width:20%;">绑定</el-button>
+                    <el-button type="primary" @click="submit()" class="blue-btn mg_auto">绑定</el-button>
     
                 </div>
     
@@ -159,8 +159,6 @@ export default {
             this.spec_number = spec_number
         },
         searchGoodsName() {
-
-
             const goodSpecUpdateParams = { uid: this.uid, keyword: this.goodsName };
             requestGoodSpecSearch(goodSpecUpdateParams).then(data => {
                 let { error_code, result } = data;
@@ -245,7 +243,14 @@ export default {
     width: 1080px;
     margin: 20px auto;
 }
-
+.wt_200{
+    width: 200px
+}
+.not_search{
+    color:red;
+    margin:50px auto 100px;
+    text-algin:center;
+}
 .goods_dialog .el-dialog.el-dialog--small {
     height: 750px;
 }

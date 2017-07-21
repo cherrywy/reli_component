@@ -2,7 +2,7 @@
     <section>
         <el-col :span="24">
             <el-col :span="7">
-                <el-select v-model="brand_name" style="width: 261px;" placeholder="品牌" @change="searchList()">
+                <el-select v-model="brand_name" class="brand_select" placeholder="品牌" @change="searchList()">
                     <el-option v-for="item in brand" :key="item.id" :label="item.name" :value="item.name">
                     </el-option>
                 </el-select>
@@ -11,17 +11,15 @@
                 <el-input v-model="key_word" @change="searchList()" placeholder="请输入商品的名称"></el-input>
             </el-col>
         </el-col>
+        <el-col :span="24" class='mg_bottom_20'>
     
-        <el-col :span="24" style="margin-bottom:20px">
-    
-            <el-button type="primary" style="float:right;background:#70a5ec;border: none;" @click="goodsNew">添加商品</el-button>
-    
+            <el-button type="primary" class='blue-btn right' @click="goodsNew">添加商品</el-button>
         </el-col>
-        <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
+        <el-table :data="tableData">
             <el-table-column label="商品图片" width="120" align="center">
                 <template scope="scope">
                     <img v-if='scope.row.goods_title_pics&&scope.row.goods_title_pics.length!=0' style='margin: 5px;' width='60' height='60' :src="scope.row.goods_title_pics">
-                     <img width='60' height='60' style='margin: 5px;'  v-else src="/static/img/pic_blank.png">
+                    <img width='60' height='60' class='mg_5' v-else src="/static/img/pic_blank.png">
                 </template>
     
             </el-table-column>
@@ -30,7 +28,7 @@
             <el-table-column label="规格" width="150" align="center">
                 <template scope="scope">
                     <div v-for="item in scope.row.spec_info">
-                        {{item.spec1_value?item.spec1_value:''}} {{item.spec2_value?","+item.spec2_value:''}}{{item.spec3_value?","+item.spec3_value:''}}
+                        {{item.spec1_value?item.spec1_value:''}} {{item.spec2_value?","+item.spec2_value:''}} {{item.spec3_value?","+item.spec3_value:''}}
                     </div>
                 </template>
             </el-table-column>
@@ -40,25 +38,17 @@
             </el-table-column>
             <el-table-column label="操作" align="center" width="150">
                 <template scope="scope">
-                    <el-button size="small" type="info" style="background:#70a5ec" @click="handleEdit(scope.row.goods_id)">编辑</el-button>
-                    <el-button size="small" type="info" style="background:#E0595B;opacity:0.66;" @click="handleDelete(scope.$index, scope.row.goods_id)">删除</el-button>
+                    <el-button size="small" type="info" class='blue-btn' @click="handleEdit(scope.row.goods_id)">编辑</el-button>
+                    <el-button size="small" type="info" class='red-btn' @click="handleDelete(scope.$index, scope.row.goods_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
         <el-row class="row center">
-            <el-pagination style="margin: 20px auto;float:right" @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" layout="total, prev, pager, next, jumper" :total='total'>
+            <el-pagination class="right mg_20" @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" layout="total, prev, pager, next, jumper" :total='total'>
             </el-pagination>
         </el-row>
     </section>
 </template>
-
-<style>
-#goods-app {
-    width: 1080px;
-    margin: 20px auto;
-}
-</style>
-
 <script>
 
 import { requestList, requestRemove, requestBrandHistory } from '../../api/goodsServer';
@@ -169,7 +159,11 @@ export default {
 
     }
 }
-
 </script>
-
+<style>
+#goods-app {
+    width: 1080px;
+    margin: 20px auto;
+}
+</style>
 
