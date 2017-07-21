@@ -132,7 +132,8 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
         },
 		search_Goods(){
 			console.log(this.shopIds)
-			console.log(this.options)
+			console.log(this.options
+			)
 			let param = {}
 			param.limit = 10
 			if(this.input2){

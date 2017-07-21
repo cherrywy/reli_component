@@ -2,13 +2,13 @@
     <section>
         <el-col :span ='24' v-if='true'>
             <el-col :span='6' style='margin-top:25px;margin-left:-50px;'>
-                 <el-input placeholder="请输入商品名称搜索" v-model="input"  class='inp_seach'></el-input>
+                 <el-input placeholder="请输入商品名称搜索" v-model="input"  class='inp_seach' @change='videoChange'></el-input>
             </el-col>
             <el-col :span='18' align='right' style='margin-top:25px;'>
                 <el-button class='btn_color' @click='bindList'>绑定素材</el-button>
             </el-col>
             <el-col :span='24' style='margin-top:20px'>
-                <el-table :data="filteredTableData" border style="width: 100%; margin-top: 15px;">
+                <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
                      <el-table-column label="商品图片" width="120" align="center">
                         <template scope="scope">
                             <img width='50' height='50' :src="scope.row.img">
@@ -45,6 +45,7 @@ export default {
     data() {
         return {
 		  tableData:[],
+          arr:[],
           video_list:{},
           dialogFormVisible:false,
           dialogDelete:false,
@@ -65,18 +66,6 @@ export default {
         this.uid = localStorage.getItem('uid');
         this.getVideoList()
 	},
-    computed:{
-        filteredTableData: function () {
-            let name = this.input
-            return this.tableData.filter(function(value){
-                if(name == ''){
-                    return true
-                }else{
-                    return new RegExp(`${name}`,'i').test(value.goodname);
-                }
-            })
-        }
-    },
 	methods:{
 		bindList:function () {
 			this.$router.push({path:'/bindList'});
@@ -91,7 +80,7 @@ export default {
                 let pageSize = this.pageinationInfo.pageSize //每页显示5条
                 let startIndex = (this.pageinationInfo.currentPage - 1) * pageSize  //当前页起始下标
                 let endIndex =(this.pageinationInfo.currentPage * pageSize )  //当前页起始下标
-                this.tableData = data.result.video_list.map(v=>{
+                this.arr = data.result.video_list.map(v=>{
                     // const {goods} = v.video;
                     const goods_pics = v.video.goods.info_title_pics?v.video.goods.info_title_pics[0]:null;
                     const img = v.video.goods.pic_url?v.video.goods.pic_url:goods_pics;
@@ -105,9 +94,19 @@ export default {
                         id:v.video.goods.info_id
                     }
                 })
-                this.tableData = this.tableData.slice(startIndex,endIndex)
+                this.tableData = this.arr.slice(startIndex,endIndex)
                 console.log(this.tableData)
             })
+        },
+        videoChange(){
+            if(this.input !== ''){
+                let name = this.input
+                    this. tableData= this.arr.filter(function(value){
+                        return new RegExp(`${name}`,'i').test(value.goodname);
+                   })
+            }else{
+                this.getVideoList()
+            }
         },
         deletegoods(index,goods_id){
             //确认解除
@@ -128,22 +127,18 @@ export default {
             })
          },
          changeDiaplay(index){
-             console.log(this.filteredTableData)
             let id= this.filteredTableData[index].id
-            console.log(this.filteredTableData[index])
             const path = '/bindList?goods_id=' + id;
             this.$router.push({ path: path });
          },
          //分页
          handleCurrentChange(currentPage) {
              //当前页变动时候触发的事件
-            console.log(currentPage)
             this.pageinationInfo.currentPage = currentPage;
             this.getVideoList()
         },
          handleSizeChange(size) {
             //pageSize 改变时会触发
-            console.log(size)
             this.pageinationInfo.pageSize = size;
             this.getVideoList()
         },

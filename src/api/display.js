@@ -49,6 +49,8 @@ export const goodstype = params => { return axios.post(`${apiServer}/a/search_hi
 export const addstype = params => { return axios.post(`${apiServer}/a/search_history/new.json`, params).then(res => res.data); };
 //查询商品信息
 export const find_one_goods = params => { return axios.post(`${apiServer}/v10/c/folder_dd/find_one_goods.json`, params).then(res => res.data); };
+//发布商品后商品列表
+export const upgoodsList = params => { return axios.post(`${apiServer}/v10/folder_dd/goods_list.json`, params).then(res => res.data); };
 
 //门店  广告机列表
 

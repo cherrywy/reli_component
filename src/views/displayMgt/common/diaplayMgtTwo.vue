@@ -40,6 +40,7 @@
                                 <el-input v-model="good_search" 
                                     placeholder="请输入商品名称搜索" 
                                     auto-complete="off" 
+                                    @change ='good_searchChange'
                                     style='width:200px;'>
                                 </el-input>
                             </el-form-item>
@@ -47,7 +48,7 @@
                                 <span>找不到商品？去<el-button type='text' @click='addDisplay'>绑定</el-button>商品</span>
                             </el-form-item>
                             <el-form-item>
-                                <el-table :data="filteredTableData" style='marign-top:10px;'  @selection-change="goods_selectionchange">
+                                <el-table :data="gridData" style='marign-top:10px;'  @selection-change="goods_selectionchange">
                                         <el-table-column type='selection' label="选择" width="200"></el-table-column>
                                         <el-table-column prop="name" label="商品名称" ></el-table-column>
                                 </el-table>
@@ -126,24 +127,13 @@
             total: 0,
          },
          uid:'',
-         good_search:''
+         good_search:'',
+         arr:[]
       };
     },
     mounted:function() {
         this.uid = localStorage.getItem('uid');
         this.getimg_List();
-    },
-    computed:{
-        filteredTableData: function () {
-            let name = this.good_search
-            return this.gridData.filter(function(value){
-                if(name == ''){
-                    return true
-                }else{
-                    return new RegExp(`${name}`,'i').test(value.name);
-                }
-            })
-        }
     },
     methods: {
         getimg_List(){
@@ -208,15 +198,15 @@
             let pageSize = this.pageinationInfo.pageSize //每页显示5条
             let startIndex = (this.pageinationInfo.currentPage - 1) * pageSize  //当前页起始下标
             let endIndex =(this.pageinationInfo.currentPage * pageSize )  //当前页起始下标
-            this.gridData = data.result.video_list.map(v => {
+            this.arr = data.result.video_list.map(v => {
                  return{
                      name:v.video.goods.info_name,
                      goods_id:v.video.goods.info_id,
                  }
             })
 
-              this.pageinationInfo.total =  this.gridData.length
-              this.gridData = this.gridData.slice(startIndex,endIndex)
+              this.pageinationInfo.total =  this.arr.length
+              this.gridData = this.arr.slice(startIndex,endIndex)
               console.log(this.gridData)  
           }) 
       },
@@ -303,6 +293,17 @@
         },
         addDisplay(){
             this.$router.push({ path: '/bindList' });
+        },
+        good_searchChange(){
+            if(this.good_search !== ''){
+                 let name = this.good_search
+                 this.gridData = this.arr.filter(function(value){
+                     return new RegExp(`${name}`,'i').test(value.name)
+                 })
+            }
+            else{
+                this.update_goods()
+            }
         }
     }
   }

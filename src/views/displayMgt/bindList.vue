@@ -23,6 +23,7 @@
                                     class='inp_seach'
                                     auto-complete="off" 
                                     style='width:200px;' 
+                                    @change='goods_name_change'
                                     :file-list="form.fileList"></el-input>
                                 </el-form-item>
                                 <el-form-item  :label-width="formLabelWidth" align='right'>
@@ -37,7 +38,7 @@
                             </el-form>
                             <el-form align='right'>
                                 <div class="block">
-                                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5, 10,]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
+                                    <el-pagination @current-change="handleCurrentChange" @size-change="sizeChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5,10,20]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
                                     </el-pagination>
                                 </div>
                             </el-form>
@@ -352,6 +353,17 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
            })
             
         },
+        updataGoods(info){
+            changeGoodsList(info).then(data => {
+                this.pageinationInfo.total = data.result.total_count
+                this.arr = data.result.list.map(v=>{
+                    return {
+                            name:v.data.name,
+                            goods_id:v.id
+                        }
+                    })
+             })
+        },
         changeGoods(){
             if(this.tagArrName.length !== 0){
                 this.dialogFormVisible = false
@@ -361,25 +373,28 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 })
             }
             else{
-            this.dialogFormVisible = true
-            let id = {
-               uid:this.uid
+                this.dialogFormVisible = true
+                let info = {
+                    uid:this.uid,
+                    limit:this.pageinationInfo.pageSize,
+                    page:this.pageinationInfo.currentPage
+                 }       
+                 if(this.searchVal !== ''){
+                     info.name = this.searchVal
+                 }
+                this.updataGoods(info)
             }
-            changeGoodsList(id).then(data => {
-                let pageSize = this.pageinationInfo.pageSize //每页显示5条
-                let startIndex = (this.pageinationInfo.currentPage - 1) * pageSize  //当前页起始下标
-                let endIndex =(this.pageinationInfo.currentPage * pageSize )  //当前页起始下标
-                this.arr = data.result.list.map(v=>{
-                    return {
-                        name:v.data.name,
-                        goods_id:v.id
-                    }
-                })
-                this.pageinationInfo.total =  this.arr.length
-                this.arr = this.arr.slice(startIndex,endIndex)
-             })
+        },
+        goods_name_change(){
+            let info = {
+                    uid:this.uid,
+                    limit:this.pageinationInfo.pageSize,
+                    page:this.pageinationInfo.currentPage
             }
-            
+            if(this.searchVal !== ''){
+                info.name = this.searchVal
+            }
+            this.updataGoods(info)
         },
         handleSelect(row){
             this.good_name = row.name
@@ -411,12 +426,11 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
         //分页
          handleCurrentChange(currentPage) {
              //当前页变动时候触发的事件
-            this.pageinationInfo.currentPage = currentPage;
+           this.pageinationInfo.currentPage = currentPage;
            this.changeGoods()
         },
-         handleSizeChange(size) {
-            //pageSize 改变时会触发
-            this.pageinationInfo.pageSize = size;
+        sizeChange(pageSize){
+            this.pageinationInfo.pageSize = pageSize;
             this.changeGoods()
         },
         remoteMethod(seleValue){
