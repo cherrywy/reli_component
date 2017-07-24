@@ -1,7 +1,7 @@
 <template>
     <section>
         <el-row :gutter="20">
-            <el-form :inline="true" class="demo-form-inline mg-l-10" >
+            <el-form :inline="true" class="demo-form-inline mg-l-10">
                 <el-form-item label="请选择门店：">
                     <el-select v-model="shopName" placeholder="请选择" @change="getFindShopPlan()">
                         <el-option v-for="item in shop" :key="item.value" :label="item.label" :value="item.value">
@@ -17,7 +17,7 @@
             </el-form>
         </el-row>
         <el-row :gutter="20" :offset="10" v-show="planId">
-            <el-card >
+            <el-card>
                 <Viewer :planId="planId" />
             </el-card>
         </el-row>
@@ -34,7 +34,7 @@
                             <span class="color_3">找不到商品？去</span>添加
                             <span class='color_3'>新商品</span>
                         </el-button>
-                        <el-table class='case_table'ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" @selection-change="handleSelectionChange">
+                        <el-table class='case_table' ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" width="55">
                             </el-table-column>
                             <el-table-column prop='goods_name' label="商品名称">
@@ -64,7 +64,7 @@
     
                 <el-table-column label="操作" align="center">
                     <template scope="scope">
-                        <el-button size="small" class='red-btn'@click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
+                        <el-button size="small" class='red-btn write' @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -137,29 +137,21 @@ export default {
         })
     },
     methods: {
+        //上架商品弹框事件
         getPopPlan() {
             this.dialogFormVisible = true;
             this.goodsName = ''
             this.getOnlineList('', 0, 5)
         },
+        //点击展柜获取详情信息列表
         getOnlineShowCaseList() {
             let OnlineListParams = { show_case_id: this.show_case_id };
             requestOnlineShowCase(OnlineListParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.onlineShowCaseList = result
-
-                }
+                this.onlineShowCaseList = data.onlineShowCaseList
             })
         },
-
+        //商品下架事件
         handleOffline(index, goods_spec_id) {
-
             this.$confirm('下架该商品后将无法撤回，是否继续', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -181,11 +173,11 @@ export default {
                 })
             })
         },
+        //上架商品事件
         submit() {
-
             const goods_spec_ids = this.multipleSelection.map(v => {
-                                        return v.id
-                                    }).join()
+                return v.id
+            }).join()
             if (goods_spec_ids.length === 0) {
                 this.$message({
                     message: "您还没有选择任何商品",
@@ -193,7 +185,6 @@ export default {
                 });
             } else {
                 let listParams = { uid: this.uid, goods_spec_ids: goods_spec_ids, show_case_id: this.show_case_id };
-
                 requestGoodsOnline(listParams).then(data => {
                     let { error_code, result } = data;
                     if (error_code !== 0) {
@@ -216,6 +207,7 @@ export default {
 
 
         },
+        //布局图下的展柜
         getPlanShowCaseList() {
             this.isCase = false;
             this.planId = this.shopPlan.filter(v => {
@@ -226,72 +218,45 @@ export default {
             }
             let planListParams = { plan_id: this.planId };
             requestPlanShowCaseList(planListParams).then(data => {
-                let { error_code, result, total_count } = data;
-
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    if (total_count === 0) {//展柜数量为0
+                    this.planShowCaseNumber = data.planShowCaseNumber
+                    if (this.planShowCaseNumber === 0) {//展柜数量为0
                         this.$message({
                             message: "该平面图无展柜，请先添加展柜",
                             type: 'info'
                         });
                         this.$bus.$emit('initViewer')
                     } else {
-                        this.planShowCase = result
-                        this.planShowCaseNumber = total_count
+                        this.planShowCase = data.planShowCase 
                         this.$bus.$emit('initViewer')
                     }
-                }
+                
             })
         },
+        //要上架商品列表
         getOnlineList(key_word, pageNum, limit) {
             let listParams = { uid: parseInt(this.uid), page: pageNum, limit: 20000 };
             if (key_word) {
                 listParams['keyword'] = key_word
             }
             requestSearchSpec(listParams).then(data => {
-                let { error_code, result, total_count } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
 
-                    this.tableOnlineList = result
+                this.tableOnlineList = data.tableOnlineList
 
-                }
             })
         },
+        //按商品名搜索
         searchGoodsName() {
             this.getOnlineList(this.goodsName, 0, 20000)
             this.key_word = ''
         },
+        //模糊搜索门店
         getFindShop() {
             const shopPlanParams = { uid: this.uid };
             requestFindShop(shopPlanParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.shop = result.map(v => {
-                        return {
-                            value: v.shop,
-                            id: v.id,
-
-                        }
-                    });
-
-                }
+                this.shop = data.shop
             })
         },
+        //模糊搜索门店布局
         getFindShopPlan() {
             this.plansName = ''
             this.planShowCase = []
@@ -305,23 +270,10 @@ export default {
             }
             const shopPlanParams = { uid: this.uid, shop_id: shop_id };
             requestFindShopPlan(shopPlanParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.shopPlan = result.map(v => {
-                        return {
-                            value: v.name,
-                            id: v.id,
-
-                        }
-                    });
-                }
+                this.shopPlan = data.shopPlan
             })
         },
+        //选择要上架商品
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
@@ -340,9 +292,10 @@ export default {
     margin: 20px auto;
 }
 
-.case_title{
+.case_title {
     line-height: 36px;
 }
+
 .container .canvas[data-v-5ae3712d] {
     overflow-x: hidden !important;
 }
@@ -357,5 +310,9 @@ export default {
 .image {
     width: 100%;
     display: block;
+}
+
+.write {
+    color: #fff
 }
 </style>

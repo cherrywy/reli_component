@@ -54,7 +54,9 @@ export const requestBrand = params => {
                 throw new Error('requst error')
             }
             const brand = result
-            return brand
+            return {
+                brand
+            }
         })
     }
     // 品牌模糊搜索
@@ -107,7 +109,7 @@ export const requestUpdate = params => {
 export const requestHistoryNew = params => {
         return axios.post(`${apiServer}/a/search_history/new.json`, params).then(res => res.data)
     }
-    //编辑数据带回
+    // 编辑数据带回
 export const requestEdit = params => {
     return axios.post(`${apiServer}/a/goods/show.json`, params).then(res => {
 
@@ -132,23 +134,85 @@ export const requestEdit = params => {
     })
 }
 export const requestOnline = params => {
-    return axios.post(`${apiServer}/a/goods/online.json`, params).then(res => res.data)
-}
+        return axios.post(`${apiServer}/a/goods/online.json`, params).then(res => res.data)
+    }
+    // 获取门店
 export const requestFindShop = params => {
-    return axios.post(`${apiServer}/a/goods/find_shop_plan.json`, params).then(res => res.data)
-}
+        return axios.post(`${apiServer}/a/goods/find_shop_plan.json`, params).then(res => {
+            const { error_code, result } = res.data
+            if (error_code !== 0) {
+                throw new Error('requst error')
+            }
+            const shop = result.map(v => {
+                return {
+                    value: v.shop,
+                    id: v.id
+
+                }
+            })
+            return {
+                shop
+            }
+        })
+    }
+    // 获取门店布局
 export const requestFindShopPlan = params => {
-    return axios.post(`${apiServer}/a/shop_plan/find.json`, params).then(res => res.data)
+    return axios.post(`${apiServer}/a/shop_plan/find.json`, params).then(res => {
+        const { error_code, result } = res.data
+        if (error_code !== 0) {
+            throw new Error('requst error')
+        }
+        const shopPlan = result.map(v => {
+            return {
+                value: v.name,
+                id: v.id
+            }
+        })
+        return {
+            shopPlan
+        }
+    })
 }
 export const requestSearchSpec = params => {
-    return axios.post(`${apiServer}/a/goods_spec/search.json`, params).then(res => res.data)
+    return axios.post(`${apiServer}/a/goods_spec/search.json`, params).then(res => {
+        const { error_code, result } = res.data
+        if (error_code !== 0) {
+            throw new Error('requst error')
+        }
+
+        const tableOnlineList = result
+        return {
+            tableOnlineList
+        }
+    })
 }
 
 export const requestOnlineShowCase = params => {
-    return axios.post(`${apiServer}/a/online_goods/by_show_case.json`, params).then(res => res.data)
-}
+        return axios.post(`${apiServer}/a/online_goods/by_show_case.json`, params).then(res => {
+            const { error_code, result } = res.data
+            if (error_code !== 0) {
+                throw new Error('requst error')
+            }
+            const onlineShowCaseList = result
+            return {
+                onlineShowCaseList
+            }
+        })
+    }
+    // 根据布局图展示展柜
 export const requestPlanShowCaseList = params => {
-    return axios.post(`${apiServer}/a/plan_show_case/list.json`, params).then(res => res.data)
+    return axios.post(`${apiServer}/a/plan_show_case/list.json`, params).then(res => {
+        const { error_code, result, total_count } = res.data
+        if (error_code !== 0) {
+            throw new Error('requst error')
+        }
+        const planShowCase = result
+        const planShowCaseNumber = total_count
+        return {
+            planShowCase,
+            planShowCaseNumber
+        }
+    })
 }
 export const requestGoodsOnline = params => {
     return axios.post(`${apiServer}/a/goods/online.json`, params).then(res => res.data)
@@ -157,18 +221,41 @@ export const requestGoodsOffline = params => {
     return axios.post(`${apiServer}/a/goods/offline.json`, params).then(res => res.data)
 }
 export const requestDataImport = params => {
-    return axios({
-        url: `${apiServer}/a/goods/sales.json`,
-        method: 'post',
-        data: params,
-        headers: { 'Content-Type': 'multipart/form-data' }
-    }).then(res => res.data)
-}
+        return axios({
+            url: `${apiServer}/a/goods/sales.json`,
+            method: 'post',
+            data: params,
+            headers: { 'Content-Type': 'multipart/form-data' }
+        }).then(res => res.data)
+    }
+    //门店数据列表
 export const requestGoodSpecProcess = params => {
-    return axios.post(`${apiServer}/a/good_spec_tobe_process/find.json`, params).then(res => res.data)
+    return axios.post(`${apiServer}/a/good_spec_tobe_process/find.json`, params).then(res => {
+        const { error_code, result } = res.data
+        if (error_code !== 0) {
+            throw new Error('requst error')
+        }
+        const dataImprt = result.list
+        const total = result.total_count
+        return {
+            dataImprt,
+            total
+
+        }
+    })
 }
 export const requestGoodSpecSearch = params => {
-    return axios.post(`${apiServer}/a/goods_spec/search.json`, params).then(res => res.data)
+    return axios.post(`${apiServer}/a/goods_spec/search.json`, params).then(res => {
+        const { error_code, result } = res.data
+        if (error_code !== 0) {
+            throw new Error('requst error')
+        }
+        const specSearchList = result
+        return {
+            specSearchList
+        }
+
+    })
 }
 export const requestGoodSpecUpdate = params => {
     return axios.post(`${apiServer}/a/goods_spec/update.json`, params).then(res => res.data)

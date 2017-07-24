@@ -97,27 +97,14 @@ export default {
         this.getFindShop()
     },
     methods: {
+        //获取门店
         getFindShop() {
             const shopPlanParams = { uid: this.uid };
             requestFindShop(shopPlanParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.shop = result.map(v => {
-                        return {
-                            value: v.shop,
-                            id: v.id,
-
-                        }
-                    });
-
-                }
+                this.shop = data.shop
             })
         },
+        //导入成功事件
         handleImportSuccess(res, fileList) {
             this.getGoodSpecProcessList()
             if (res.result.error_code !== 0) {
@@ -127,31 +114,27 @@ export default {
                 });
             }
         },
+        //门店数据列表
         getGoodSpecProcessList() {
             this.shop_id = this.shop.filter(v => {
                 return v.value === this.shopName;
             }).map(v => v.id).pop();
             let goodSpecProcessParams = { shop_id: this.shop_id, page: this.currentPage };
             requestGoodSpecProcess(goodSpecProcessParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.dataImprt = result.list
-                    this.total = result.total_count
+              
+                    this.dataImprt = data.dataImprt 
+                    this.total = data.total
 
-                }
+                
             })
         },
+        //分页事件
         handleCurrentChange(val) {
             this.currentPage = val;
             this.getGoodSpecProcessList()
         },
+        //商品规格搜索
         searchGoodsSpec(index, id, name, spec_number) {
-
             this.index = index;
             this.goodsId = id
             this.dialogFormVisible = true
@@ -161,15 +144,8 @@ export default {
         searchGoodsName() {
             const goodSpecUpdateParams = { uid: this.uid, keyword: this.goodsName };
             requestGoodSpecSearch(goodSpecUpdateParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.specSearchList = result
-                    if (result.length == 0) {
+              this.specSearchList=data.specSearchList 
+                    if (data.specSearchList.length == 0) {
                         this.isShowNull = true
                         this.isShow = false
 
@@ -177,13 +153,9 @@ export default {
                         this.isShow = true
                         this.isShowNull = false
                     }
-
-                }
             })
         },
-        setCurrent(row) {
-            this.$refs.singleTable.setCurrentRow(row);
-        },
+        //绑定商品事件
         submit() {
             if (this.currentRow === '') {
                 this.$message({
@@ -214,6 +186,7 @@ export default {
             }
 
         },
+        //删除规格
         delectSpec() {
             let removeParams = { id: this.goodsId };
             requestGoodSpecRemove(removeParams).then(data => {
@@ -230,10 +203,9 @@ export default {
                 }
             })
         },
+        //选中事件
         handleCurrentSelect(val) {
             this.currentRow = val.id;
-
-
         }
     }
 }
@@ -249,7 +221,7 @@ export default {
 .not_search{
     color:red;
     margin:50px auto 100px;
-    text-algin:center;
+    text-align:center;
 }
 .goods_dialog .el-dialog.el-dialog--small {
     height: 750px;
