@@ -88,12 +88,12 @@ export default {
                 let size = this.pageinationInfo.pageSize
                 let allIndex = (page - 1) * size + index
                 //获取点击的index
-                goods_id = this.allGoods[allIndex].goods_id
                 let banId = {
                    goods_id:goods_id,
                    uid:this.uid,
                 }
                 deleteOneList(banId).then(data =>{
+                    
                     if(data.error_code == 0){
                         this.$confirm('提示', {
                             message:'解除绑定成功',
@@ -103,17 +103,18 @@ export default {
                         this.$confirm('提示', {
                             message:'解除绑定失败',
                             type: 'error'
-                            
+
                         })
                     }
-                }) 
+                    this.getInfomation();
+                })  
             })
         },
         bindList(){
             //绑定素材
             this.$router.push({ path: '/bind_list' });
          },
-        changeDiaplay(index){
+        changeDiaplay(index,goods_id){
         //更新素材
             //当前也页
             let page = this.pageinationInfo.currentPage  
@@ -121,7 +122,7 @@ export default {
             let size = this.pageinationInfo.pageSize
             //获取点击的index
             let allIndex = (page - 1) * size + index
-            let id= this.allGoods[allIndex].goods_id
+            let id= goods_id
             const path = '/bind_list?goods_id=' + id;
             this.$router.push({ path: path });	
         },

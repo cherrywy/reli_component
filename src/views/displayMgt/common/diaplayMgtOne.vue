@@ -93,7 +93,9 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
     },
     mounted() {
         this.uid = localStorage.getItem('uid');
-        this.display_device_id = this.$route.query.id;
+        //
+        //this.$route.query.id;
+        this.display_device_id = 1291185013457004;
         this.getGoods_List();
     },
     methods:{

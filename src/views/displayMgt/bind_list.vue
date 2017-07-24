@@ -170,6 +170,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
       };
     },
     mounted() {
+        this.uid = localStorage.getItem('uid');
         this.head_office_id = localStorage.getItem('head_office_id');
         this.getGoodsList();
     },
