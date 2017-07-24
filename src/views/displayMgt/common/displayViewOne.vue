@@ -14,10 +14,10 @@
             </el-table-column>
             <el-table-column prop="bindvideo" label="绑定视频" width="100" align="center">
             </el-table-column>
-            <el-table-column prop="bindurl" label="URl地址" width="400" align="center">
+            <el-table-column prop="bindurl" label="URl地址" width="300" align="center">
             </el-table-column>
             <el-table-column label="操作" align="center" >
-                <template scope="scope">
+                <template scope="scope"  width="250" >
                     <el-button size='small' class='btn_red_color' @click="deletegoods(scope.$index,scope.row.goods_id)">解除绑定</el-button>
                     <el-button size='small' class='btn_color' @click="changeDiaplay(scope.$index,scope.row.goods_id)">更换素材</el-button>
                 </template>
@@ -103,6 +103,7 @@ export default {
                         this.$confirm('提示', {
                             message:'解除绑定失败',
                             type: 'error'
+                            
                         })
                     }
                 }) 

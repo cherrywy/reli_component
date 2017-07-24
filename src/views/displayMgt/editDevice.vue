@@ -4,7 +4,7 @@
 			<el-col :span ='24' style='margin-top:20px;' align='center'>
 				<ul style='list-style:none;' align='center'>
 					<li class='bg_img'>
-						<div class='device' @click='switchDiaplay("diaplayMgeOne")'></div>
+						<div class='deviceone' @click='switchDiaplay("diaplayMgeOne")'></div>
 					</li>
 					<li class='bg_img'>
 						<div class='device' @click='switchDiaplay("diaplayMgeTwo")'></div>
@@ -73,6 +73,18 @@ import {carouselImgs} from '../../api/display'
 		background-size:100% 100%;
 	}
 	.device:active{
+		border:1px blue solid;
+		width:150px;
+		height:200px;
+	}
+	.deviceone{
+		width:150px;
+		height:200px;
+		margin-right:20px;
+		background:url('/static/img/two.jpeg') no-repeat;
+		background-size:100% 100%;
+	}
+	.deviceone:active{
 		border:1px blue solid;
 		width:150px;
 		height:200px;

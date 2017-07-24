@@ -4,7 +4,7 @@
 			<el-col :span ='24' style='margin-top:20px;' align='center'>
 				<ul style='list-style:none;' align='center'>
 					<li class='bg_img'>
-						<div class='device' @click='deviceStyle("displayViewOne")'></div>
+						<div class='deviceone' @click='deviceStyle("displayViewOne")'></div>
 					</li>
 					<li class='bg_img'>
 						<div class='device' @click='deviceStyle("displayViewTwo")'></div>
@@ -79,7 +79,18 @@ export default {
 		background:url('/static/img/twoad.jpeg') no-repeat;
 		background-size:100% 100%;
 	}
+	.deviceone{
+		width:150px;
+		height:200px;
+		background:url('/static/img/two.jpeg') no-repeat;
+		background-size:120% 120%;
+	}
 	.device:active{
+		border:1px blue solid;
+		width:150px;
+		height:200px;
+	}
+	.deviceone:active{
 		border:1px blue solid;
 		width:150px;
 		height:200px;
