@@ -12,7 +12,6 @@
             </el-col>
         </el-col>
         <el-col :span="24" class='mg_bottom_20'>
-    
             <el-button type="primary" class='blue-btn right' @click="goodsNew">添加商品</el-button>
         </el-col>
         <el-table :data="tableData">
@@ -74,19 +73,15 @@ export default {
 
     },
     methods: {
+        //品牌模糊搜索
         brandHistory() {
-            let brandParams = { head_office_id: this.head_office_id, name: this.brand_name };
+            let brandParams = { 
+                head_office_id: this.head_office_id,
+                 name: this.brand_name 
+                };
             requestBrandHistory(brandParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.brand = result.list
-                    this.brand.unshift({ name: '全部' })
-                }
+                this.brand = data.brand
+                this.brand.unshift({ name: '全部' })
             })
         },
         //列表搜索
@@ -105,7 +100,6 @@ export default {
             }
             requestList(listParams).then(data => {
                 this.tableData = data.tableData;
-
                 this.total = data.total_count;
             }).catch(err => {
                 this.$message({
@@ -118,14 +112,17 @@ export default {
         searchList() {
             this.getList(this.brand_name, this.key_word, 0)
         },
+        //商品列表页切换
         handleCurrentChange(val) {
             this.currentPage = val;
             this.getList(this.brand_name, this.key_word, this.currentPage)
         },
+        //编辑商品
         handleEdit(goods_id) {
             const path = '/goodsMgtEdit?goods_id=' + goods_id;
             this.$router.push({ path: path });
         },
+        //删除商品
         handleDelete(index, goods_id) {
             this.$confirm('删除该商品后将无法撤回，是否继续', '提示', {
                 confirmButtonText: '确定',
@@ -152,6 +149,7 @@ export default {
                 });
             });
         },
+        //添加商品跳转
         goodsNew() {
             const path = '/goodsMgtNew';
             this.$router.push({ path: path });
