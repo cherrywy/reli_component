@@ -1,7 +1,7 @@
 <template>
     <section>
         <el-row :gutter="20">
-            <el-form :inline="true" class="demo-form-inline" style="margin-left: 10px;">
+            <el-form :inline="true" class="demo-form-inline mg-l-10" >
                 <el-form-item label="请选择门店：">
                     <el-select v-model="shopName" placeholder="请选择" @change="getFindShopPlan()">
                         <el-option v-for="item in shop" :key="item.value" :label="item.label" :value="item.value">
@@ -16,30 +16,25 @@
                 </el-form-item>
             </el-form>
         </el-row>
-        <el-row :gutter="20" :offset="10" style="margin-bottom:20px;text-align:center;" v-show="planId">
-            <el-card style="margin: 0 auto;position:relative">
+        <el-row :gutter="20" :offset="10" v-show="planId">
+            <el-card >
                 <Viewer :planId="planId" />
-                <!--<div style="bottom: 0;position: absolute;">-->
-                    <!--<div class="bottom">-->
-                        <!--<el-button type="text" class="button">展柜数量:{{planShowCaseNumber}}</el-button>-->
-                    <!--</div>-->
-                <!--</div>-->
             </el-card>
         </el-row>
         <el-card class="box-card" v-show="isCase">
             <div slot="header" class="clearfix">
-                <span style="line-height: 36px;">{{show_case_type}}-{{show_case_name}}</span>
-                <el-button style="float: right;background: rgb(112, 165, 236);border: none;" type="primary" @click="getPopPlan()">上架商品</el-button>
+                <span class='case_title'>{{show_case_type}}-{{show_case_name}}</span>
+                <el-button class='blue-btn right' type="primary" @click="getPopPlan()">上架商品</el-button>
                 <el-dialog :visible.sync="dialogFormVisible">
                     <el-form>
                         <el-form-item label="">
                             <el-input v-model="goodsName" placeholder="请输入商品名称搜索" @change="searchGoodsName" auto-complete="off"></el-input>
                         </el-form-item>
-                        <el-button type="text" style="float:right" @click="goodsNew()">
-                            <span style="color:#333">找不到商品？去</span>添加
-                            <span style="color:#333">新商品</span>
+                        <el-button type="text" class='right' @click="goodsNew()">
+                            <span class="color_3">找不到商品？去</span>添加
+                            <span class='color_3'>新商品</span>
                         </el-button>
-                        <el-table ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" style="width: 100%;margin-bottom: 20px;height: 380px;scoll-y: auto;overflow-y: scroll;" @selection-change="handleSelectionChange">
+                        <el-table class='case_table'ref="multipleTable" :data="tableOnlineList" border tooltip-effect="dark" @selection-change="handleSelectionChange">
                             <el-table-column type="selection" width="55">
                             </el-table-column>
                             <el-table-column prop='goods_name' label="商品名称">
@@ -52,13 +47,13 @@
                         </el-table>
                         </el-form-item>
                     </el-form>
-                    <div style="text-align:center">
+                    <div class='text_center'>
     
-                        <el-button type="primary" style="margin:auto 0;background: rgb(112, 165, 236)" @click="submit">保存</el-button>
+                        <el-button type="primary" class='blue-btn mg-auto' @click="submit">保存</el-button>
                     </div>
                 </el-dialog>
             </div>
-            <el-table :data="onlineShowCaseList" border style="width: 100%;margin-top: 15px;">
+            <el-table :data="onlineShowCaseList" border class='wt_100'>
                 <el-table-column prop='goods_name' label="商品名称">
                 </el-table-column>
                 <el-table-column prop="" label="商品规格" align="center">
@@ -69,7 +64,7 @@
     
                 <el-table-column label="操作" align="center">
                     <template scope="scope">
-                        <el-button size="small" style="background:#E0595B;opacity:0.66;color:#fff;border: none;" @click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
+                        <el-button size="small" class='red-btn'@click="handleOffline(scope.$index, scope.row.id)">下架</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -189,8 +184,8 @@ export default {
         submit() {
 
             const goods_spec_ids = this.multipleSelection.map(v => {
-                return v.id
-            }).join()
+                                        return v.id
+                                    }).join()
             if (goods_spec_ids.length === 0) {
                 this.$message({
                     message: "您还没有选择任何商品",
@@ -226,8 +221,8 @@ export default {
             this.planId = this.shopPlan.filter(v => {
                 return v.value === this.plansName;
             }).map(v => v.id).pop();
-            if(!this.planId){
-               return
+            if (!this.planId) {
+                return
             }
             let planListParams = { plan_id: this.planId };
             requestPlanShowCaseList(planListParams).then(data => {
@@ -239,18 +234,16 @@ export default {
                         type: 'error'
                     });
                 } else {
-                    if (total_count===0){//展柜数量为0
+                    if (total_count === 0) {//展柜数量为0
                         this.$message({
                             message: "该平面图无展柜，请先添加展柜",
                             type: 'info'
                         });
                         this.$bus.$emit('initViewer')
-                        console.log('1111')
-                    }else {
+                    } else {
                         this.planShowCase = result
                         this.planShowCaseNumber = total_count
                         this.$bus.$emit('initViewer')
-                        console.log('222')
                     }
                 }
             })
@@ -301,7 +294,7 @@ export default {
         },
         getFindShopPlan() {
             this.plansName = ''
-            this.planShowCase =[]
+            this.planShowCase = []
             let shop_id = '';
             if (this.$route.query.shopId) {
                 shop_id = this.$route.query.shopId
@@ -347,6 +340,9 @@ export default {
     margin: 20px auto;
 }
 
+.case_title{
+    line-height: 36px;
+}
 .container .canvas[data-v-5ae3712d] {
     overflow-x: hidden !important;
 }

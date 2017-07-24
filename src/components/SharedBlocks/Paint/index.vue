@@ -426,7 +426,7 @@ export default {
       if (object.id) {
         this.$zydialog({
           msg: '确实要删除这个展柜吗？',
-          desc: '它和柜图、商品的关联关系将被同时删除',
+          desc: '它和柜图将被同时删除,展柜和商品的关联关系将会保留',
           okDanger: true,
           onOk: async () => {
             this.$data.ui.loading = true

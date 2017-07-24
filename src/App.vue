@@ -69,4 +69,82 @@ body {
     background: rgb(112, 165, 236) !important;
     border: none !important;
 }
+.red-btn{
+	background:#E0595B !important;
+	opacity:0.66
+}
+.right{
+	float:right;
+}
+.mg_bottom_20{
+	margin-bottom:20px;
+}
+.mg_5{
+	margin: 5px
+}
+.mg_20{
+	margin: 20px
+}
+.brand_select {
+    width: 260px !important;
+}
+.input_select {
+    width: 195px !important;
+}
+.brand_text{
+    font-size:8px;
+    color:#ccc;
+    margin-right:10px;
+}
+.spec_content{
+    width:100% !important;
+    padding:10px !important;
+    background:#eee !important;
+    position:relative !important;
+}
+.wt_100{
+	width:100%
+}
+.goods_close{
+    color:#20a0ff;
+    right: 21px;
+    top: 21px;
+    position: absolute;
+}
+.sku_select{
+    width:50%;
+    padding:10px;
+}
+.sku_value{
+   width:100%;
+   background-color:transparent;
+   -webkit-appearance:none;
+}
+.mg-l-10{
+	margin-left: 10px;
+}
+.mg-r-20{
+	margin-right:20px;
+}
+.mg-r-50{
+	margin-right:50px !important;
+}
+.color_3{
+	color:#333;
+}
+.text_center{
+	text-align:center
+}
+.mg-auto{
+margin:auto 0;
+}
+.pd-10{
+	padding:10px;
+}
+.case_table{
+    width: 100%;
+    margin-bottom: 20px;
+    height: 380px;
+    overflow-y: scroll !important;
+}
 </style>
