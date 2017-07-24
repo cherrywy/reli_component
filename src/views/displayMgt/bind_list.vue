@@ -2,25 +2,16 @@
     <section>
         <el-row>
             <el-col :span='24'>
-                <el-form ref="form" :model="bindgoods" >
+                <el-form ref="form" :model="bindgoods" label-position="top">
                     <el-form-item label="请选择商品：">
-                        <el-input
-                            icon="search"
-                            v-model="filter.goods"
-                            :on-icon-click="handleIconClick"
-                            style='width:200px;'>
-                        </el-input>
                         <el-button type='text'  @click="changeGoods">选择商品</el-button>
-                        <br/>
                         <el-tag
-                            v-model="form.goods_name"
-                            :key="form.goods_name"
+                            v-for='tag in tagArrName'
                             :closable="true"
                             :type="primary"
-                            @close="handleClose(form.goods_name)"
-                            style='margin-left:100px'
-                            >
-                            {{form.goods_name}}
+                            @close="handleClose(tag)"
+                            style='margin-left:100px' >
+                            {{tag}}
                         </el-tag>
                         <el-dialog :visible.sync="dialogFormVisible">
                             <el-form :model="form">
@@ -31,13 +22,13 @@
                                     auto-complete="off" 
                                     style='width:200px;' 
                                     :file-list="form.fileList"
-                                    on-icon-click='search'></el-input>
+                                    @change='goods_name_change'></el-input>
                                 </el-form-item>
                                 <el-form-item  :label-width="formLabelWidth" align='right'>
                                     <span>找不到商品？去<el-button type='text' @click='addgoods'>添加</el-button></span>
                                 </el-form-item>
                                 <el-form-item  :label-width="formLabelWidth">
-                                    <el-table :data="arr" style='marign-top:10px;'  @cell-click="handleSelect" @selection-change="selectionchange">
+                                    <el-table :data="arr" style='marign-top:10px;'  @cell-click="handleSelect">
                                             <el-table-column label="选择" width="200" type='selection'></el-table-column>
                                             <el-table-column label="商品名称" prop='name'></el-table-column>
                                     </el-table>
@@ -45,10 +36,8 @@
                             </el-form>
                             <el-form align='right'>
                                 <div class="block">
-                                    <el-pagination
-                                        layout="prev, pager, next"
-                                        :total="50">
-                                    </el-pagination> 
+                                    <el-pagination @current-change="handleCurrentChange" @size-change="sizeChange" :current-page="pageinationInfo.currentPage" :page-sizes="[5,10,20]" :page-size="pageinationInfo.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageinationInfo.total">
+                                    </el-pagination>
                                 </div>
                             </el-form>
                             <div slot="footer" class="dialog-footer" align='center'>
@@ -65,9 +54,9 @@
                             :data="upload_params"      
                             :show-file-list="true"
                             list-type="picture-card"
-                            :file-list="fileList"
+                            :file-list="showImgs"
                             :on-remove='handleAvatarRemove'
-                            :on-success='imghandleAvatarSuccess'>
+                            :on-success='showImgs_Success'>
                              <i class="el-icon-plus"></i>
                         </el-upload>
                     </el-form-item>
@@ -79,15 +68,16 @@
                             :show-file-list="true"
                             list-type="picture-card"
                             :file-list="fileList"
-                            :on-remove='handleAvatarRemove'
+                            :on-remove='fileListdelete'
                             :on-success='imghandleAvatarSuccess'>
                              <i class="el-icon-plus"></i>
                         </el-upload>
+                        <div class="el-upload__tip" slot="tip" style='margin-left:100px;color:red;'>注：图片支持768*600</div>
                     </el-form-item>
                     
                    
                     <el-form-item label="跳转地址">
-                       <el-input  style='width:300px;' v-model='form.jump_url_url'></el-input>
+                       <el-input  style='width:300px;' v-model='form.jump_url'></el-input>
                     </el-form-item>
     
                     <el-form-item label="请选择互动视频" >
@@ -95,7 +85,7 @@
                         class="upload-demo"
                         drag
                         name="pic"
-                        :data="video_upload_params"  
+                        :data="upload_video"  
                         :show-file-list="true"
                         :file-list="videoList"
                         :on-remove='videohandleAvatarRemove'
@@ -116,10 +106,11 @@
     </section>
 </template>
 <script>
-import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/display'
+import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bind_OneList} from '../../api/display'
   export default {
     data() {
       return {
+        showadd:true,
         dialogTableVisible: false,
         searchVal:'',
         bindgoods:{},
@@ -141,8 +132,9 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
         tag:'',
         obj:{url:''},
         videoobj:{url:''},
-        options: [{value: '经典',name:'经典'}, {value: '新品',name: '新品'}],
-        tag_goods_value:'',
+        options: [],
+        seleValue:'',
+        tagValue:[],
         saveInfomations:{
              banner_urls:'',
                details_intro:'',
@@ -159,145 +151,280 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo} from '../../api/dis
                video_url:'',
         },
         goodId:'',
-        upload_params:{type:'image'},
-        video_upload_params:{type:'video'},
         good_name:'',
         selectAry:[],
-        uid:'',
+        pageinationInfo: {
+            currentPage: 1,
+            pageSize: 5,
+            total: 0,
+         },
+         upload_video:{
+             type:'video',
+             with_suffix:1
+         },
+         uid:'',
+         head_office_id:'',
+         tagArrName:[],
+         tagArrtag:[],
+         showImgs:[],
       };
     },
     mounted() {
         this.uid = localStorage.getItem('uid');
+        this.head_office_id = localStorage.getItem('head_office_id');
         this.getGoodsList();
+    },
+    computed:{
+        filteredTableData: function () {
+            let name = this.searchVal
+            return this.arr.filter(function(value){
+                if(name == ''){
+                    return true
+                }else{
+                    return new RegExp(`${name}`,'i').test(value.name);
+                }
+            })
+        }
     },
 	methods:{
         getGoodsList(){
-            const goods_id = this.$route.query.goods_id
-            let uid ={
-                 uid:this.uid
+            //获取商品详情
+            if(this.$route.query.goods_id){
+                 this.goodId = this.$route.query.goods_id
             }
-            updatavideo(uid).then(data => {
+            let inf ={
+                 goods_id:this.$route.query.goods_id,
+                 head_office_id:this.head_office_id
+            }
+            getGoods_OneList(inf).then(data => {
                 //更新绑定素材的时候获取商品列表
-                 data.result.video_list.map(v =>{
-                   if(goods_id == v.video.goods.info_id){
-                        v.video.goods.info_title_pics.map(val => {
-                           this.obj.url = val
-                           this.fileList.push(this.obj)
-                       })  
-                       this.tag_goods_value = v.video.goods.tag_goods_value
-                       this.form = {
-                            goods_name:v.video.goods.info_name,
-                            ag_goods_value:v.video.goods.tag_goods_value,
-                            details_intro_goods_value:v.video.goods.details_intro_goods_value,
-                            propaganda_intro_goods_value:v.video.goods.propaganda_intro_goods_value,
-                            jump_url_url:v.video.goods.jump_url_url,
-                            price_goods_value:v.video.goods.price_goods_value,
-                            vedio_url_url:v.video.goods.vedio_url_url
-                       }
-                   }
-                 })
+                const val = data.result
+                let name  = val.goods[0].data.name
+                this.tagArrName.push(name)
+                let img = {
+                    url:val.goods_pic[0].data.url
+                }
+                this.showImgs.push(img)
+
+                let pic_imgs = val.banner.map(v=>{
+                    return {
+                        url:v.data.url
+                    }
+                })
+                this.fileList = pic_imgs
+                this.form.jump_url = val.jump_url[0].data.url
+                this.videoList = val.video_url
             })
         },
-        handleClose(goods_name) {
-            //标签关闭
-            goods_name= null
-            //var index = this.ruleForm.tags.indexOf(tag);
-            //this.ruleForm.tags.splice(index,1);
+        handleClose(tag) {
+            //商品标签关闭判断
+            if(this.$route.fullPath !== '/bind_list'){
+                this.$message({
+                    message: "更换素材不能删除商品",
+                    type: 'error'
+                })
+            }else{
+                var index = this.tagArrName.indexOf(tag);
+                this.tagArrName.splice(index,1);
+            } 
         },
-        handleTag(tag){
-            this.tag_goods_value = null
+        handleTag(valtag){
+            //商品标签 标签关闭
+            var index = this.tagArrtag.indexOf(valtag);
+            this.tagArrtag.splice(index,1);
         },
         addgoods(){
             //添加商品 跳转页面
              this.$router.push({ path: '/goodsMgtNew' });
         },
+        showImgs_Success(res,file){
+            //商品展示图片上传
+            let info = {
+                url:res.result.file_download_url
+            }
+            this.showImgs.push(info)
+            if(this.showImgs.length>1){
+                this.showImgs.splice(0,1)
+                this.$message({
+                    message: "只能上传一张图片，以最新为准",
+                    type: 'error'
+                })
+            }
+        },
         imghandleAvatarSuccess(res, file){
             //图片上传事件
             let upimg = {
-                pic:res.result.file_download_url
+                url:res.result.file_download_url
             }
             this.fileList.push(upimg)
         },
-        imghandleAvatarSuccess(res, file){
-            //视频上传事件
-            let upvideo = {
+        videohandleAvatarSuccess(res, file){
+            let upimg = {
                 url:res.result.file_download_url
             }
-            if(this.videoLis.length == 0){
-                this.videoList.push(upvideo)
-            }else{
+            this.videoList.push(upimg)
+            if(this.videoList.length>1){
+                this.videoList.splice(0,1)
                 this.$message({
-                    message: "只能上传一个视频",
+                    message: "只能上传一个视频，以最新为准",
                     type: 'error'
-                 });
-            } 
+                })
+            }
+        },
+        handleAvatarRemove(file,fileLis){
+            //图片删除
+            this.fileList =[]
+          //  console.log(file)
+        },
+        fileListdelete(file,fileList){
+            let index = this.fileList.indexOf(fileList)
+            this.fileList.splice(index,1)
+        },
+        videohandleAvatarRemove(){
+            this.videoList =[]
         },
         onSubmit(){//绑定
-           //console.log(this.form)
            let info = this.form
-           this.fileList.map(v=>{ this.saveInfomations.banner_urls = v.url +','})
-           this.saveInfomations = {
-               banner_urls:this.saveInfomations.banner_urls,
-               details_intro:info.details_intro_goods_value,
-               details_tag:this.tag_goods_value,
-               goods_id:this.$route.query.goods_id || this.goodId,
-               goods_tag:this.tag_goods_value,
-               goods_tag_url:'',
-               goods_url:info.jump_url_url,
-               jump_url:info.vedio_url_url,
-               price:info.price_goods_value,
-               propaganda:info.propaganda_intro_goods_value,
-               propaganda_pic:'',
-               uid:this.uid,
-               video_url:this.videoList,
+           console.log(this.fileList.length)
+           if(this.fileList.length !== 0){
+                let imgs_url = ''
+                imgs_url = this.fileList.map(v=>{
+                    return v.url+''
+                })
+               this.saveInfomations.banner_urls = imgs_url
            }
-           changeDiaplay(this.saveInfomations).then(data=>{
-               this.$router.push({ path: '/bindDisplayData' });
-               this.$message({
-                    message: "上传成功",
-                    type: 'success'
-                });
+           if(this.showImgs.length !== 0){
+               this.saveInfomations.goods_url = this.showImgs[0].url
+           }
+           if(info.jump_url){
+               this.saveInfomations.jump_url =info.jump_url
+           }
+           if(this.videoList.length !== 0){
+               this.saveInfomations.video_url = this.videoList[0].url
+           }
+           this.saveInfomations = {
+               goods_id:this.goodId,                          //商品id
+               uid:this.uid,
+           }
+           
+           console.log(this.saveInfomations)
+           bind_OneList(this.saveInfomations).then(data=>{
+               if(data.error_code !== 0){
+                   this.$message({
+                        message:'上传失败',
+                        type: 'error'
+                    })
+               }else{
+                     this.$message({
+                        message: "上传成功",
+                        type: 'success'
+                    }).then(
+                    this.$router.push({path:'/bindDisplayData'})
+                    )
+               }
+              
            })
+            
         },
-        changeGoods(){
-            this.dialogFormVisible = true
-            let id = {
-               uid:this.uid 
-            }
-            changeGoodsList(id).then(data => {
+        updataGoods(info){
+            changeGoodsList(info).then(data => {
+                this.pageinationInfo.total = data.result.total_count
                 this.arr = data.result.list.map(v=>{
                     return {
-                        name:v.data.name,
-                        goods_id:v.id
-
-                    }
-                });
-            })
+                            name:v.data.name,
+                            goods_id:v.id
+                        }
+                    })
+             })
+        },
+        changeGoods(){
+            if(this.tagArrName.length !== 0){
+                this.dialogFormVisible = false
+                this.$message({
+                    message: "只能添加一个商品",
+                    type: 'error'
+                })
+            }
+            else{
+                this.dialogFormVisible = true
+                let info = {
+                    uid:this.uid,
+                    limit:this.pageinationInfo.pageSize,
+                    page:this.pageinationInfo.currentPage
+                 }       
+                 if(this.searchVal !== ''){
+                     info.name = this.searchVal
+                 }
+                this.updataGoods(info)
+            }
+        },
+        goods_name_change(){
+        //搜索
+            let info = {
+                    uid:this.uid,
+                    limit:this.pageinationInfo.pageSize,
+                    page:this.pageinationInfo.currentPage
+            }
+            if(this.searchVal !== ''){
+                info.name = this.searchVal
+            }
+            this.updataGoods(info)
         },
         handleSelect(row){
-            //console.log(row)
             this.good_name = row.name
             this.goodId = row.goods_id
             this.selectAry.push(row)
         },
         saveChangeGoods(){
-            if(this.selectAry.length >2){
+            if(this.tagArrName.length == 1){
+                if(!this.tagArrName[0]){
+                    this.$message({
+                        message: "请选择一个商品",
+                         type: 'error'
+                    }) 
+                    this.tagArrName=[]
+                }
+                 this.tagArrName.push(this.good_name)
+            }
+            else if(this.tagArrName.length > 1 ){
                 this.$message({
                    message: "只能选择一个商品",
                    type: 'error'
-                })
+                })       
             }
             else{
-                this.dialogFormVisible = false;
-                this.form.goods_name = this.good_name
+                this.tagArrName.push(this.good_name)
+                this.dialogFormVisible = false
             }   
         },
-        search(){
-            //alert(1)
-           let name = this.searchVal
-           this.arr = this.arr.filter(function(v){
-               return new RegExp(`${name}`,'i').test(v.name);
-           })
+        //分页
+         handleCurrentChange(currentPage) {
+             //当前页变动时候触发的事件
+           this.pageinationInfo.currentPage = currentPage;
+           this.changeGoods()
+        },
+        sizeChange(pageSize){
+            this.pageinationInfo.pageSize = pageSize;
+            this.changeGoods()
+        },
+        remoteMethod(seleValue){
+            if(this.options.indexOf(seleValue) == -1){
+                //值不在下拉框中，添加
+                    let inf = {
+                        uid:this.uid,
+                        type:4,
+                        key_word:this.seleValue
+                      }
+                   addstype(inf)
+            }
+            if(this.tagArrtag.length == 0){
+                this.tagArrtag.push(seleValue)
+            }else{
+                this.tagArrtag =[]
+                this.tagArrtag.push(seleValue)
+            }
+            console.log(this.tagArrtag)
+            //this.getGoodsList();
         }
     }
   };

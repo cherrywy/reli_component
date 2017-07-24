@@ -87,12 +87,13 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 		getList(param){
 			search_goods(param).then(data=>{ 
 					this.pageinationInfo.total = data.total_count
-					let time = Date.parse(new Date())
+					let time = new Date().getTime();
 					this.tableData = data.result.map( v=>{
+						const {heartbeat_time=0} = v.data;
 						return{
 							name:v.data.name,
 							shop:v.data.shop_name || '无门店信息',
-							state:(time - v.data.heartbeat_time >= 1800)?'不正常':'正常',
+							state:(time - heartbeat_time >= 1000*3600)?'不正常':'正常',
 							id:v.data.shop_id
 						}
 					})

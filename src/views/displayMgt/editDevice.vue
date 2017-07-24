@@ -2,8 +2,14 @@
 	<section>
 		<el-row>
 			<el-col :span ='24' style='margin-top:20px;' align='center'>
-				<!--<el-button class='device' @click="switchDiaplay('diaplayMgeOne')">广告机1</el-button>-->
-				<div class='device' @click="switchDiaplay('diaplayMgeTwo')"></div>
+				<ul style='list-style:none;' align='center'>
+					<li class='bg_img'>
+						<div class='device' @click='switchDiaplay("diaplayMgeOne")'></div>
+					</li>
+					<li class='bg_img'>
+						<div class='device' @click='switchDiaplay("diaplayMgeTwo")'></div>
+					</li>
+				</ul>
 			</el-col>
 		</el-row>
 		<components :is='currentView'></components>
@@ -20,7 +26,7 @@ import {carouselImgs} from '../../api/display'
         return {
 			dialogImageUrl: '',
        		dialogVisible: false,
-			currentView: 'diaplayMgeTwo',
+			currentView: 'diaplayMgeOne',
 			uid:''
 		}
     },
@@ -56,6 +62,9 @@ import {carouselImgs} from '../../api/display'
  }
 </script>
 <style>
+	.bg_img{
+		float:left;
+	}
 	.device{
 		width:150px;
 		height:200px;

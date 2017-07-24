@@ -79,7 +79,7 @@ let routes = [
         name: '广告管理',
         children: [
             { 
-                path: '/bindDisplayData/viewTwoimgs', 
+                path: '/bindDisplayData', 
                 component: bindDisplayData,
                 name: '素材绑定',
                 children:[

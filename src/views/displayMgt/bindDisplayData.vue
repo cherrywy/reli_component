@@ -2,8 +2,14 @@
 	<section>
 		<el-row>
 			<el-col :span ='24' style='margin-top:20px;' align='center'>
-				<!--<el-button class='device' @click='deviceStyle("displayViewOne")'>广告机1</el-button>-->
-				<div class='device' @click='deviceStyle("displayViewTwo")'></div>
+				<ul style='list-style:none;' align='center'>
+					<li class='bg_img'>
+						<div class='device' @click='deviceStyle("displayViewOne")'></div>
+					</li>
+					<li class='bg_img'>
+						<div class='device' @click='deviceStyle("displayViewTwo")'></div>
+					</li>
+				</ul>
 			</el-col>
 		</el-row>
 		<components :is='currentView'></components>
@@ -20,7 +26,7 @@ export default {
           activeName2: 'first',
 		  options: [{value: 5,label: 5}, {value: 10,label: 10}],
 		  value: '',
-		  currentView: 'displayViewTwo',
+		  currentView: 'displayViewOne',
 		  lists:null,
 		  uid:''
 		}
@@ -64,6 +70,9 @@ export default {
  }
 </script>
 <style>
+	.bg_img{
+		float:left;
+	}
 	.device{
 		width:150px;
 		height:200px;

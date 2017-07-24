@@ -73,15 +73,27 @@ export const get_shop_imgs = params => { return axios.post(`${apiServer}/a/plan_
 
 /****-----------
  * ---
- * ------                               广告机1
+ * ------                               广告机1  素材管理
  * ------
  * -------
  * ------------------*/
-//广告机1 获取素材
-export const getOneList = params => { return axios.post(`${apiServer}/v10/c/display_device/dd.json`, params).then(res => res.data); };
-//广广告机 - 编辑默认广告 - 获取商品列表#
+//广告机1 获取商品素材
+export const getOneList = params => { return axios.post(`${apiServer}/v10/a/goods/fold_def/find_display_list.json`, params).then(res => res.data); };
+//  解除绑定
+export const deleteOneList = params => { return axios.post(`${apiServer}/v10/a/goods/def_display/remove.json`, params).then(res => res.data); };
+//  获取商品列表
+export const getGoods_OneList = params => { return axios.post(`${apiServer}/v10/c/display_device/def_dd.json`, params).then(res => res.data); };
+//绑定素材
+export const bind_OneList = params => { return axios.post(`${apiServer}/v10/a/goods/dd/edit.json`, params).then(res => res.data); };
 
-export const adgoodlist = params => { return axios.post(`${apiServer}/v10/def_dd/goods.json`, params).then(res => res.data); };
+//广告机 - 编辑默认广告 - 获取商品列表#
+//获取广告机的默认商品和互动商品列表
+export const getAlllist = params => { return axios.post(`${apiServer}/v10/c/display_device/dd.json`, params).then(res => res.data); };
+//广告机 - 绑定互动展示商品#
+export const bind_dd_goods = params => { return axios.post(`${apiServer}/v10/c/int_dd/bind.json`, params).then(res => res.data); };
+
+export const adgoodlist = params => { return axios.post(`${apiServer}/v10/c/display_device/dd.json`, params).then(res => res.data); };
+//获取商品列表
 export const interactivead_list = params => { return axios.post(`${apiServer}/v10/int_dd/goods.json`, params).then(res => res.data); };
 
 //删除默认

@@ -24,7 +24,7 @@
                     </el-table-column>
                     <el-table-column prop="bindaddress" label="商品详情地址" width="300" align="center">
                     </el-table-column>
-                    <el-table-column label="操作" align="center" width="200">
+                    <el-table-column label="操作" align="center">
                         <template scope="scope">
                             <el-button size='small' class='btn_red_color' @click="deletegoods(scope.$index,scope.row.goods_id)">解除绑定</el-button>
                             <el-button size='small' class='btn_color' @click="changeDiaplay(scope.$index,scope.row.goods_id)">更换素材</el-button>
@@ -115,7 +115,13 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() =>{
-                goods_id = this.tableData[index].id
+                //当前页1
+                let page = this.pageinationInfo.currentPage  
+                //每页数量5
+                let size = this.pageinationInfo.pageSize
+                //获取点击的index
+                let allIndex = (page - 1) * size + index
+                goods_id = this.arr[allIndex].id
                 let banId = {
                    goods_id:goods_id,
                    uid:this.uid
@@ -127,7 +133,14 @@ export default {
             })
          },
          changeDiaplay(index){
-            let id= this.filteredTableData[index].id
+        //更换素材
+            //当前页1
+            let page = this.pageinationInfo.currentPage  
+            //每页数量5
+            let size = this.pageinationInfo.pageSize
+            //获取点击的index
+            let allIndex = (page - 1) * size + index
+            let id= this.arr[allIndex].id
             const path = '/bindList?goods_id=' + id;
             this.$router.push({ path: path });
          },
