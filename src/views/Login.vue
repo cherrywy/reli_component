@@ -63,7 +63,7 @@
               let { msg, error_code,result } = data;
               if (error_code !== 0) {
                 this.$message({
-                  message: '未登录成功',
+                  message: msg,
                   duration: 1000,
                   type: 'error'
                 });
