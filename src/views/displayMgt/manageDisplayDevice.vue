@@ -79,7 +79,7 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
         this.getFocusList()
     },
 		methods:{
-		edit (index,id) {
+		edit (index,id){
 			const path = '/editDevice?id=' + id;
 			this.$router.push({ path: path });
 		},
@@ -93,7 +93,7 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 							name:v.data.name,
 							shop:v.data.shop_name || '无门店信息',
 							state:(time - heartbeat_time >= 1000*3600)?'不正常':'正常',
-							id:v.data.shop_id
+							id:v.id
 						}
 					})
 			})
@@ -131,9 +131,6 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
             this.getFocusList()
         },
 		search_Goods(){
-			console.log(this.shopIds)
-			console.log(this.options
-			)
 			let param = {}
 			param.limit = 10
 			if(this.input2){
