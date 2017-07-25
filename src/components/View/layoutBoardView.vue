@@ -91,25 +91,10 @@ export default {
       'getPlanListByShopId'
     ]),
     getFindShop() {
-      const shopPlanParams = { uid: this.uid };
-      requestFindShop(shopPlanParams).then(data => {
-        let { error_code, result } = data;
-        if (error_code !== 0) {
-          this.$message({
-            message: "返回数据有误",
-            type: 'error'
-          });
-        } else {
-          this.shop = result.map(v => {
-            return {
-              value: v.shop,
-              id: v.id,
-
-            }
-          });
-
-        }
-      })
+       const shopPlanParams = { uid: this.uid };
+            requestFindShop(shopPlanParams).then(data => {
+                this.shop = data.shop
+            })
     },
     getFindShopPlan() {
       this.planList.length=0 
@@ -119,23 +104,9 @@ export default {
       }).map(v => v.id).pop();
       this.shopId = shop_id
       const shopPlanParams = { uid: this.uid, shop_id: shop_id };
-      requestFindShopPlan(shopPlanParams).then(data => {
-        let { error_code, result } = data;
-        if (error_code !== 0) {
-          this.$message({
-            message: "返回数据有误",
-            type: 'error'
-          });
-        } else {
-          this.shopPlan = result.map(v => {
-            return {
-              value: v.name,
-              id: v.id,
-
-            }
-          });
-        }
-      })
+       requestFindShopPlan(shopPlanParams).then(data => {
+                this.shopPlan = data.shopPlan
+            })
       // 清除画板
       this.$bus.$emit('resetPaintCanvas')
     },
@@ -163,8 +134,6 @@ export default {
         this.$bus.$emit('changePaintPlanId', this.plan_id)
         this.$bus.$emit('initPaintCanvas')
       })
-      
-      console.log(this.planList.length)
       if (this.planList.length === 0) {        
         // this.$router.push('/home')
         // alert('未找到平面图列表')
