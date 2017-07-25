@@ -136,7 +136,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
         seleValue:'',
         tagValue:[],
         saveInfomations:{
-             banner_urls:'',
+               banner_urls:'',
                details_intro:'',
                details_tag:'',
                goods_id:'',
@@ -201,11 +201,12 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
                 const val = data.result
                 let name  = val.goods[0].data.name
                 this.tagArrName.push(name)
-                let img = {
-                    url:val.goods_pic[0].data.url
+                if(val.goods_pic[0].data.url){
+                     let img = {
+                        url:val.goods_pic[0].data.url
+                     }
+                    this.showImgs.push(img)
                 }
-                this.showImgs.push(img)
-
                 let pic_imgs = val.banner.map(v=>{
                     return {
                         url:v.data.url
@@ -291,7 +292,6 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
         },
         onSubmit(){//绑定
            let info = this.form
-           console.log(this.fileList.length)
            if(this.fileList.length !== 0){
                 let imgs_url = ''
                 imgs_url = this.fileList.map(v=>{
@@ -308,11 +308,8 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
            if(this.videoList.length !== 0){
                this.saveInfomations.video_url = this.videoList[0].url
            }
-           this.saveInfomations = {
-               goods_id:this.goodId,                          //商品id
-               uid:this.uid,
-           }
-           
+           this.saveInfomations.goods_id = this.goodId
+           this.saveInfomations.uid = this.uid
            console.log(this.saveInfomations)
            bind_OneList(this.saveInfomations).then(data=>{
                if(data.error_code !== 0){
@@ -327,8 +324,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
                     }).then(
                     this.$router.push({path:'/bindDisplayData'})
                     )
-               }
-              
+               } 
            })
             
         },
