@@ -9,22 +9,22 @@
             </el-col>
             <el-col :span='24' style='margin-top:20px'>
                 <el-table :data="tableData" border style="width: 100%; margin-top: 15px;">
-                     <el-table-column label="商品图片" width="120" align="center">
+                     <el-table-column label="商品图片" width="100" align="center">
                         <template scope="scope">
                             <img width='50' height='50' :src="scope.row.img">
                         </template>
                      </el-table-column>
-                    <el-table-column prop="goodname" label="商品名称" align="center" width="200">
+                    <el-table-column prop="goodname" label="商品名称" align="center" width="180">
                     </el-table-column>
-                    <el-table-column label="商品标签" width="100" align="center" prop="goodtag">
+                    <el-table-column label="商品标签" width="80" align="center" prop="goodtag">
                     </el-table-column>
                     <el-table-column prop="goodprice" label="商品价格（元）" align="center" width="100">
                     </el-table-column>
                     <el-table-column prop="bindvideo" label="绑定视频" width="100" align="center">
                     </el-table-column>
-                    <el-table-column prop="bindaddress" label="商品详情地址" width="300" align="center">
+                    <el-table-column prop="bindaddress" label="商品详情地址" align="center">
                     </el-table-column>
-                    <el-table-column label="操作" align="center">
+                    <el-table-column label="操作" align="center" width="200" >
                         <template scope="scope">
                             <el-button size='small' class='btn_red_color' @click="deletegoods(scope.$index,scope.row.goods_id)">解除绑定</el-button>
                             <el-button size='small' class='btn_color' @click="changeDiaplay(scope.$index,scope.row.goods_id)">更换素材</el-button>
