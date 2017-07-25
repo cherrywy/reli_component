@@ -7,7 +7,8 @@
 						<!--<div class='deviceone' @click='switchDiaplay("diaplayMgeOne")'></div>-->
 					</li>
 					<li class='bg_img'>
-						<div class='device' @click='switchDiaplay("diaplayMgeTwo")'></div>
+						<p>广告机2</p>
+						<div class='device' @click='switchDiaplay("diaplayMgtTwo")'></div>
 					</li>
 				</ul>
 			</el-col>
@@ -17,8 +18,8 @@
 </template>
 <script>
 
-import diaplayMgeOne from './common/diaplayMgtOne.vue'
-import diaplayMgeTwo from './common/diaplayMgtTwo.vue'
+import diaplayMgtOne from './common/diaplayMgtOne.vue'
+import diaplayMgtTwo from './common/diaplayMgtTwo.vue'
 
 import {carouselImgs} from '../../api/display'
 	export default {
@@ -37,8 +38,8 @@ import {carouselImgs} from '../../api/display'
 		}
 	},
 	components: {
-		diaplayMgeOne,
-		diaplayMgeTwo
+		diaplayMgtOne,
+		diaplayMgtTwo
 	},
 	mounted() {
         this.uid = localStorage.getItem('uid');

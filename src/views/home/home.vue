@@ -10,11 +10,11 @@
 		<el-col :span='12' v-for='info in infos'>
 			<span style='line-height:40px;font-size:20px;'>{{info.shop}}</span>
 			<el-card class='card'>
-				<img :src="info.shop_pic" width='350px' height='300px'>
-				<div style="padding: 5px;" align='center'>
+				<img :src="info.shop_pic" class='img_sty'>
+				<div class='onlineGoods' align='center'>
 					<el-button type="text" class="button" @click='onlinegoods(info)'>上架商品</el-button>
+					<p style='font-size:13px;'>地址：{{info.street}}</p>
 				</div>
-				<p style='font-size:13px;'>地址：{{info.street}}</p>
 			</el-card>		
 		</el-col>
 	</section>
@@ -142,6 +142,12 @@ export default {
 	.card{
 		width:400px;
 		height:400px;
+		position:relative;
+	}
+	.onlineGoods{
+		position:absolute;
+		width:350px;
+		bottom:0px;
 	}
 	.title{
 		height:30px;
@@ -150,5 +156,11 @@ export default {
 		background:#70a5ec;
 		border-radius:5px;
 		color:white;
+	}
+	.img_sty{
+		height:100%;
+		width:100%;
+		/*border:1px red solid;*/
+		margin-top:50px;
 	}
 </style>

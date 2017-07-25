@@ -51,20 +51,6 @@ export default {
 	methods:{
 		deviceStyle:function (str) {
 			this.currentView = str
-			let id = {
-				uid:this.uid
-			}
-			getImgsList(id).then(data => {
-				//console.log(data)
-			})
-			updatavideo(id).then(data => {
-				//console.log(data)
-			})
-			allPic_imgs(id).then(data => {
-				this.lists = data.result
-				let imgList =this.lists
-				//console.log(this.lists)
-			})
 		}
 	}
  }

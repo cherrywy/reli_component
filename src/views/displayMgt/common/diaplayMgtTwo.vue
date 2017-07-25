@@ -1,6 +1,6 @@
 <template>
     <section>
-    <el-row>
+      <el-row>
             <el-col :span='24'>
                 <span style='line-height:50px;font-size:18px;'>轮播图</span>
             </el-col>

@@ -82,7 +82,7 @@
 export default {
 	data() {
 		return {
-			sysName: '智慧门店后台管理',
+			sysName: '智慧门店管理后台',
 			collapsed: false,
 			sysUserName: '',
 			sysUserAvatar: '',
