@@ -190,12 +190,12 @@ export default {
         // 中岛柜色盘
         '10': {
           stroke: 'blue',
-          fill: 'rgba(56, 121, 217, 0.9)'
+          fill: 'rgba(56, 121, 217, 0.2)'
         },
         // 背柜色盘
         '20': {
           stroke: 'green',
-          fill: 'rgba(196, 223, 184, 0.9)'
+          fill: 'rgba(196, 223, 184, 0.2)'
         },
         // 未保存展柜色盘
         unsaved: {
