@@ -80,7 +80,6 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
     },
 		methods:{
 		edit (index,id) {
-			id = this.tableData[index].id
 			const path = '/editDevice?id=' + id;
 			this.$router.push({ path: path });
 		},
