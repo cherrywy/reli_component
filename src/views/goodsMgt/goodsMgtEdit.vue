@@ -4,7 +4,7 @@
             <el-col>
                 <el-form :label-position="labelPosition" label-width="80px">
                     <el-form-item label="商品类目">
-                         <el-select v-model="big_category" filterable allow-create placeholder="大类目" @change="searchHistoryNew(0,big_category)">
+                        <el-select v-model="big_category" filterable allow-create placeholder="大类目" @change="searchHistoryNew(0,big_category)">
                             <el-option v-for="item in bigcategory" :key="item.id" :label="item.name" :value="item.value">
                             </el-option>
                         </el-select>
@@ -20,7 +20,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="商品名称">
-                        <el-input placeholder='请输入商品名称' v-model="name"  class="input_select"></el-input>
+                        <el-input placeholder='请输入商品名称' v-model="name" class="input_select"></el-input>
                     </el-form-item>
                     <el-form-item label="商品图片">
                         <el-upload class="avatar-uploader" :action="action" name="pic" :show-file-list="false" :on-success="handleAvatarSuccess">
@@ -40,11 +40,11 @@
                                     </el-option>
                                 </el-select>
                                 <el-button type="text" @click="deletSku(index)">
-                                    <i class="el-icon-close goods_close" ></i>
+                                    <i class="el-icon-close goods_close"></i>
                                 </el-button>
                             </div>
                             <div v-if="spec.spec_name!='' " class='sku_select'>
-                                 <el-select class='sku_value'  v-model="spec.spec_value" @change="searchHistoryNew(3,spec.spec_value,spec.spec_name)" multiple filterable allow-create placeholder="请选择规格值">
+                                <el-select class='sku_value' v-model="spec.spec_value" @change="searchHistoryNew(3,spec.spec_value,spec.spec_name)" multiple filterable allow-create placeholder="请选择规格值">
                                     <el-option v-for="item in skuValue" :key="item.value" :label="item.label" :value="item.value">
                                     </el-option>
                                 </el-select>
@@ -60,7 +60,7 @@
     </section>
 </template>
  <script>
-import { requestHistoryNew,requestSearchHistory, requestEdit, requestUpdate, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
+import { getBatchParam, requestHistoryNew, requestSearchHistory, requestEdit, requestUpdate, requestBrand, requestBrandHistory, requestUpload } from '../../api/goodsServer';
 import env from '../../env'
 export default {
     data() {
@@ -95,13 +95,16 @@ export default {
         this.getGoodsMes()
     },
     methods: {
+        //删除品牌规格
         deletSku(index) {
             this.specs.splice(index, 1);
         },
+        //获得品牌规格值
         getSkuVulue(name) {
             this.searchHistoryNew(2, name)
             this.loadAll(3, name);
         },
+        //添加品牌规格
         addSku() {
             if (this.specs.length == 0) {
                 this.loadAll(2);
@@ -112,7 +115,6 @@ export default {
                     spec_name: '',
                     spec_value: []
                 });
-
             } else {
                 this.$message({
                     message: "目前只能添加3个规格",
@@ -121,6 +123,7 @@ export default {
 
             }
         },
+        //新建品牌类目，规格，规格值
         searchHistoryNew(type, key_word, parent_key_word) {
             if (type === 3) {
                 if (Array.isArray(key_word)) {
@@ -144,18 +147,16 @@ export default {
                 }
             })
         },
+        //图片上传成功之后事件
         handleAvatarSuccess(res, file) {
-            this.imageUrl = URL.createObjectURL(file.raw);
             this.imageUrl = res.result.original_pic
 
         },
         submit() {
-
             this.specs = this.specs.filter(v => {
                 return v.spec_value.length;
             });
-
-            this.batch = this.getBatchParam(this.specs)
+            this.batch = getBatchParam(this.specs)
             const goods_id = this.$route.query.goods_id;
             const brand_id = this.brand.filter(v => {
                 return v.name === this.brand_name;
@@ -179,7 +180,6 @@ export default {
                     });
                     this.goodsList()
                 } else {
-
                     this.$message({
                         message: "返回数据有误",
                         type: 'error'
@@ -187,194 +187,53 @@ export default {
                 }
             })
         },
+        //通过name，创建品牌ID
         getBrandId(brand_name) {
             let newbrandParams = { uid: this.uid, brand_name: brand_name };
             requestBrand(newbrandParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.brand = result
-                }
+                this.brand = data.brand
             })
         },
+        //品牌模糊搜索
         brandHistory() {
-            let brandParams = { head_office_id: this.head_office_id, name: this.brand_name };
+            let brandParams = {
+                head_office_id: this.head_office_id,
+                name: this.brand_name
+            };
             requestBrandHistory(brandParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.brand = result.list
-
-                }
+                this.brand = data.brand
             })
         },
+        //商品信息带回
         getGoodsMes() {
             const goods_id = this.$route.query.goods_id;
             let mesParams = { goods_id: goods_id };
             requestEdit(mesParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    this.brand_name = result.list.goods_brand_name ? result.list.goods_brand_name : ''
-                    this.small_category = result.list.goods_small_category ? result.list.goods_small_category : ''
-                    this.big_category = result.list.goods_big_category ? result.list.goods_big_category : ''
-                    this.name = result.list.goods_name ? result.list.goods_name : ''
-                    this.imageUrl = result.list.goods_title_pics ? result.list.goods_title_pics : ''
-                    function getSpecsResult(data) {
-                        const result_specs_to_params = (data) => {
-                            let specs = [];
-                            if (!data) {
-                                return [];
-                            }
-                            if (data.hasOwnProperty('spec_spec1_name') && data['spec_spec1_name']) {
-                                specs.push({
-                                    spec_name: data['spec_spec1_name'],
-                                    spec_value: data['spec_spec1_values']
-                                })
-                            }
-                            if (data.hasOwnProperty('spec_spec2_name') && data['spec_spec2_name']) {
-                                specs.push({
-                                    spec_name: data['spec_spec2_name'],
-                                    spec_value: data['spec_spec2_values']
-                                })
-                            }
-                            if (data.hasOwnProperty('spec_spec3_name' && data['spec_spec3_name'])) {
-                                specs.push({
-                                    spec_name: data['spec_spec3_name'],
-                                    spec_value: data['spec_spec3_values']
-                                })
-                            }
-                            return specs;
-                        }
-                        return result_specs_to_params(result.list);
-                    }
-
-                    this.specs = getSpecsResult(result.list) ? getSpecsResult(result.list) : []
-
-                }
+                this.brand_name = data.brand_name
+                this.small_category = data.small_category
+                this.big_category = data.big_category
+                this.name = data.name
+                this.imageUrl = data.imageUrl
+                this.specs = data.specs
             })
         },
+        //获取品牌类目，规格，规格值，模糊搜索
         loadAll(type, parent_key_word) {
             let bigParams = { uid: this.uid, type: type, parent_key_word: parent_key_word };
             requestSearchHistory(bigParams).then(data => {
-                let { error_code, result } = data;
-                if (error_code !== 0) {
-                    this.$message({
-                        message: "返回数据有误",
-                        type: 'error'
-                    });
-                } else {
-                    if (type == 0) {
-                        this.bigcategory = result.map(v => {
-                            return {
-                                value: v
-                            }
-                        });
-                    }
-                    if (type == 1) {
-                        this.smallcategory = result.map(v => {
-                            return {
-                                value: v
-                            }
-                        });
-                    }
-                    if (type == 2) {
-                        this.sku = result.map(v => {
-                            return {
-                                value: v
-                            }
-                        });
-                    }
-                    if (type == 3) {
-                        this.skuValue = result.map(v => {
-                            return {
-                                value: v
-                            }
-                        });
-                    }
-
+                if (data.bigcategory) {
+                    this.bigcategory = data.bigcategory
+                }
+                if (data.smallcategory) {
+                    this.smallcategory = data.smallcategory
+                }
+                if (data.sku) {
+                    this.sku = data.sku
+                }
+                if (data.skuValue) {
+                    this.skuValue = data.skuValue
                 }
             })
-        },
-        getBatchParam(specs) {
-
-            const com_data = (specs) => {
-
-                const result = specs.map((v, index) => {
-                    const { spec_name, spec_value = [] } = v;
-                    return spec_value.map(v => {
-                        const obj = {};
-                        obj[`spec${index + 1}_name`] = spec_name;
-                        obj[`spec${index + 1}_value`] = v;
-                        return obj;
-                    })
-                });
-                if (result.length === 1) {
-                    return result.pop();
-                } else if (result.length === 2) {
-                    return two_com_data(result);
-                } else if (result.length === 3) {
-                    return three_com_data(result);
-                } else {
-                    return null;
-                }
-            };
-
-            function extend(target, source, source_two) {
-                const tmp = JSON.parse(JSON.stringify(target));
-                for (let obj in target) {
-                    tmp[obj] = target[obj];
-                }
-                for (let obj in source) {
-                    tmp[obj] = source[obj];
-                }
-                if (source_two) {
-                    for (let obj in source_two) {
-                        tmp[obj] = source_two[obj];
-                    }
-                }
-                return tmp;
-            }
-
-            const two_com_data = (datas) => {
-                let batch = [];
-                for (let i = 0; i < datas[0].length; i++) {
-                    for (let j = 0; j < datas[1].length; j++) {
-                        let s1 = datas[0][i];
-                        let s2 = datas[1][j];
-                        batch.push(extend(s1, s2));
-                    }
-                }
-                return batch;
-            };
-
-            const three_com_data = (datas) => {
-                let batch = [];
-                for (let i = 0; i < datas[0].length; i++) {
-                    for (let j = 0; j < datas[1].length; j++) {
-                        for (let k = 0; k < datas[2].length; k++) {
-                            let s1 = datas[0][i];
-                            let s2 = datas[1][j];
-                            let s3 = datas[2][k];
-                            batch.push(extend(s1, s2, s3));
-                        }
-                    }
-                }
-                return batch;
-            };
-            return com_data(specs);
         },
         goodsList() {
             const path = '/goodsMgtList';
