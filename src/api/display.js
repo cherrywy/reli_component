@@ -95,7 +95,8 @@ export const bind_dd_goods = params => { return axios.post(`${apiServer}/v10/c/i
 export const adgoodlist = params => { return axios.post(`${apiServer}/v10/c/display_device/dd.json`, params).then(res => res.data); };
 //获取商品列表
 export const interactivead_list = params => { return axios.post(`${apiServer}/v10/int_dd/goods.json`, params).then(res => res.data); };
-
+//广告机 - 绑定默认广告-展位上的商品 
+export const bind_inf_goods = params => { return axios.post(`${apiServer}/v10/c/def_dd/bind.json`, params).then(res => res.data); };
 //删除默认
 export const delete_defaultad = params => { return axios.post(`${apiServer}/v10/c/def_dd/remove.json`, params).then(res => res.data); };
 //删除互动

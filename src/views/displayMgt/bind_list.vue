@@ -213,7 +213,13 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
                 })
                 this.fileList = pic_imgs
                 this.form.jump_url = val.jump_url[0].data.url
-                this.videoList = val.video_url
+                console.log(val.video_url[0].data.url)
+                if(val.video_url[0].data.url){
+                    let url ={
+                        url:val.video_url[0].data.url
+                    }
+                    this.videoList.push(url)
+                }       
             })
         },
         handleClose(tag) {

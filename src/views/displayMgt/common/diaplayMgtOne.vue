@@ -23,7 +23,7 @@
             </el-table-column>
             <el-table-column label="操作" align="center">
                 <template scope="scope">
-                    <el-button size='small'  @click="delete_goods(scope.$index,scope.row.goods_id)">删除</el-button>
+                    <el-button size='small'  @click="delete_goods(scope.$index,scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -48,7 +48,7 @@
                 <el-form-item  :label-width="formLabelWidth">
                     <el-table :data="tableData" style='marign-top:10px;'  @selection-change="goods_selectionchange">
                             <el-table-column label="选择" width="200" type='selection'></el-table-column>
-                            <el-table-column label="商品名称" prop='name'></el-table-column>
+                            <el-table-column label="商品名称" prop='good_name'></el-table-column>
                     </el-table>
                 </el-form-item>
             </el-form>
@@ -65,7 +65,7 @@
     </section>
 </template>
 <script>
-import {bind_dd_goods,getAlllist,adgoodlist,interactivead_list,delete_defaultad,delete_interactivead} from '../../../api/display'
+import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,delete_defaultad,delete_interactivead} from '../../../api/display'
   export default {
     data() {
       return {
@@ -76,63 +76,75 @@ import {bind_dd_goods,getAlllist,adgoodlist,interactivead_list,delete_defaultad,
          formLabelWidth:'120px;',
          pageinationInfo:{
              pageSize:5,
-             total:'',
+             total:null,
              currentPage:1,
          },
          form:'',
          searchVal:'',
          tableData:[],
+         form:'',
+         arr:[],
+         uid:'',
+         good_index:null,
+         goods_id:'',
+         index:'',
+         display_device_id:'',
       }
     },
     mounted() {
+        this.uid = localStorage.getItem('uid');
+        //
+        //this.$route.query.id;
+        this.display_device_id = 1291185013457004;
         this.getGoods_List();
     },
     methods:{
       getGoods_List(){
           let info = {
-              //this.$route.query.id
-              display_device_id:1291185013457004,
+              display_device_id:this.display_device_id,
           }
           this.defaultad=[
               {
                   num:'展位一',
-                  name:'',
+                  name:'空',
                   id:'',
-                  show:'',
+                  show:'添加',
               },{
                   num:'展位二',
-                  name:'',
+                  name:'空',
                   id:'',
-                  show:'',
+                  show:'添加',
               },{
                   num:'展位三',
-                  name:'',
+                  name:'空',
                   id:'',
-                  show:'',
+                  show:'添加',
               },{
                   num:'展位四',
-                  name:'',
+                  name:'空',
                   id:'',
-                  show:'',
+                  show:'添加',
               }
           ]
           getAlllist(info).then(data =>{
-              for(let i= 0;i<=3;i++){//dd_goods_id
-                  this.defaultad[i].name = (data.result.def_dd.list[i])?data.result.def_dd.list[i].adver_number_goods_name : '空'
-                  this.defaultad[i].id = (data.result.def_dd.list[i])?data.result.def_dd.list[i].dd_goods_id : ''
-                  this.defaultad[i].show = (this.defaultad[i].name == '空') ? '添加' : '删除'
-              }
-              this.interactivead = data.result.int_dd.list.map(v=>{
+            data.result.def_dd.list.map(v =>{
+               let index = v.adver_number_adver_number-1
+               this.defaultad[index].name = v.dd_goods_name
+               this.defaultad[index].id = v.dd_goods_id
+               this.defaultad[index].show = (this.defaultad[index].name !== '空') ? '删除' : '添加'
+            })
+            this.interactivead = data.result.int_dd.list.map(v=>{
                     return {
                         name:v.dd_goods_name,
-                        state:v.dd_video_display_type,
+                        state:(v.dd_video_display_type==0)?'未下载':(v.dd_video_display_type == 1 ? '下载中' :(v.dd_video_display_type==-2?'下载失败':'正常')),
                         id:v.dd_goods_id,
-                    }
-              })
+                     }
+             })
           })
         },
         deletegoods(index,show,id){
-            console.log(id)
+            //删除默认
+            this.good_index = index
             if(show == '删除'){
                  this.$confirm('删除该商品后将无法撤回，是否继续', '提示', {
                     confirmButtonText: '确定',
@@ -140,70 +152,143 @@ import {bind_dd_goods,getAlllist,adgoodlist,interactivead_list,delete_defaultad,
                     type: 'warning'
                 }).then(()=>{
                     let info ={
-                        id:id
+                     adver_number:index+1,
+                     display_device_id:this.display_device_id,
                     }
                     delete_defaultad(info).then(data=>{
-                        console.log(data.result)
+                        if(data.error_code == 0){
+                            this.$confirm('提示', {
+                                message:'删除成功',
+                                type: 'success'
+                            })
+                        }else{
+                            this.$confirm('提示', {
+                                message:'删除失败',
+                                type: 'error'
+                            })
+                        }
+                        this.getGoods_List();
                     })
                 })
             }
             if(show == '添加'){
                 this.dialogFormVisible = true
-                let inf = {
-                     display_device_id:1291185013457004
-                }
-                interactivead_list(inf).then(data=>{
-                    console.log(data.result)
-                })
+                this. show_goods_list()
             }
-        },
-        delete_goods(index,row){
-            //删除
-                console.log(row)
-                this.$confirm('删除该商品后将无法撤回，是否继续', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(()=>{
-                    let info= {
-                        id:this.interactivead[index].id
-                    } 
-                    delete_defaultad(info).then(data=>{
-                        console.log(data.result)
-                    })
-                })
-        },
-        addGoods(){
-            //添加互动广告
-            this.dialogFormVisible = true
-            let info = {
-                display_device_id:1291185013457004
-            }
-            getAlllist(info).then(data=>{
-                
-            })
-        },
-        saveChangeGoods(){
-            alert('保存')
-        },
-        goods_name_change(){
-            console.log(this.searchVal)
-        },
-        add_goods(){
-            alert('跳转添加商品也')
         },
         goods_selectionchange(val){
-            console.log(val)
+            //选择商品
+            this.goods_id = val[0].id
+            console.log(this.goods_id)
+            if(val.length > 1){
+                this.$confirm( '提示', {
+                    message:'只能选择一个商品',
+                    type: 'error'
+                })
+            }
+        },
+        show_goods_list(){
+            let param = {
+                display_device_id:this.display_device_id,
+            }
+            interactivead_list(param).then(data=>{
+                let pageSize = this.pageinationInfo.pageSize //每页显示5条
+                let startIndex = (this.pageinationInfo.currentPage - 1) * pageSize  //当前页起始下标
+                let endIndex =(this.pageinationInfo.currentPage * pageSize )  //当前页起始下标
+                this.arr = data.result.map(v =>{
+                    return {
+                            good_name:v.data.name,
+                            id:v.id,
+                     }
+                })
+                this.tableData = this.arr.slice(startIndex,endIndex)
+                this.pageinationInfo.total = data.result.length
+             })
+        },
+        delete_goods(index,id){
+         //删除默认商品
+            this.$confirm('删除该商品后将无法撤回，是否继续', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(()=>{
+                let info= {
+                    goods_id:id,
+                    display_device_id:this.display_device_id,
+                } 
+                delete_interactivead(info).then(data=>{
+                    if(data.error_code == 0){
+                        this.$confirm('提示', {
+                            message:'删除成功',
+                            type: 'success'
+                        })
+                    }else{
+                        this.$confirm('提示', {
+                            message:'删除失败',
+                            type: 'error'
+                        })
+                    }
+                    this.getGoods_List();
+                })
+            })
+        },
+        addGoods(){
+        //添加互动广告
+             this.dialogFormVisible = true
+             this.show_goods_list()
+        },
+        saveChangeGoods(){
+        //添加绑定商品
+            let good_info = {
+                    display_device_id:this.display_device_id,
+                    goods_id:this.goods_id,
+                    uid:this.uid,
+            }
+            if(this.good_index){
+                good_info.adver_number = this.good_index +1
+                bind_inf_goods(good_info).then(data=>{
+                    if(data.error_code == 0){
+                        this.$confirm('提示', {
+                            message:'添加成功',
+                            type: 'success'
+                        })
+                    }else{
+                        this.$confirm('提示', {
+                            message:'添加失败',
+                            type: 'error'
+                        })
+                    }
+                this.dialogFormVisible = false;
+                this.getGoods_List();
+               })
+            }else{
+                bind_dd_goods(good_info).then(data =>{
+                     this.dialogFormVisible = false;
+                    this.getGoods_List();
+                })
+            }
+            
+        },
+        goods_name_change(){
+            //搜索
+            console.log(this.searchVal)
+             if(this.searchVal !== ''){
+                let name = this.searchVal
+                    this.tableData= this.arr.filter(function(value){
+                        return new RegExp(`${name}`,'i').test(value.good_name);
+                   })
+            }else{
+                this.show_goods_list()
+            }
+        },
+        add_goods(){
+             this.$router.push({ path: '/goodsMgtNew' });
         },
           //分页
         handleCurrentChange(currentPage) {
              //当前页变动时候触发的事件
             this.pageinationInfo.currentPage = currentPage;
-			let param = {
-					limit:10,
-					page:currentPage
-			} 
-            this.getList(param)
+            this.show_goods_list()
         },
         sizeChange(size) {
             //pageSize 改变时会触发
