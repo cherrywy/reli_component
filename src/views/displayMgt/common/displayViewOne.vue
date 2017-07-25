@@ -95,12 +95,12 @@ export default {
                 deleteOneList(banId).then(data =>{
                     
                     if(data.error_code == 0){
-                        this.$confirm('提示', {
+                        this.$message({
                             message:'解除绑定成功',
                             type: 'success'
                         })
                     }else{
-                        this.$confirm('提示', {
+                        this.$message( {
                             message:'解除绑定失败',
                             type: 'error'
 

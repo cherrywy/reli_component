@@ -157,12 +157,12 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
                     }
                     delete_defaultad(info).then(data=>{
                         if(data.error_code == 0){
-                            this.$confirm('提示', {
+                            this.$message({
                                 message:'删除成功',
                                 type: 'success'
                             })
                         }else{
-                            this.$confirm('提示', {
+                            this.$message({
                                 message:'删除失败',
                                 type: 'error'
                             })
@@ -181,7 +181,7 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
             this.goods_id = val[0].id
             console.log(this.goods_id)
             if(val.length > 1){
-                this.$confirm( '提示', {
+                this.$message({
                     message:'只能选择一个商品',
                     type: 'error'
                 })
@@ -218,12 +218,12 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
                 } 
                 delete_interactivead(info).then(data=>{
                     if(data.error_code == 0){
-                        this.$confirm('提示', {
+                        this.$message({
                             message:'删除成功',
                             type: 'success'
                         })
                     }else{
-                        this.$confirm('提示', {
+                        this.$message({
                             message:'删除失败',
                             type: 'error'
                         })
@@ -248,12 +248,12 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
                 good_info.adver_number = this.good_index +1
                 bind_inf_goods(good_info).then(data=>{
                     if(data.error_code == 0){
-                        this.$confirm('提示', {
+                        this.$message({
                             message:'添加成功',
                             type: 'success'
                         })
                     }else{
-                        this.$confirm('提示', {
+                        this.$message({
                             message:'添加失败',
                             type: 'error'
                         })

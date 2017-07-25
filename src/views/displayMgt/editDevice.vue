@@ -4,7 +4,7 @@
 			<el-col :span ='24' style='margin-top:20px;' align='center'>
 				<ul style='list-style:none;' align='center'>
 					<li class='bg_img'>
-						<div class='deviceone' @click='switchDiaplay("diaplayMgeOne")'></div>
+						<!--<div class='deviceone' @click='switchDiaplay("diaplayMgeOne")'></div>-->
 					</li>
 					<li class='bg_img'>
 						<div class='device' @click='switchDiaplay("diaplayMgeTwo")'></div>
@@ -26,7 +26,7 @@ import {carouselImgs} from '../../api/display'
         return {
 			dialogImageUrl: '',
        		dialogVisible: false,
-			currentView: 'diaplayMgeOne',
+			currentView: 'diaplayMgtTwo',
 			uid:''
 		}
     },
