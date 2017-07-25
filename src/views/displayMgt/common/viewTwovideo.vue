@@ -26,8 +26,8 @@
                     </el-table-column>
                     <el-table-column label="操作" align="center" width="200" >
                         <template scope="scope">
-                            <el-button size='small' class='btn_red_color' @click="deletegoods(scope.$index,scope.row.goods_id)">解除绑定</el-button>
-                            <el-button size='small' class='btn_color' @click="changeDiaplay(scope.$index,scope.row.goods_id)">更换素材</el-button>
+                            <el-button size='small' class='btn_red_color' @click="deletegoods(scope.$index,scope.row.id)">解除绑定</el-button>
+                            <el-button size='small' class='btn_color' @click="changeDiaplay(scope.$index,scope.row.id)">更换素材</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -101,14 +101,15 @@ export default {
         videoChange(){
             if(this.input !== ''){
                 let name = this.input
-                    this. tableData= this.arr.filter(function(value){
+                    this.tableData= this.arr.filter(function(value){
                         return new RegExp(`${name}`,'i').test(value.goodname);
-                   })
+                })
+                console.log(this.tableData)
             }else{
                 this.getVideoList()
             }
         },
-        deletegoods(index,goods_id){
+        deletegoods(index,id){
             //确认解除
             this.$confirm('删除该商品后将无法撤回，是否继续', '提示', {
                 confirmButtonText: '确定',
@@ -121,9 +122,8 @@ export default {
                 let size = this.pageinationInfo.pageSize
                 //获取点击的index
                 let allIndex = (page - 1) * size + index
-                goods_id = this.arr[allIndex].id
                 let banId = {
-                   goods_id:goods_id,
+                   goods_id:id,
                    uid:this.uid
                 }
                 deleteBindGoods(banId).then(data => {
@@ -132,7 +132,7 @@ export default {
                 })  
             })
          },
-         changeDiaplay(index){
+         changeDiaplay(index,id){
         //更换素材
             //当前页1
             let page = this.pageinationInfo.currentPage  
@@ -140,7 +140,6 @@ export default {
             let size = this.pageinationInfo.pageSize
             //获取点击的index
             let allIndex = (page - 1) * size + index
-            let id= this.arr[allIndex].id
             const path = '/bindList?goods_id=' + id;
             this.$router.push({ path: path });
          },
