@@ -124,7 +124,10 @@ import {getShop,search_goods,get_shop} from '../../api/display'
 					limit:10,
 					page:currentPage,
 					uid:this.uid
-			} 
+			}
+			if(this.optionsValue !== '全部'){
+				param.shop_id =this.shopIds[this.options.indexOf(this.optionsValue)] + ''
+			}
             this.getList(param)
         },
         sizeChange(size) {
