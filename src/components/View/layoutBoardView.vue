@@ -110,8 +110,14 @@ export default {
         if(this.isON){
           this.plansName=this.shopPlan.map( v=>v.value).pop()
           this.plan_id= this.shopPlan.map( v=>v.id).pop()
-          this.getPlanList()
+          // this.getPlanList()
           this.isON=!this.isON
+          // 通知 canvas 重新绘图
+          this.setCurrentPlanById(this.plan_id)
+          this.$nextTick(() => {
+            this.$bus.$emit('changePaintPlanId', this.plan_id)
+            this.$bus.$emit('initPaintCanvas')
+          })
         }
       })
       // 清除画板
