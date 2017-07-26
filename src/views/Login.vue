@@ -16,7 +16,7 @@
     </el-form>
     </div>
     <div class='footer'>
-      <span class='text'>@shoppingdata.cn 2017</span>
+    @shoppingdata.cn 2017
     </div>
   </div>
 </template>
@@ -120,12 +120,10 @@
   }
   .footer{
 			position:absolute;
-			bottom:25px;
+			bottom:0px;
 			text-align:center;
       width:100%;
-			.text{
-				color:#999;
-        font-size:18px;
-			}
+			color:#999;
+      font-size:16px;
 	}
 </style>

@@ -54,7 +54,7 @@ export const upgoodsList = params => { return axios.post(`${apiServer}/v10/folde
 
 //门店  广告机列表
 
-export const display_list = params => { return axios.post(`${apiServer}/v10/a/display_device/list.json`, params).then(res => res.data); };
+
 //获取商品信息
 export const goodsImgs = params => { return axios.post(`${apiServer}/a/goods/show.json`, params).then(res => res.data); };
 //广告机-查询已绑定折叠广告机轮播图

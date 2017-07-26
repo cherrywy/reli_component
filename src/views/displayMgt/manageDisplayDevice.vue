@@ -35,6 +35,7 @@
 					label="操作" align='center'>
 					<template scope="scope">
         				<el-button @click="edit(scope.$index,scope.row.id)" type="text" size="small">查看并编辑</el-button>
+        				<el-button @click="delete_display(scope.$index,scope.row.id)" type="text" size="small">删除</el-button>
      				 </template>
 				</el-table-column>
     		</el-table>
@@ -47,7 +48,7 @@
 </template>
 <script>
 import moment from 'moment';
-import {getShop,display_list,search_goods,get_shop} from '../../api/display'
+import {getShop,search_goods,get_shop} from '../../api/display'
     export default {
       data() {
         return {
@@ -78,24 +79,24 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 		this.uid = localStorage.getItem('uid');
         this.getFocusList()
     },
-		methods:{
+	methods:{
 		edit (index,id){
 			const path = '/editDevice?id=' + id;
 			this.$router.push({ path: path });
 		},
 		getList(param){
 			search_goods(param).then(data=>{ 
-					this.pageinationInfo.total = data.total_count
-					let time = new Date().getTime();
-					this.tableData = data.result.map( v=>{
-						const {heartbeat_time=0} = v.data;
-						return{
-							name:v.data.name,
-							shop:v.data.shop_name || '无门店信息',
-							state:(time - heartbeat_time >= 1000*3600)?'不正常':'正常',
-							id:v.id
-						}
-					})
+				this.pageinationInfo.total = data.total_count
+				let time = new Date().getTime();
+				this.tableData = data.result.map( v=>{
+					const {heartbeat_time=0} = v.data;
+					return{
+						name:v.data.name,
+						shop:v.data.shop_name || '无门店信息',
+						state:(time - heartbeat_time >= 1000*3600)?'不正常':'正常',
+						id:v.id
+					}
+				})
 			})
 		},
 		getFocusList(){//加载页面时候加载门店		
@@ -111,9 +112,9 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 			})
 			let param = {}
 			param.limit = 10
-				this.getList(param)
-				this.pageinationInfo.currentPage = currentPage
-			//this.getList(param)
+			param.uid = this.uid
+			this.getList(param)
+			this.pageinationInfo.currentPage = currentPage
         },
 		  //分页
         currentChange(currentPage) {
@@ -121,7 +122,8 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
             this.pageinationInfo.currentPage = currentPage;
 			let param = {
 					limit:10,
-					page:currentPage
+					page:currentPage,
+					uid:this.uid
 			} 
             this.getList(param)
         },
@@ -133,6 +135,7 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 		search_Goods(){
 			let param = {}
 			param.limit = 10
+			param.uid = this.uid
 			if(this.input2){
 				//搜索框有值
 				param.name = this.input2
@@ -145,7 +148,13 @@ import {getShop,display_list,search_goods,get_shop} from '../../api/display'
 				}
 			}
 				 this.getList(param)
-		}
+		},
+		// delete_display(index,id){
+		// 	alert(id)
+		// 	let info = {
+		// 		id:id
+		// 	}
+		// }
     },
 }
   </script>
