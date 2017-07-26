@@ -336,9 +336,9 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
            }
            changeDiaplay(this.saveInfomations).then(data=>{
                console.log(data)
-               if(data.error_code !== 0){
+               if(data.error_code !== 0 || this.tagArrName == []){
                    this.$message({
-                        message:'上传失败',
+                        message:'上传失败,请选择商品',
                         type: 'error'
                     })
                }else{
