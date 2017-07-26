@@ -26,14 +26,14 @@
         <div class="form-row" v-if="activeObject && activeObject.id">
           类型：
           <label>
-            {{ (selectedObjectType == 10) ? '中岛柜' : '背柜' }}
+            {{ (selectedObjectType == 10) ? '默认' : '背柜' }}
           </label>
         </div>
 
         <div class="form-row" v-else>
           类型：
           <label>
-            <input type="radio" value="10" v-model="selectedObjectType" :disabled="activeObject && activeObject.id"> 中岛柜
+            <input type="radio" value="10" v-model="selectedObjectType" :disabled="activeObject && activeObject.id"> 默认
           </label>
           &nbsp;
           <label>

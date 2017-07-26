@@ -240,7 +240,6 @@ export const requestGoodSpecProcess = params => {
         return {
             dataImprt,
             total
-
         }
     })
 }

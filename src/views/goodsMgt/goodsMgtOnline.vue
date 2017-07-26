@@ -128,7 +128,7 @@ export default {
             this.show_case_id = scObj.data.original_showcase_id
             this.show_case_name = scObj.data.name
             if (scObj.data.type === 10) {
-                this.show_case_type = '中岛柜'
+                this.show_case_type = '默认'
             }
             if (scObj.data.type === 20) {
                 this.show_case_type = '背柜'

@@ -2,11 +2,11 @@
   <div class="modal fade" tabindex="-2" role="dialog" id="newplanmodal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-
+  
         <div class="modal-header">
           <h5 class="pull-left">新增平面图</h5>
         </div>
-
+  
         <div class="modal-body">
           <div class="form-group">
             平面图名称：
@@ -27,7 +27,7 @@
             </label>
           </div>
         </div>
-
+  
         <div class="modal-footer">
           <button type="button" class="btn btn-default btn-flat pull-left" @click="_hideModal" :disabled="uploading">取消</button>
           <button type="button" class="btn btn-flat btn-primary pull-right" @click="_save" :disabled="uploading">保存</button>
@@ -39,20 +39,27 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-
+import { requestFindShopPlan } from '../../../api/goodsServer';
 export default {
   props: [],
   components: {},
   computed: {
     ...mapGetters('storage', [
       'uploading'
-    ])
+    ]),
+    ...mapGetters('lbShop', [
+      'selectedShopId'
+    ]),
+
   },
-  data () {
+  data() {
     return {
       src: '',
       file: null,
-      name: ''
+      name: '',
+      shopId: null,
+      shopPlan: [],
+      uid: ''
     }
   },
   methods: {
@@ -62,10 +69,10 @@ export default {
     ...mapActions('lbPlan', [
       'newPlan'
     ]),
-    _hideModal () {
+    _hideModal() {
       window.$('#newplanmodal').modal('hide')
     },
-    _readFile (e) {
+    _readFile(e) {
       if (!window.FileReader) {
         this.$zydialog('抱歉，你的浏览器不支持文件预览上传功能。请安装最新版 Chrome、Firefox 或 Safari 浏览器后再试。')
         return false
@@ -83,13 +90,27 @@ export default {
       reader.readAsDataURL(files[0])
       this.file = files[0]
     },
-    async _save () {
+     getPlanList(){
+        this.shopId = this.selectedShopId
+      const shopPlanParams = { uid: this.uid, shop_id: this.shopId };
+      requestFindShopPlan(shopPlanParams).then(data => {
+        this.shopPlan = data.shopPlan
+      })
+      },
+    async _save() {
+      this.getPlanList()
       if (!this.name) {
         this.$zydialog('请填写平面图名称')
         return false
       }
       if (!this.file) {
         this.$zydialog('请选择一张平面图图片')
+        return false
+      }
+      if (this.shopPlan.some(v => {
+        return v.value === this.name;
+      })) {
+        this.$zydialog('平面图名称重复，请重新输入名称')
         return false
       }
       try {
@@ -110,23 +131,25 @@ export default {
           this.$zydialog('错误：上传图片失败，请重试')
         }
       } catch (err) {
-        console.error(err)
         this.$zydialog('错误：创建平面图失败。')
       }
     },
-    _resetForm () {
+    _resetForm() {
       this.file = null
       this.name = ''
       this.src = ''
       if (this.$refs.readFile) this.$refs.readFile.value = ''
     }
   },
-  mounted () {},
-  created () {
+  mounted() {
+    this.uid = localStorage.getItem('uid');
+  },
+  created() {
     this.$bus.$on('resetNewPlanForm', this._resetForm)
   }
 }
 </script>
 
 <style lang="scss" scoped>
+
 </style>

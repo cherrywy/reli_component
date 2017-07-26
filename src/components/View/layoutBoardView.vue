@@ -65,7 +65,7 @@ export default {
     }
   },
   watch: {
-    shopId (after) {
+    shopId(after) {
       if (after) {
         this.setSelectedShopId(parseInt(after))
       }
@@ -79,7 +79,8 @@ export default {
       shopPlan: [],
       shopName: '',
       plansName: '',
-      plan_id:'',
+      plan_id: '',
+      isON:false
     }
   },
   methods: {
@@ -91,27 +92,40 @@ export default {
       'getPlanListByShopId'
     ]),
     getFindShop() {
-       const shopPlanParams = { uid: this.uid };
-            requestFindShop(shopPlanParams).then(data => {
-                this.shop = data.shop
-            })
+      const shopPlanParams = { uid: this.uid };
+      requestFindShop(shopPlanParams).then(data => {
+        this.shop = data.shop
+      })
     },
     getFindShopPlan() {
-      this.planList.length=0 
+      this.planList.length = 0
       this.plansName = ''
       const shop_id = this.shop.filter(v => {
         return v.value === this.shopName;
       }).map(v => v.id).pop();
       this.shopId = shop_id
       const shopPlanParams = { uid: this.uid, shop_id: shop_id };
-       requestFindShopPlan(shopPlanParams).then(data => {
-                this.shopPlan = data.shopPlan
-            })
+      requestFindShopPlan(shopPlanParams).then(data => {
+        this.shopPlan = data.shopPlan
+        if(this.isON){
+          this.plansName=this.shopPlan.map( v=>v.value).pop()
+          this.plan_id= this.shopPlan.map( v=>v.id).pop()
+          // this.getPlanList()
+          this.isON=!this.isON
+          // 通知 canvas 重新绘图
+          this.setCurrentPlanById(this.plan_id)
+          this.$nextTick(() => {
+            this.$bus.$emit('changePaintPlanId', this.plan_id)
+            this.$bus.$emit('initPaintCanvas')
+          })
+        }
+      })
       // 清除画板
       this.$bus.$emit('resetPaintCanvas')
+       
     },
     async getPlanList() {
-      
+         
       const shop_id = this.shop.filter(v => {
         return v.value === this.shopName;
       }).map(v => v.id).pop();
@@ -123,7 +137,7 @@ export default {
 
       //todo:切换到新增的门店时，没有plan_id此时不能隐藏新增平面图按钮。传shopid过去，新增该门店下的平面图
 
-      if(!this.plan_id){
+      if (!this.plan_id) {
         //切换门店时，不绘制平面图
         return;
       }
@@ -134,12 +148,12 @@ export default {
         this.$bus.$emit('changePaintPlanId', this.plan_id)
         this.$bus.$emit('initPaintCanvas')
       })
-      if (this.planList.length === 0) {        
+      if (this.planList.length === 0) {
         // this.$router.push('/home')
         // alert('未找到平面图列表')
       }
     },
-    showNewPlanModal () {
+    showNewPlanModal() {
       this.$bus.$emit('resetNewPlanForm')
       window.$('#newplanmodal').modal({
         keyboard: false,
@@ -149,7 +163,12 @@ export default {
   },
   mounted() {
     this.$bus.$off('planCreated')
-    this.$bus.$on('planCreated', this.getFindShopPlan)
+    this.$bus.$on('planCreated', () => {
+      this.getFindShopPlan()
+      this.isON=true
+    })
+
+
     this.$nextTick(async () => {
       this.uid = localStorage.getItem('uid');
       this.getFindShop()

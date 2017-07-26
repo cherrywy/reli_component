@@ -60,14 +60,21 @@
             requestLogin(loginParams).then(data => {
               this.logining = false;
          
-              let { msg, error_code,result } = data;
-              if (error_code !== 0) {
+              let { error_msg, error_code,result } = data;
+              if (error_code === 10001) {
                 this.$message({
-                  message: '未登录成功',
+                  message:'密码错误',
                   duration: 1000,
                   type: 'error'
                 });
-              } else {
+              } 
+              if (error_code === 20022) {
+                this.$message({
+                  message:'账号不存在',
+                  duration: 1000,
+                  type: 'error'
+                });
+              }  else {
                
                 localStorage.setItem('uid',result.id );
                 localStorage.setItem('shop_id',result.user_data.shop_id );
