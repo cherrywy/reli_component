@@ -96,22 +96,24 @@
                        <el-input  style='width:300px;'v-model='form.price_goods_value'></el-input> 元
                     </el-form-item>
                     <el-form-item label="请选择视频" >
-                    {{videoList.vedio_url}}
+                    <video :src="videoUrl" width='350px' height='250px' controls v-show='videofalse'></video>
                     <el-upload
                         class="upload-demo"
-                        drag
                         name="pic"
                         :data="upload_video"  
                         :show-file-list="true"
                         :file-list="videoList"
                         :on-remove='videohandleAvatarRemove'
                         :on-success='videohandleAvatarSuccess'
-                        action="http://118.89.232.160:10001/util/file/upload.json"
-                        multiple>
-                        <i class="el-icon-upload"></i>
-                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        :on-progress='upvideoing'
+                        action="http://118.89.232.160:10001/util/file/upload.json">
+                        
+                         <el-button size="small" type="primary">点击上传</el-button>
+                         <span v-show='video_icon' style='margin-left:20px;'>
+                             <i class='el-icon-loading'></i>视频上传中
+                         </span>
                          <div class="el-upload__tip" slot="tip" style='color:red;'>注：视频只支持16：9尺寸，且只能上传一个</div>
-                        </el-upload>  
+                    </el-upload>
                     </el-form-item>
                     <el-form-item align='center'>
                         <el-button type="primary" @click="onSubmit">绑定</el-button>
@@ -131,6 +133,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
         searchVal:'',
         bindgoods:{},
         form:{},
+        videofalse:false,
         filter: {
                 goods:null,
                 userId: null ,
@@ -144,6 +147,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
         arr:[],
         dialogImageUrl:'',
         videoList:[],
+        videoUrl:'',
         fileList:[],
         tag:'',
         obj:{url:''},
@@ -182,6 +186,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
          head_office_id:'',
          tagArrName:[],
          tagArrtag:[],
+         video_icon:false,
       };
     },
     mounted() {
@@ -221,6 +226,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                    let video = {
                         url:val.vedio_url[0].data.url
                     } 
+                    this.videoUrl = val.vedio_url[0].data.url
                     this.videoList.push(video)
                 }
                 this.seleValue = val.tag[0].data.goods_value
@@ -300,6 +306,13 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
             let upimg = {
                 url:res.result.file_download_url
             }
+            this.video_icon = false
+            this.$message({
+                    message: "视频上传成功",
+                    type: 'info'
+            })
+            this.videoUrl = res.result.file_download_url
+            this.videofalse = true
             this.videoList.push(upimg)
             if(this.videoList.length>1){
                 this.videoList.splice(0,1)
@@ -316,6 +329,8 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
         },
         videohandleAvatarRemove(){
             this.videoList =[]
+            this.videoUrl = ''
+            this.videofalse = false
         },
         onSubmit(){//绑定
            let info = this.form
@@ -449,8 +464,9 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                 this.tagArrtag =[]
                 this.tagArrtag.push(seleValue)
             }
-            console.log(this.tagArrtag)
-            //this.getGoodsList();
+        },
+        upvideoing(){
+            this.video_icon = true
         }
     }
   };
