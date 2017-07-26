@@ -226,6 +226,7 @@ import {find_one_goods,changeGoodsList,changeDiaplay,goodsImgs,updatavideo,goods
                    let video = {
                         url:val.vedio_url[0].data.url
                     } 
+                    this.videofalse = true
                     this.videoUrl = val.vedio_url[0].data.url
                     this.videoList.push(video)
                 }
