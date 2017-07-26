@@ -35,7 +35,7 @@
 					label="操作" align='center'>
 					<template scope="scope">
         				<el-button @click="edit(scope.$index,scope.row.id)" type="text" size="small">查看并编辑</el-button>
-        				<el-button @click="delete_display(scope.$index,scope.row.id)" type="text" size="small">删除</el-button>
+        				<!--<el-button @click="delete_display(scope.$index,scope.row.id)" type="text" size="small">删除</el-button>-->
      				 </template>
 				</el-table-column>
     		</el-table>
