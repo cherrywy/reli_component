@@ -92,15 +92,16 @@
                         :on-success='videohandleAvatarSuccess'
                         :on-progress='upvideoing'
                         action="http://118.89.232.160:10001/util/file/upload.json">
-                        <el-button size="small" type="primary">点击上传</el-button>
+                        <el-button size="small" type="primary" class='clickUp'>点击上传</el-button>
                          <span v-show='video_icon' style='margin-left:20px;'>
                              <i class='el-icon-loading'></i>视频上传中
                          </span>
-                        <div class="el-upload__tip" slot="tip" style='color:red;'>注：视频只支持16：9尺寸，且只能上传一个</div>
+                        <div class="el-upload__tip" slot="tip" style='
+                        color:red;'>注：视频只支持16：9尺寸，且只能上传一个</div>
                         </el-upload>  
                     </el-form-item>
                     <el-form-item align='center'>
-                        <el-button type="primary" @click="onSubmit">绑定</el-button>
+                        <el-button type="primary" @click="onSubmit" class='clickUp'>绑定</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -450,5 +451,16 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
   };
 </script>
 <style>
-    
+    .clickUp{
+         background:#70a5ec;
+        border:none;
+        outline:none;
+        color:white;
+    }
+    .clickUp:hover{
+        background:#70a5ec;
+        border:none;
+        outline:none;
+        color:white;
+    }
 </style>

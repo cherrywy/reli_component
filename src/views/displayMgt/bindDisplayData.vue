@@ -1,12 +1,14 @@
 <template>
 	<section>
 		<el-row>
-			<el-col :span ='24' style='margin-top:20px;' align='center'>
+			<el-col :span ='24' align='center'>
 				<ul style='list-style:none;' align='center'>
 					<li class='bg_img'>
+					<p class='styleTxt'>广告机1</p>
 						<div class='deviceone' @click='deviceStyle("displayViewOne")'></div>
 					</li>
 					<li class='bg_img'>
+					<p class='styleTxt'>广告机2</p>
 						<div class='device' @click='deviceStyle("displayViewTwo")'></div>
 					</li>
 				</ul>
@@ -97,5 +99,9 @@ export default {
 	}
 	.active{
 		background:#999;
+	}
+	.styleTxt{
+		font-weight:bold;
+		line-height:30px;
 	}
 </style>

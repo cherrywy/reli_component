@@ -1,14 +1,14 @@
 <template>
 	<section>
 		<el-row>
-			<el-col :span ='24' style='margin-top:20px;' align='center'>
+			<el-col :span ='24' align='center'>
 				<ul style='list-style:none;' align='center'>
 					<li class='bg_img'>
-						<p>广告机1</p>
+						<p class='styleTxt'>广告机1</p>
 						<div class='deviceone' @click='switchDiaplay("diaplayMgtOne")'></div>
 					</li>
 					<li class='bg_img'>
-						<p>广告机2</p>
+						<p class='styleTxt'>广告机2</p>
 						<div class='device' @click='switchDiaplay("diaplayMgtTwo")'></div>
 					</li>
 				</ul>
@@ -90,5 +90,8 @@ import {carouselImgs} from '../../api/display'
 		border:1px blue solid;
 		width:150px;
 		height:200px;
+	}
+	.styleTxt{
+		font-weight:bold;
 	}
 </style>

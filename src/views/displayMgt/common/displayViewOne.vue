@@ -3,7 +3,7 @@
 		<el-row>
 			<el-col :span='6' style='margin:20px 0px;'><el-input v-model="inputInfo" placeholder="请输入商品名称" @change='input_change'></el-input></el-col>
             <el-col :span='18' align='right' style='margin-top:20px;'>
-                <el-button type="primary" @click='bindList'>绑定素材</el-button>
+                <el-button type="primary" @click='bindList' class='bindList'>绑定素材</el-button>
             </el-col>
 
 			<el-col :span='24'>
@@ -172,6 +172,18 @@ export default {
     .btn_red_color:hover{
         background:#E0595B;
         opacity:0.66;
+        border:none;
+        outline:none;
+        color:white;
+    }
+    .bindList{
+        background:#70a5ec;
+        border:none;
+        outline:none;
+        color:white;
+    }
+    .bindList:hover{
+        background:#70a5ec;
         border:none;
         outline:none;
         color:white;

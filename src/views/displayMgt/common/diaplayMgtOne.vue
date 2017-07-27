@@ -1,7 +1,7 @@
 <template>
     <section>
-       <el-col :span='24'>
-           <span>默认广告</span>
+       <el-col :span='24' >
+           <span class='textStyle'>默认广告</span>
            <el-table :data="defaultad" border style="width: 100%; margin-top: 15px;">
             <el-table-column  label="展位名称" align="center" width="350" prop='num'>
             </el-table-column>
@@ -9,13 +9,13 @@
             </el-table-column>
             <el-table-column label="操作" align="center" prop="show">
                 <template scope="scope">
-                    <el-button size='small'  @click="deletegoods(scope.$index,scope.row.show,scope.row.id)">{{scope.row.show}}</el-button>
+                    <el-button size='small'  @click="deletegoods(scope.$index,scope.row.show,scope.row.id)"  :style='scope.row.show=="删除"?btnstyle:btnstyleone'>{{scope.row.show}}</el-button>
                 </template>
             </el-table-column>
         </el-table>
        </el-col>
        <el-col :span='24'>
-           <span>互动广告</span>
+           <span class='textStyle'>互动广告</span>
            <el-table :data="interactivead" border style="width: 100%; margin-top: 15px;">
             <el-table-column label="商品名称" width="400" align="center" prop="name">
             </el-table-column>
@@ -23,12 +23,12 @@
             </el-table-column>
             <el-table-column label="操作" align="center">
                 <template scope="scope">
-                    <el-button size='small'  @click="delete_goods(scope.$index,scope.row.id)">删除</el-button>
+                    <el-button size='small' :style='btnstyle' @click="delete_goods(scope.$index,scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
         <el-col :span='24' align='center' style='margin-top:10px;'>
-             <el-button style='width:200px;' @click='addGoods'>+</el-button>
+             <el-button style='width:200px;' @click='addGoods' :style='btnstyleone'>+</el-button>
         </el-col>
        </el-col>
        <el-dialog :visible.sync="dialogFormVisible">
@@ -89,6 +89,19 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
          goods_id:'',
          index:'',
          display_device_id:'',
+         btnstyle:{
+             background:'#E0595B',
+             opacity:'0.66',
+             border:'none',
+             outline:'none',
+             color:'white',
+         },
+         btnstyleone:{
+             background:'#70a5ec',
+             border:'none',
+             outline:'none',
+             color:'white',
+         }
       }
     },
     mounted() {
@@ -300,3 +313,24 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
     }
 }
 </script>
+<style>
+.btn{
+    background:#E0595B;
+    opacity:0.66;
+    border:none;
+    outline:none;
+    color:white;
+}
+.btn:hover{
+    background:#E0595B;
+    opacity:0.66;
+    border:none;
+    outline:none;
+    color:white;
+}
+.textStyle{
+    position:relative;
+    top:15px;
+    font-weight:bold;
+}
+</style>
