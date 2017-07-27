@@ -43,7 +43,7 @@
                     @change='goods_name_change'></el-input>
                 </el-form-item>
                 <el-form-item  :label-width="formLabelWidth" align='right'>
-                    <span>找不到商品？去<el-button type='text' @click='add_goods'>添加</el-button></span>
+                    <span>找不到商品？去<el-button type='text' @click='add_goods'>绑定</el-button>商品</span>
                 </el-form-item>
                 <el-form-item  :label-width="formLabelWidth">
                     <el-table :data="tableData" style='marign-top:10px;'  @selection-change="goods_selectionchange">
@@ -172,14 +172,14 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
                 })
             }
             if(show == '添加'){
+                this.good_index = index
                 this.dialogFormVisible = true
-                this. show_goods_list()
+                this.show_goods_list()
             }
         },
         goods_selectionchange(val){
             //选择商品
             this.goods_id = val[0].id
-            console.log(this.goods_id)
             if(val.length > 1){
                 this.$message({
                     message:'只能选择一个商品',
@@ -240,12 +240,13 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
         saveChangeGoods(){
         //添加绑定商品
             let good_info = {
-                    display_device_id:this.display_device_id,
-                    goods_id:this.goods_id,
-                    uid:this.uid,
+                display_device_id:this.display_device_id,
+                goods_id:this.goods_id,
+                uid:this.uid,
             }
-            if(this.good_index){
-                good_info.adver_number = this.good_index +1
+            console.log(this.good_index)
+            if(this.good_index >=0){
+                good_info.adver_number = this.good_index + 1
                 bind_inf_goods(good_info).then(data=>{
                     if(data.error_code == 0){
                         this.$message({
@@ -253,7 +254,8 @@ import {bind_inf_goods,bind_dd_goods,getAlllist,adgoodlist,interactivead_list,de
                             type: 'success'
                         })
                     }else{
-                        this.$message({
+                        this.$message(
+                            {
                             message:'添加失败',
                             type: 'error'
                         })

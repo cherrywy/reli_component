@@ -4,7 +4,7 @@
 			<el-col :span ='24' style='margin-top:20px;' align='center'>
 				<ul style='list-style:none;' align='center'>
 					<li class='bg_img'>
-						<!--<div class='deviceone' @click='deviceStyle("displayViewOne")'></div>-->
+						<div class='deviceone' @click='deviceStyle("displayViewOne")'></div>
 					</li>
 					<li class='bg_img'>
 						<div class='device' @click='deviceStyle("displayViewTwo")'></div>
@@ -26,7 +26,7 @@ export default {
           activeName2: 'first',
 		  options: [{value: 5,label: 5}, {value: 10,label: 10}],
 		  value: '',
-		  currentView: 'displayViewTwo',
+		  currentView: 'displayViewOne',
 		  lists:null,
 		  uid:''
 		}

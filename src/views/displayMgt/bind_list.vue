@@ -81,20 +81,22 @@
                     </el-form-item>
     
                     <el-form-item label="请选择互动视频" >
+                    <video :src="videoUrl" width='350px' height='250px' controls v-show='videofalse'></video>
                     <el-upload
                         class="upload-demo"
-                        drag
                         name="pic"
                         :data="upload_video"  
                         :show-file-list="true"
                         :file-list="videoList"
                         :on-remove='videohandleAvatarRemove'
                         :on-success='videohandleAvatarSuccess'
-                        action="http://118.89.232.160:10001/util/file/upload.json"
-                        multiple>
-                        <i class="el-icon-upload"></i>
-                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                        <div class="el-upload__tip" slot="tip" style='margin-left:100px;color:red;'>注：视频只支持16：9尺寸，且只能上传一个</div>
+                        :on-progress='upvideoing'
+                        action="http://118.89.232.160:10001/util/file/upload.json">
+                        <el-button size="small" type="primary">点击上传</el-button>
+                         <span v-show='video_icon' style='margin-left:20px;'>
+                             <i class='el-icon-loading'></i>视频上传中
+                         </span>
+                        <div class="el-upload__tip" slot="tip" style='color:red;'>注：视频只支持16：9尺寸，且只能上传一个</div>
                         </el-upload>  
                     </el-form-item>
                     <el-form-item align='center'>
@@ -129,6 +131,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
         dialogImageUrl:'',
         videoList:[],
         fileList:[],
+        video_icon:false,
         tag:'',
         obj:{url:''},
         videoobj:{url:''},
@@ -167,6 +170,8 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
          tagArrName:[],
          tagArrtag:[],
          showImgs:[],
+         videoUrl:'',
+         videofalse:false,
       };
     },
     mounted() {
@@ -219,6 +224,8 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
                     let url ={
                         url:val.video_url[0].data.url
                     }
+                    this.videofalse = true
+                    this.videoUrl = val.video_url[0].data.url
                     this.videoList.push(url)
                 }       
             })
@@ -269,6 +276,13 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
             let upimg = {
                 url:res.result.file_download_url
             }
+            this.video_icon = false
+            this.$message({
+                    message: "视频上传成功",
+                    type: 'info'
+            })
+            this.videoUrl = res.result.file_download_url
+            this.videofalse = true
             this.videoList.push(upimg)
             if(this.videoList.length>1){
                 this.videoList.splice(0,1)
@@ -281,6 +295,7 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
         handleAvatarRemove(file,fileLis){
             //图片删除
             this.fileList =[]
+            this.videoUrl = ''
           //  console.log(file)
         },
         fileListdelete(file,fileList){
@@ -427,6 +442,9 @@ import {changeGoodsList,changeDiaplay,goodsImgs,updatavideo,getGoods_OneList,bin
             }
             console.log(this.tagArrtag)
             //this.getGoodsList();
+        },
+        upvideoing(){
+            this.video_icon = true
         }
     }
   };
