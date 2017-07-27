@@ -6,7 +6,7 @@
         <div class="form-row">
           类型：
           <label>
-            {{ (activeObject.data.type == 10) ? '默认' : '背柜' }}
+            {{ (activeObject && activeObject.data && activeObject.data.type == 10) ? '默认' : '背柜' }}
           </label>
         </div>
 
